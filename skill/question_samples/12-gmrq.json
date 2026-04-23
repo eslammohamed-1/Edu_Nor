@@ -1,0 +1,66 @@
+{
+  "question_id": "123456789012",
+  "parent_id": "123456789012",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "subject": "mathematics",
+  "subject_id": "105108757595",
+  "grade": "4",
+  "grade_id": "616145068630",
+  "number_of_parts": 1,
+  "section_id": "123456789012",
+  "source": "nagwa",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "gmrq",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Find the two words, one from each group, that together make one correctly spelt word. You may not change the order of the letters. The word from the first group always comes before the word from the second group.</span></p>",
+        "items": {
+          "A": [
+            {
+              "label": "A",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">her</span></p>",
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">be</span></p>",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">cold</span></p>",
+              "is_correct": false
+            }
+          ],
+          "B": [
+            {
+              "label": "X",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">live</span></p>",
+              "is_correct": false
+            },
+            {
+              "label": "Y",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">own</span></p>",
+              "is_correct": false
+            },
+            {
+              "label": "Z",
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">self</span></p>",
+              "is_correct": true
+            }
+          ]
+        },
+        "correct_answer": {
+          "A": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">her</span></p>",
+          "B": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">self</span></p>"
+        },
+
+        "explanation": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">To find the correctly spelt words, we need to combine the words from the first group with the words from the second group. The correct combinations are 'her' and 'self'.</span></p>"
+      }
+    ]
+  }
+}

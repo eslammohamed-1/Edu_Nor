@@ -1,0 +1,4 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP3-001,CP3,FRQ Question Component,"Textarea with auto-grow and word count for essay answers",component,medium,todo,2,CP1-003,src/components/questions/types/FRQQuestion.vue
+CP3-002,CP3,Counting Question Component,"Interactive grid with clickable cells and counter display",component,medium,todo,2.5,CP1-003,src/components/questions/types/CountingQuestion.vue
+CP3-003,CP3,GMRQ Question Component,"Two separate choice groups with one selection per group",component,medium,todo,2,CP1-003,src/components/questions/types/GMRQQuestion.vue

@@ -1,0 +1,52 @@
+{
+  "question_id": "102187579024",
+  "parent_id": "102187579024",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "10",
+  "grade_id": "616145068630",
+  "subject": "Physics",
+  "subject_id": "105108757595",
+  "source": "ai",
+  "section_id": "123456789012",
+  "number_of_parts": 1,
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "mrq",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The diagram shows a Coolidge tube used for the production of X-rays. X-rays are emitted in the directions shown by the arrows when a beam of electrons strikes the point from which the arrows originate.</span></p><div><img src=\"https://images.nagwa.com/figures/102187579024/1.svg\"/></div><p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Which of the following most correctly describe the reason for using the angle of the target surface relative to the electron beam that strikes the surface? Select all that apply.</span></p>",
+        "choices": [
+          {
+            "label": "A",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to control the direction in which X-rays are most strongly emitted from the target material.</span></p>",
+            "is_correct": true
+          },
+          {
+            "label": "B",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to increase the area on the target that electrons are incident on.</span></p>",
+            "is_correct": true
+          },
+          {
+            "label": "C",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to control the rate of production of X-rays in the target material.</span></p>",
+            "is_correct": false
+          }
+        ],
+        "correct_answer": [
+          {
+            "label": "A",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to control the direction in which X-rays are most strongly emitted from the target material.</span></p>"
+          },
+          {
+            "label": "B",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to increase the area on the target that electrons are incident on.</span></p>"
+          }
+        ],
+        "explanation": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The angle of the surface is used to control the direction in which X-rays are most strongly emitted from the target material. The angle of the surface is used to increase the area on the target that electrons are incident on.</span></p>"
+      }
+    ]
+  }
+}

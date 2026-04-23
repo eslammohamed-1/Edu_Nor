@@ -1,0 +1,6 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP5-001,CP5,Math Rendering Integration,"Integrate MathField/KaTeX for inline and block math expressions",feature,critical,todo,3,CP1-003,src/components/questions/StemRenderer.vue
+CP5-002,CP5,HTML Sanitization,"DOMPurify integration with safe tag whitelist for stem/choices/explanations",feature,critical,todo,1.5,,src/utils/richText.ts
+CP5-003,CP5,RTL/LTR Mixed Content,"Direction detection and BiDi-aware layout for Arabic/English content",feature,critical,todo,2,,src/utils/richText.ts
+CP5-004,CP5,Image Handling,"Responsive image display with loading states and lightbox zoom",feature,high,todo,2,CP1-003,src/components/questions/StemRenderer.vue
+CP5-005,CP5,Rich Text Utilities,"sanitizeHTML, extractText, parseBlankSlots, detectDirection functions",utility,critical,todo,2,,src/utils/richText.ts

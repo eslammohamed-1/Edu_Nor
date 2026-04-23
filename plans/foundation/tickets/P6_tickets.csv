@@ -1,0 +1,7 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P6-001,P6,LessonPlayer Component,"Video embed with 16:9 ratio and play overlay",component,critical,done,2,,src/components/courses/LessonPlayer.vue
+P6-002,P6,LessonPage View,"Two-column layout with player/notes/sidebar, responsive",page,critical,done,3,P6-001,src/views/LessonPage.vue
+P6-003,P6,Lesson Navigation,"Previous/Next buttons with cross-chapter awareness",feature,high,done,1.5,P6-002,src/views/LessonPage.vue
+P6-004,P6,Lesson Content Area,"Rich content display with highlighted notes and key points",component,high,done,1.5,P6-002,src/views/LessonPage.vue
+P6-005,P6,Lesson Sidebar,"Chapter list with current lesson highlighted and expand/collapse",component,high,done,2,P6-002,src/views/LessonPage.vue
+P6-006,P6,Lesson Completion,"Mark complete button with persist and progress update",feature,high,done,1,P6-002,src/stores/courses.ts

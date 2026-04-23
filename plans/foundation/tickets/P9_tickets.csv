@@ -1,0 +1,10 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P9-001,P9,Theme Composable + Store,"useTheme with toggle/OS detection/localStorage persist",composable,critical,done,1.5,,src/composables/useTheme.ts
+P9-002,P9,Dark Mode CSS,"Apply dark palette to all components with smooth transition",style,critical,done,2,P9-001,src/assets/css/variables.css
+P9-003,P9,Accessibility Audit,"Focus indicators/keyboard nav/ARIA labels/touch targets",feature,high,done,2,,
+P9-004,P9,SEO Meta Tags,"Unique title + description + OG tags for every page",feature,high,done,1.5,,index.html
+P9-005,P9,Skeleton Loaders,"Add skeleton loading states to subjects/courses/dashboard",feature,medium,done,2,,
+P9-006,P9,Empty States,"Friendly empty states with illustrations and CTAs",feature,medium,done,1.5,,
+P9-007,P9,NotFoundPage,"404 page with brand design and back-to-home button",page,medium,done,1,,src/views/NotFoundPage.vue
+P9-008,P9,Performance Optimization,"Lazy-load routes/image optimization/bundle review",optimization,medium,done,1.5,,
+P9-009,P9,Final Responsive Testing,"Test all pages on mobile/tablet/desktop + RTL",testing,critical,done,2,,

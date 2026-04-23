@@ -1,0 +1,27 @@
+{
+  "question_id": "103127961472",
+  "parent_id": "103127961472",
+  "language_code": "ar",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "12",
+  "grade_id": "616145068630",
+  "subject": "التاريخ",
+  "subject_id": "105108757595",
+  "number_of_parts": 1,
+  "section_id": "123456789012",
+  "source": "nagwa",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "frq",
+        "stem": "<p   dir=\"rtl\"><span style=\"white-space: pre-wrap;\">بمَ تفسِّر اهتمام نابليون بإنشاء المجمع العلمي؟</span></p>",
+        "ai_template_id": "750162567617",
+        "acceptable_answers": ["<p   dir=\"rtl\"><span style=\"white-space: pre-wrap;\">ليكون هيئةً استشاريةً للحكومة عن طريق ربط العلم بالسياسة.</span></p>"],
+        "explanation": "<p   dir=\"rtl\"><span style=\"white-space: pre-wrap;\">كان نابليون مهتمًا بإنشاء المجمع العلمي ليكون هيئةً استشاريةً للحكومة عن طريق ربط العلم بالسياسة، مما يعكس رؤيته في تعزيز التقدم العلمي والتكنولوجي لخدمة الدولة.</span></p>"
+      }
+    ]
+  }
+}

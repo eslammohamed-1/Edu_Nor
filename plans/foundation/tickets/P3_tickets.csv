@@ -1,0 +1,8 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P3-001,P3,Hero Section,"High-impact hero with AI illustration, floating cards, and clear CTA",section,critical,done,3,P2-006,src/views/Home.vue
+P3-002,P3,Features Section,Grid of feature cards with custom icons and brand colors,section,critical,done,2,P1-011,src/views/Home.vue
+P3-003,P3,Grades/Stages Section,Interactive cards for primary/prep/secondary stages,section,high,done,2,P1-011,src/views/Home.vue
+P3-004,P3,Statistics Section,Animated counter section showing platform scale,section,medium,done,1.5,P1-009,src/views/Home.vue
+P3-005,P3,CTA Section,Gradient background CTA card with primary brand button,section,critical,done,1.5,P1-010,src/views/Home.vue
+P3-006,P3,CTASection,"Final CTA with gold gradient bg and register button",component,high,done,1,,src/views/Home.vue
+P3-007,P3,HomePage Assembly,"Assemble all sections + SEO meta + smooth scroll",page,critical,done,1,P3-001,src/views/Home.vue

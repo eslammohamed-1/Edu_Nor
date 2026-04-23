@@ -1,0 +1,72 @@
+{
+  "question_id": "109151625739",
+  "parent_id": "109151625739",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "5",
+  "grade_id": "616145068630",
+  "subject": "English",
+  "subject_id": "105108757595",
+  "number_of_parts": 1,
+  "source": "ai",
+  "section_id": "123456789012",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "ordering",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Put the words in the correct order to form a sentence.</span></p>",
+        "direction": "horizontal",
+        "items": [
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">and then</span></p>",
+            "display_order": 1,
+            "correct_order": 4
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">makes</span></p>",
+            "display_order": 2,
+            "correct_order": 6
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">dinner.</span></p>",
+            "display_order": 3,
+            "correct_order": 7
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">does</span></p>",
+            "display_order": 4,
+            "correct_order": 2
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">she</span></p>",
+            "display_order": 5,
+            "correct_order": 1
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">her homework</span></p>",
+            "display_order": 6,
+            "correct_order": 3
+          },
+          {
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">she</span></p>",
+            "display_order": 7,
+            "correct_order": 5
+          }
+        ],
+        "correct_answer": [
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">she</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">does</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">her homework</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">and then</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">she</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">makes</span></p>",
+          "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">dinner.</span></p>"
+        ],
+        "explanation": null
+      }
+    ]
+  }
+}

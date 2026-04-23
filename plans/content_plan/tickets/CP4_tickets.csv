@@ -1,0 +1,3 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP4-001,CP4,Puzzle Question Component,"Drag & drop pieces into grid with correct image reveal on success",component,low,todo,4,CP2-001,src/components/questions/types/PuzzleQuestion.vue
+CP4-002,CP4,Multipart Question Component,"Shared statement + recursive rendering of different question types per part",component,low,todo,3,CP1-002,src/components/questions/types/MultipartQuestion.vue

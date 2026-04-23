@@ -1,0 +1,10 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP1-001,CP1,Question TypeScript Types,"Define all question type interfaces: QuestionMeta, QuestionPart, MCQ, MRQ, Input, String, Opinion, Choice, QuestionAttempt",type,critical,todo,2,,src/types/question.ts
+CP1-002,CP1,QuestionRenderer Component,"Dynamic component loader based on part.type with mode (practice/exam/review)",component,critical,todo,2,CP1-001,src/components/questions/QuestionRenderer.vue
+CP1-003,CP1,StemRenderer Component,"Safe HTML rendering with RTL/LTR detection and image support",component,critical,todo,1.5,CP1-001,src/components/questions/StemRenderer.vue
+CP1-004,CP1,MCQ Question Component,"Radio choices with single select and correct/incorrect feedback",component,critical,todo,2,CP1-003,src/components/questions/types/MCQQuestion.vue
+CP1-005,CP1,MRQ Question Component,"Checkbox choices with multiple select and partial scoring",component,critical,todo,2,CP1-003,src/components/questions/types/MRQQuestion.vue
+CP1-006,CP1,Input Question Component,"Numeric input with validation constraints and unit display",component,critical,todo,2,CP1-003,src/components/questions/types/InputQuestion.vue
+CP1-007,CP1,String Question Component,"Text input compared against acceptable_answers case-insensitive",component,critical,todo,1.5,CP1-003,src/components/questions/types/StringQuestion.vue
+CP1-008,CP1,Opinion Question Component,"Radio/button choices with no grading and thank-you feedback",component,critical,todo,1,CP1-003,src/components/questions/types/OpinionQuestion.vue
+CP1-009,CP1,Question Store,"Pinia store: currentQuestion, answers, mode, actions, getters",store,critical,todo,1.5,CP1-001,src/stores/questions.ts

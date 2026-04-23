@@ -1,0 +1,72 @@
+{
+  "question_id": "104174751358",
+  "parent_id": "104174751358",
+  "language_code": "ar",
+  "language": "Arabic",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "5",
+  "grade_id": "616145068630",
+  "subject": "Science",
+  "subject_id": "105108757595",
+  "number_of_parts": 1,
+  "section_id": "123456789012",
+  "source": "human",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "matching",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Match the evidence to the fact it supports.</span></p>",
+        "items": {
+          "A": [
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Earth rotates from west to east.</span></p>",
+              "label": "A1"
+            },
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The position and size of the shadow change.</span></p>",
+              "label": "A2"
+            },
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Earth revolves around the Sun.</span></p>",
+              "label": "A3"
+            }
+          ],
+          "B": [
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">There is an apparent change in the position of stars and constellations in the night sky from season to season.</span></p>",
+              "label": "B1",
+              "matches": "A3"
+            },
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The Sun rises from the east and sets in the west.</span></p>",
+              "label": "B2",
+              "matches": "A1"
+            },
+            {
+              "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The apparent change in the Sun's position in the sky is due to Earth's rotation around its axis.</span></p>",
+              "label": "B3",
+              "matches": "A2"
+            }
+          ]
+        },
+        "correct_answer": [
+          {
+            "A": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Earth rotates from west to east.</span></p>",
+            "B": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The Sun rises from the east and sets in the west.</span></p>"
+          },
+          {
+            "A": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The position and size of the shadow change.</span></p>",
+            "B": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The apparent change in the Sun's position in the sky is due to Earth's rotation around its axis.</span></p>"
+          },
+          {
+            "A": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Earth revolves around the Sun.</span></p>",
+            "B": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">There is an apparent change in the position of stars and constellations in the night sky from season to season.</span></p>"
+          }
+        ],
+        "explanation": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">To match the evidence to the fact it supports, we need to pair the correct evidence with the correct fact. The correct pairs are: 'Earth rotates from west to east' with 'There is an apparent change in the position of stars and constellations in the night sky from season to season', 'The position and size of the shadow change' with 'The Sun rises from the east and sets in the west', and 'Earth revolves around the Sun' with 'The apparent change in the Sun's position in the sky is due to Earth's rotation around its axis'.</span></p>"
+      }
+    ]
+  }
+}

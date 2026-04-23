@@ -1,0 +1,9 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P2-001,P2,Vue Router Setup,Define all routes with meta titles and scroll behavior,setup,critical,done,1.5,P1-001,src/router/index.ts
+P2-002,P2,TheNavbar Component,"Sticky navbar with logo/links/auth buttons/dark mode toggle, responsive",component,critical,done,3,P1-010,src/components/layout/TheNavbar.vue
+P2-003,P2,Mobile Navigation Drawer,Slide-in drawer from right with overlay and transitions,component,critical,done,2,P2-002,src/components/layout/TheNavbar.vue
+P2-004,P2,TheFooter Component,"Footer with logo/links/social/copyright, navy background",component,high,done,2,P1-005,src/components/layout/TheFooter.vue
+P2-005,P2,TheSidebar Component,Collapsible sidebar for lesson and dashboard pages,component,medium,done,2,P1-005,src/components/layout/TheSidebar.vue
+P2-006,P2,TheLayout Component,Main layout wrapper with navbar/content/footer and router-view,component,critical,done,1,P2-002,src/layouts/TheLayout.vue
+P2-007,P2,App.vue Update,Import global CSS and use TheLayout with theme provider,setup,critical,done,1,P2-006,src/App.vue
+P2-008,P2,Route Guards,Navigation guards for protected routes,feature,high,done,1,P2-001,src/router/index.ts

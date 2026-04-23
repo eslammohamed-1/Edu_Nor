@@ -1,0 +1,11 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P5-001,P5,Course Types,"Define Subject/Course/Chapter/Lesson interfaces",type,critical,done,0.5,,src/types/course.ts
+P5-002,P5,Mock Data — Subjects,"8+ subjects with Arabic names and icons",data,critical,done,1.5,P5-001,src/data/subjects.ts
+P5-003,P5,Mock Data — Courses,"3-4 courses per subject with chapters and lessons",data,critical,done,2,P5-001,src/data/courses.ts
+P5-004,P5,Mock Data — Lessons,"Lesson details with content and durations",data,high,done,1.5,P5-001,src/data/lessons.ts
+P5-005,P5,Courses Store,"Pinia store with subjects/courses/filters state and actions",store,critical,done,1.5,P5-001,src/stores/courses.ts
+P5-006,P5,SubjectCard Component,"Subject icon + name + lesson count with hover effect",component,critical,done,1.5,P5-001,src/components/courses/SubjectCard.vue
+P5-007,P5,CourseCard Component,"Course title/description/progress/CTA with hover effect",component,critical,done,1.5,P5-001,src/components/courses/CourseCard.vue
+P5-008,P5,LessonCard Component,"Lesson title/duration/type icon/completion status",component,high,done,1,P5-001,src/components/courses/LessonCard.vue
+P5-009,P5,SubjectsPage View,"Subjects grid with grade filter tabs, responsive",page,critical,done,2,P5-006,src/views/SubjectsPage.vue
+P5-010,P5,CoursePage View,"Subject courses with accordion chapters and lesson list",page,critical,done,2.5,P5-007,src/views/CoursePage.vue

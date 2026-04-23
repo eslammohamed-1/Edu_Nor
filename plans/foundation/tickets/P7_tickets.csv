@@ -1,0 +1,8 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P7-001,P7,Quiz Types,"Define Quiz/Question/QuizAttempt interfaces",type,critical,done,0.5,,src/types/quiz.ts
+P7-002,P7,Mock Quiz Data,"5+ quizzes with Arabic questions and explanations",data,critical,done,2,P7-001,src/data/quizzes.ts
+P7-003,P7,Quiz Store,"Pinia store with quiz state/actions/getters",store,critical,done,1.5,P7-001,src/stores/quiz.ts
+P7-004,P7,QuizQuestion Component,"Question display with 4 options and correct/incorrect feedback",component,critical,done,2,P7-001,src/components/quiz/QuizQuestion.vue
+P7-005,P7,QuizProgress Component,"Progress bar + timer + question dots",component,high,done,1.5,,src/components/quiz/QuizProgress.vue
+P7-006,P7,QuizResults Component,"Score/pass-fail/review/retry display",component,high,done,2,,src/components/quiz/QuizResults.vue
+P7-007,P7,QuizPage View,"Full quiz flow page with navigation and results",page,critical,done,2,P7-004,src/views/QuizPage.vue

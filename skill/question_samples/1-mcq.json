@@ -1,0 +1,51 @@
+{
+  "question_id": "102103856456",
+  "parent_id": "102103856456",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "12",
+  "grade_id": "616145068630",
+  "subject": "Mathematics",
+  "subject_id": "105108757595",
+  "source": "human",
+  "section_id": "123456789012",
+  "number_of_parts": 1,
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "mcq",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Find the point of inflection of the curve </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y=3x^2+5x+6\" locale=\"en\">y=3x^2+5x+6</math-field></span><span style=\"white-space: pre-wrap;\"> .</span></p>",
+        "choices": [
+          {
+            "label": "A",
+            "value": "<p  ><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"\\left(3,-9\\right)\" locale=\"en\">\\left(3,-9\\right)</math-field></span></p>",
+            "is_correct": false
+          },
+          {
+            "label": "B",
+            "value": "<p  ><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"\\left(2,-8\\right)\" locale=\"en\">\\left(2,-8\\right)</math-field></span></p>",
+            "is_correct": false
+          },
+          {
+            "label": "C",
+            "value": "<p  ><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"\\left(6,0\\right)\" locale=\"en\">\\left(6,0\\right)</math-field></span></p>",
+            "is_correct": false
+          },
+          {
+            "label": "D",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The curve has no point of inflection.</span></p>",
+            "is_correct": true
+          }
+        ],
+        "correct_answer": {
+          "label": "D",
+          "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The curve has no point of inflection.</span></p>"
+        },
+        "explanation": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">To find the point of inflection, we need to determine where the second derivative changes sign. The function can be expressed as a piecewise function:</span></p>\n\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">For </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"x<6\" locale=\"en\">x<6</math-field></span><span style=\"white-space: pre-wrap;\">: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y=x(6-x)=6x-x^2\" locale=\"en\">y=x(6-x)=6x-x^2</math-field></span></p>\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">For </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"x\\geq6\" locale=\"en\">x\\geq6</math-field></span><span style=\"white-space: pre-wrap;\">: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y=x(x-6)=x^2-6x\" locale=\"en\">y=x(x-6)=x^2-6x</math-field></span></p>\n\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Calculating the first and second derivatives for both cases:</span></p>\n\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">For </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"x<6\" locale=\"en\">x<6</math-field></span><span style=\"white-space: pre-wrap;\">:</span></p>\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">First derivative: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y' = 6 - 2x\" locale=\"en\">y' = 6 - 2x</math-field></span></p>\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Second derivative: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y'' = -2\" locale=\"en\">y'' = -2</math-field></span></p>\n\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">For </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"x\\geq6\" locale=\"en\">x\\geq6</math-field></span><span style=\"white-space: pre-wrap;\">:</span></p>\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">First derivative: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y' = 2x - 6\" locale=\"en\">y' = 2x - 6</math-field></span></p>\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Second derivative: </span><span class=\"LexicalTheme__math--inline\" data-node-type=\"math\" data-node-variation=\"inline\"><math-field default-mode=\"inline-math\" read-only=\"true\" value=\"y'' = 2\" locale=\"en\">y'' = 2</math-field></span></p>\n\n<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">The second derivative is constant in both intervals and does not change sign. Therefore, there are no points of inflection.</span></p>"
+      }
+    ]
+  }
+}

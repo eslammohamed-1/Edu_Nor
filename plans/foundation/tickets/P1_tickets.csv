@@ -1,0 +1,19 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P1-001,P1,Initialize Vite + Vue 3 + TS,Run create-vite with vue-ts template and clean boilerplate,setup,critical,done,1,,
+P1-002,P1,Install Dependencies,"Install vue-router@4, pinia, lucide-vue-next",setup,critical,done,0.5,P1-001,
+P1-003,P1,Configure TypeScript,Setup tsconfig.json with strict mode and path aliases,config,critical,done,0.5,P1-001,tsconfig.json
+P1-004,P1,Configure Vite,Setup vite.config.ts with aliases and plugins,config,critical,done,0.5,P1-001,vite.config.ts
+P1-005,P1,CSS Variables,Create design tokens from brand guide (colors/spacing/shadows/transitions),style,critical,done,2,P1-001,src/assets/css/variables.css
+P1-006,P1,CSS Reset,Modern CSS reset with RTL defaults,style,critical,done,1,P1-001,src/assets/css/reset.css
+P1-007,P1,Typography Setup,Import Cairo + Poppins fonts and define type scale,style,critical,done,1,P1-005,src/assets/css/typography.css
+P1-008,P1,Utility Classes,Text/display/spacing/color utility classes,style,high,done,1,P1-005,src/assets/css/utilities.css
+P1-009,P1,Animation System,Keyframes and animation utility classes with reduced-motion support,style,high,done,1,P1-005,src/assets/css/animations.css
+P1-010,P1,AppButton Component,"Button with variants (primary/secondary/ghost/danger), sizes, states",component,critical,done,2,P1-005,src/components/common/AppButton.vue
+P1-011,P1,AppCard Component,Card with hover lift effect and shadow from brand guide,component,critical,done,1,P1-005,src/components/common/AppCard.vue
+P1-012,P1,AppInput Component,Input with label/error/focus states and v-model support,component,critical,done,1.5,P1-005,src/components/common/AppInput.vue
+P1-013,P1,AppBadge Component,Pill badge with brand color variants,component,medium,done,0.5,P1-005,src/components/common/AppBadge.vue
+P1-014,P1,AppModal Component,Modal with backdrop/escape/transition animations,component,high,done,1.5,P1-009,src/components/common/AppModal.vue
+P1-015,P1,AppToast Component,Toast notification with auto-dismiss and slide animation,component,high,done,1.5,P1-009,src/components/common/AppToast.vue
+P1-016,P1,AppProgressBar Component,Animated progress bar with brand color variants,component,high,done,1,P1-005,src/components/common/AppProgressBar.vue
+P1-017,P1,AppSkeleton Component,Skeleton loader with shimmer pulse animation,component,medium,done,1,P1-009,src/components/common/AppSkeleton.vue
+P1-018,P1,AppIcon Component,Lucide icon wrapper with brand size grid,component,medium,done,0.5,P1-002,src/components/common/AppIcon.vue

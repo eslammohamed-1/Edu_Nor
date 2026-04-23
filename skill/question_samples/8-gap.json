@@ -1,0 +1,57 @@
+{
+  "question_id": "104101940767",
+  "parent_id": "104101940767",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "7",
+  "grade_id": "616145068630",
+  "subject": "English",
+  "subject_id": "105108757595",
+  "number_of_parts": 1,
+  "section_id": "123456789012",
+  "source": "nagwa",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "gap",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">Complete the text with the correct words.</span></p><p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">I would like to have some <span data-node-type=\"blank-line\" data-node-variation=\"gap\"> </span>, but I don’t because my <span data-node-type=\"blank-line\" data-node-variation=\"gap\"> </span> isn’t married and doesn’t have any children. He is my mother’s <span data-node-type=\"blank-line\" data-node-variation=\"gap\"> </span> and they are very good friends, but they like to do <span data-node-type=\"blank-line\" data-node-variation=\"gap\"> </span> things when he comes to the house, like talk and drink coffee. I want to do <span data-node-type=\"blank-line\" data-node-variation=\"gap\"> </span> things, like play.</span></p>",
+        "gap_keys": [
+          {
+            "value": "cousins",
+            "correct_order": 1,
+            "display_order": 1
+          },
+          {
+            "value": "interesting",
+            "correct_order": 5,
+            "display_order": 2
+          },
+          {
+            "value": "brother",
+            "correct_order": 3,
+            "display_order": 3
+          },
+          {
+            "value": "uncle",
+            "correct_order": 2,
+            "display_order": 4
+          },
+          {
+            "value": "aunts",
+            "display_order": 5
+          },
+          {
+            "value": "boring",
+            "correct_order": 4,
+            "display_order": 6
+          }
+        ],
+        "correct_answer": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">I would like to have some cousins, but I don’t because my brother isn’t married and doesn’t have any children. He is my mother’s cousin and they are very good friends, but they like to do things when he comes to the house, like talk and drink coffee. I want to do things, like play.</span></p>",
+        "explanation": null
+      }
+    ]
+  }
+}

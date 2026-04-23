@@ -1,0 +1,34 @@
+{
+  "question_id": "123129620652",
+  "parent_id": "716183568164",
+  "language_code": "en",
+  "language": "English",
+  "country_code": "eg",
+  "country": "Egypt",
+  "grade": "1",
+  "grade_id": "616145068630",
+  "subject": "اكتشف",
+  "subject_id": "105108757595",
+  "number_of_parts": 1,
+  "source": "ai",
+  "section_id": "123456789012",
+  "content": {
+    "parts": [
+      {
+        "n": 1,
+        "type": "opinion",
+        "stem": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">هل تعتقد أن جميع الأسر تحتفل بالأعياد بالطريقة نفسها؟</span></p>",
+        "choices": [
+          {
+            "label": "ا",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">نعم</span></p>"
+          },
+          {
+            "label": "ب",
+            "value": "<p   dir=\"ltr\"><span style=\"white-space: pre-wrap;\">لا</span></p>"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P4-001,P4,Auth Types,Define User/LoginPayload/RegisterPayload/AuthState interfaces,type,critical,done,0.5,,src/types/auth.ts
+P4-002,P4,Auth Store,"Pinia store with login/register/logout/checkAuth + localStorage persistence",store,critical,done,2,P4-001,src/stores/auth.ts
+P4-003,P4,LoginForm Component,"Email + password inputs with validation and error display",component,critical,done,2,P1-012,src/components/auth/LoginForm.vue
+P4-004,P4,RegisterForm Component,"Name/email/password/confirm/grade inputs with full validation",component,critical,done,2.5,P1-012,src/components/auth/RegisterForm.vue
+P4-005,P4,LoginPage View,"Split layout with form + decorative side, responsive",page,critical,done,1.5,P4-003,src/views/LoginPage.vue
+P4-006,P4,RegisterPage View,"Split layout with register form, responsive",page,critical,done,1.5,P4-004,src/views/RegisterPage.vue
+P4-007,P4,Route Guards Update,Redirect logic for protected and auth pages,feature,high,done,1,P4-002,src/router/index.ts
+P4-008,P4,useAuth Composable,Composable wrapper around auth store for components,composable,medium,done,1,P4-002,src/composables/useAuth.ts

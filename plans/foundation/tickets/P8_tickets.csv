@@ -1,0 +1,7 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+P8-001,P8,DashboardStats Component,"Welcome + 4 stat cards with animated numbers",component,critical,done,2,,src/components/dashboard/DashboardStats.vue
+P8-002,P8,RecentLessons Component,"Last 5 lessons with resume button and empty state",component,high,done,1.5,,src/components/dashboard/RecentLessons.vue
+P8-003,P8,ProgressChart Component,"Visual progress per subject with bars and percentages",component,high,done,2,,src/components/dashboard/ProgressChart.vue
+P8-004,P8,ProfileCard Component,"Avatar/name/email/grade display with edit button",component,medium,done,1,,src/components/dashboard/ProfileCard.vue
+P8-005,P8,DashboardPage View,"Dashboard grid layout with all widgets, responsive",page,critical,done,2,P8-001,src/views/DashboardPage.vue
+P8-006,P8,ProfilePage View,"Edit profile form with validation and save",page,high,done,2,,src/views/ProfilePage.vue

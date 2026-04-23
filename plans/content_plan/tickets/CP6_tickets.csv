@@ -1,0 +1,5 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP6-001,CP6,Auto-Grading Engine,"Grading functions for all 13 question types with partial scoring",utility,high,todo,3,,src/utils/grading.ts
+CP6-002,CP6,Feedback Display Component,"Correct/incorrect/partial feedback with animations and explanation toggle",component,high,todo,2,CP6-001,src/components/questions/QuestionFeedback.vue
+CP6-003,CP6,Attempt Tracking Store,"Per-question attempt tracking with localStorage persistence and stats",store,high,todo,2,CP6-001,src/stores/attempts.ts
+CP6-004,CP6,Quiz Summary Component,"Results page with score breakdown and per-question review and retry option",component,high,todo,2.5,CP6-001,src/components/questions/QuizSummary.vue

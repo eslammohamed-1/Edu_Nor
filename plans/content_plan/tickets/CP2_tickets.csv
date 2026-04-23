@@ -1,0 +1,5 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+CP2-001,CP2,Drag & Drop Composable,"Reusable drag/drop logic with HTML5 API + touch support + keyboard accessibility",composable,high,todo,3,,src/composables/useDragDrop.ts
+CP2-002,CP2,Ordering Question Component,"Draggable items reordering with horizontal/vertical direction support",component,high,todo,3,CP2-001,src/components/questions/types/OrderingQuestion.vue
+CP2-003,CP2,Matching Question Component,"Two-column matching with connecting lines or dropdown approach",component,high,todo,3.5,CP2-001,src/components/questions/types/MatchingQuestion.vue
+CP2-004,CP2,Gap Fill Question Component,"Text with blank slots and draggable word bank with distractors",component,high,todo,3,CP2-001,src/components/questions/types/GapQuestion.vue
