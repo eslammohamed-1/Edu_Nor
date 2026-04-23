@@ -1,0 +1,13 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA4-001,SA4,Admin Content Store,"Pinia store managing subjects/courses/lessons CRUD + reorder + publish + persistence",store,critical,todo,3,,src/stores/admin/adminContent.ts
+SA4-002,SA4,SubjectForm Component,"Form with AR/EN name, slug, icon, color, stages, order + live card preview",component,critical,todo,2,SA4-001,src/components/admin/content/SubjectForm.vue
+SA4-003,SA4,AdminSubjects Page,"Card grid with CRUD, reorder (drag/arrows), toggle visibility",page,critical,todo,2,"SA4-001,SA4-002",src/views/admin/AdminSubjects.vue
+SA4-004,SA4,CourseForm Component,"Form with title, description, subject, grade, instructor, thumbnail, duration, tags",component,critical,todo,2,SA4-001,src/components/admin/content/CourseForm.vue
+SA4-005,SA4,AdminCourses Page,"Filterable DataTable of courses with CRUD and status",page,critical,todo,2,"SA4-001,SA4-004,SA3-002",src/views/admin/AdminCourses.vue
+SA4-006,SA4,LessonEditor Component,"Side-by-side form + preview with auto-save draft",component,critical,todo,3,SA4-001,src/components/admin/content/LessonEditor.vue
+SA4-007,SA4,AdminLessons Page,"Tree view Subject>Course>Chapter>Lesson with drag reorder and CRUD",page,critical,todo,3,"SA4-001,SA4-006",src/views/admin/AdminLessons.vue
+SA4-008,SA4,Publish/Unpublish Feature,"Toggle with timestamp; filter hidden content from student-facing views",feature,high,todo,1,SA4-001,src/stores/admin/adminContent.ts
+SA4-009,SA4,Reorder Chapters/Lessons,"Drag handle + keyboard arrows for reordering inside a course",feature,high,todo,1.5,SA4-007,src/views/admin/AdminLessons.vue
+SA4-010,SA4,Bulk Actions Content,"Multi-select + bulk publish/unpublish/delete/move",feature,medium,todo,1.5,"SA4-005,SA4-007",src/views/admin/AdminCourses.vue
+SA4-011,SA4,Content Audit Integration,"Hook all CRUD operations to adminAudit.log with diffs",feature,high,todo,1,"SA4-001,SA8-001",src/stores/admin/adminContent.ts
+SA4-012,SA4,Icon Picker Component,"Searchable Lucide icon picker used by SubjectForm",component,low,todo,1.5,SA4-002,src/components/admin/shared/IconPicker.vue

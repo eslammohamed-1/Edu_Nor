@@ -1,0 +1,16 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA3-001,SA3,Admin Users Store,"Pinia store with CRUD + role/ban/permissions actions + localStorage persistence + seed",store,critical,todo,2.5,,src/stores/admin/adminUsers.ts
+SA3-002,SA3,DataTable Shared Component,"Reusable table: columns/rows/sort/pagination/multi-select/slots",component,critical,todo,3,,src/components/admin/shared/DataTable.vue
+SA3-003,SA3,FilterBar Component,"Debounced search + filter chips + clear",component,high,todo,1.5,,src/components/admin/shared/FilterBar.vue
+SA3-004,SA3,ConfirmDialog Component,"Reusable destructive action confirmation modal",component,high,todo,1,,src/components/admin/shared/ConfirmDialog.vue
+SA3-005,SA3,RoleBadge Component,"Color-coded pill per role with Lucide icon",component,medium,todo,0.5,,src/components/admin/users/RoleBadge.vue
+SA3-006,SA3,UserForm Component,"Create/Edit modes with validation + role and permissions editor",component,critical,todo,2.5,SA3-001,src/components/admin/users/UserForm.vue
+SA3-007,SA3,Permissions Editor,"Checkbox list from PERMISSIONS + select all/none + summary preview",component,high,todo,1,SA3-006,src/components/admin/users/UserForm.vue
+SA3-008,SA3,AdminUsers List Page,"Header + filters + DataTable + row actions + bulk actions",page,critical,todo,2.5,"SA3-001,SA3-002,SA3-003,SA3-006",src/views/admin/AdminUsers.vue
+SA3-009,SA3,AdminUserDetail Page,"Tabs Info/Permissions/Activity/Progress + edit button",page,high,todo,2,SA3-008,src/views/admin/AdminUserDetail.vue
+SA3-010,SA3,useImpersonate Composable,"Start/stop impersonation with origin snapshot and audit log",composable,high,todo,1.5,"SA3-001,SA8-001",src/composables/useImpersonate.ts
+SA3-011,SA3,Impersonation Banner,"Yellow banner in AdminTopbar with return button",component,high,todo,0.5,"SA3-010,SA1-003",src/components/admin/layout/AdminTopbar.vue
+SA3-012,SA3,CSV Export Users,"Export current users list to CSV file",feature,medium,todo,0.75,"SA3-008,SA6-005",src/views/admin/AdminUsers.vue
+SA3-013,SA3,CSV Import Users,"Upload CSV with schema validation and preview before apply",feature,medium,todo,1.5,SA3-008,src/views/admin/AdminUsers.vue
+SA3-014,SA3,Ban/Unban Enforcement,"Block login for banned users with explanatory toast",feature,high,todo,0.5,SA3-001,src/stores/auth.ts
+SA3-015,SA3,Reset Password Action,"Action button + audit entry (no real email yet)",feature,medium,todo,0.5,"SA3-001,SA8-001",src/stores/admin/adminUsers.ts

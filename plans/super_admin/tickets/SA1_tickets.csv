@@ -1,0 +1,9 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA1-001,SA1,AdminLayout Component,"Shell layout with Sidebar + Topbar + Breadcrumbs + RouterView, responsive drawer on mobile",component,critical,todo,2,,src/components/admin/layout/AdminLayout.vue
+SA1-002,SA1,AdminSidebar Component,"Grouped nav (Overview/Users/Content/Assessment/Analytics/System) with Lucide icons and active states",component,critical,todo,2,SA1-001,src/components/admin/layout/AdminSidebar.vue
+SA1-003,SA1,AdminTopbar Component,"Search + theme toggle + notifications + user menu + impersonate banner slot",component,critical,todo,1.5,SA1-001,src/components/admin/layout/AdminTopbar.vue
+SA1-004,SA1,AdminBreadcrumbs Component,"Builds path from route.matched with RTL-aware separators",component,high,todo,0.75,SA1-001,src/components/admin/layout/AdminBreadcrumbs.vue
+SA1-005,SA1,Admin Nested Routes,"Refactor /admin into parent route with children using AdminLayout",feature,critical,todo,1.5,SA1-001,src/router/index.ts
+SA1-006,SA1,Route Guard Enhancements,"Ensure all /admin/* enforce requiresSuperAdmin and preserve redirect query",feature,critical,todo,0.5,SA1-005,src/router/index.ts
+SA1-007,SA1,Admin Navigation Config,"Declarative sidebar sections (title/icon/to/permission)",config,medium,todo,0.5,SA1-002,src/config/adminNav.ts
+SA1-008,SA1,Admin Styles & Tokens,"admin.css with layout variables and utility classes; dark-mode aware",style,medium,todo,1,SA1-001,src/assets/css/admin.css

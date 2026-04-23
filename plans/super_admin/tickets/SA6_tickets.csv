@@ -1,0 +1,12 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA6-001,SA6,Admin Analytics Store,"Getters computing KPIs/trends/funnels from existing stores",store,high,todo,2,"SA3-001,SA4-001,SA5-001",src/stores/admin/adminAnalytics.ts
+SA6-002,SA6,LineChartMini Component,"SVG line chart for time series data",component,high,todo,1.5,,src/components/admin/analytics/LineChartMini.vue
+SA6-003,SA6,BarChartMini Component,"SVG bar chart for categorical data",component,high,todo,1.5,,src/components/admin/analytics/BarChartMini.vue
+SA6-004,SA6,DonutChart Component,"SVG donut chart for distributions",component,medium,todo,1.5,,src/components/admin/analytics/DonutChart.vue
+SA6-005,SA6,CSV Utility,"toCSV + downloadCSV helpers",util,critical,todo,0.75,,src/lib/csv.ts
+SA6-006,SA6,Time Range Picker,"7d/30d/90d/custom with reactive computed on charts",component,high,todo,1.5,,src/components/admin/shared/TimeRangePicker.vue
+SA6-007,SA6,AdminAnalytics Page,"Full dashboard with range picker + charts + top lists + funnel",page,high,todo,2.5,"SA6-001,SA6-002,SA6-003,SA6-004,SA6-006",src/views/admin/AdminAnalytics.vue
+SA6-008,SA6,Funnel Widget,"Signup > Verified > First Lesson > First Quiz with conversion rates",component,medium,todo,1.5,"SA6-001",src/components/admin/analytics/FunnelWidget.vue
+SA6-009,SA6,Reports Builder Modal,"Modal to configure report (type/range/columns/format) with preview",component,medium,todo,2,"SA6-001,SA6-005",src/components/admin/shared/ReportsBuilder.vue
+SA6-010,SA6,Print-friendly Report Page,"HTML report view optimized for window.print",page,low,todo,1,SA6-009,src/views/admin/AdminReportPrint.vue
+SA6-011,SA6,Scheduled Reports UI,"Visual-only form to schedule weekly email reports (mock)",component,low,todo,1,SA6-007,src/components/admin/shared/ScheduledReports.vue

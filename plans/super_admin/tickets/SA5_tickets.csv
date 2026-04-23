@@ -1,0 +1,14 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA5-001,SA5,Admin Quizzes Store,"Pinia store managing quizzes + questions CRUD + duplicate + archive + reorder",store,critical,todo,3,,src/stores/admin/adminQuizzes.ts
+SA5-002,SA5,AdminQuizzes List Page,"DataTable with filters, row actions (edit/duplicate/preview/archive/delete)",page,critical,todo,2,"SA5-001,SA3-002",src/views/admin/AdminQuizzes.vue
+SA5-003,SA5,AdminQuizBuilder Page,"3-panel layout: metadata / question list / current editor + reorder",page,critical,todo,3,"SA5-001,SA5-004",src/views/admin/AdminQuizBuilder.vue
+SA5-004,SA5,QuestionBuilder Component,"Dynamic form per question type (mcq/mrq/input/string/opinion)",component,critical,todo,4,SA5-001,src/components/admin/quiz/QuestionBuilder.vue
+SA5-005,SA5,MCQ/MRQ Sub-editor,"Choices list editor with correct flags and per-choice HTML",component,critical,todo,2,SA5-004,src/components/admin/quiz/editors/ChoicesEditor.vue
+SA5-006,SA5,Input/String Sub-editor,"Numeric constraints + acceptable answers + guidelines",component,high,todo,1.5,SA5-004,src/components/admin/quiz/editors/AnswerEditor.vue
+SA5-007,SA5,Opinion Sub-editor,"Choices without correctness for polls",component,medium,todo,0.5,SA5-004,src/components/admin/quiz/editors/OpinionEditor.vue
+SA5-008,SA5,JSON Import,"Validate and import quiz/questions from JSON (uses skill/question_samples structure)",feature,high,todo,2,"SA5-001,SA5-004",src/views/admin/AdminQuizBuilder.vue
+SA5-009,SA5,JSON Export,"Export quiz to standard JSON format",feature,high,todo,1,"SA5-001,SA5-003",src/views/admin/AdminQuizBuilder.vue
+SA5-010,SA5,Quiz Preview Mode,"Open quiz in student-like viewer with correct answers revealed",feature,high,todo,1.5,SA5-003,src/views/admin/AdminQuizBuilder.vue
+SA5-011,SA5,Duplicate & Archive,"Actions to clone a quiz and archive without deletion",feature,medium,todo,1,SA5-001,src/stores/admin/adminQuizzes.ts
+SA5-012,SA5,Quiz Analytics Modal,"Attempts count, avg score, hardest/easiest question per quiz",component,medium,todo,1.5,SA5-002,src/components/admin/quiz/QuizAnalyticsModal.vue
+SA5-013,SA5,Quiz Audit Integration,"Log every quiz/question CRUD to adminAudit",feature,high,todo,0.5,"SA5-001,SA8-001",src/stores/admin/adminQuizzes.ts

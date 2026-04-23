@@ -1,0 +1,12 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA7-001,SA7,Admin Settings Store,"Pinia store with general/branding/seo/integrations/features sections + persistence",store,critical,todo,2,,src/stores/admin/adminSettings.ts
+SA7-002,SA7,AdminSettings Tabs Page,"Tabbed settings page with sticky save button per tab",page,critical,todo,2,SA7-001,src/views/admin/AdminSettings.vue
+SA7-003,SA7,General Settings Form,"Platform name/email/phone/address/timezone/locale",component,high,todo,1,SA7-002,src/views/admin/AdminSettings.vue
+SA7-004,SA7,Branding Form,"Logo/favicon URLs + color pickers with live preview",component,high,todo,2,SA7-002,src/views/admin/AdminSettings.vue
+SA7-005,SA7,Dynamic Branding Applier,"Apply colors to CSS vars and update favicon/logo at runtime",feature,high,todo,1,SA7-004,src/stores/admin/adminSettings.ts
+SA7-006,SA7,SEO Form,"Default title/description/OG image/robots + Google preview card",component,medium,todo,1.5,SA7-002,src/views/admin/AdminSettings.vue
+SA7-007,SA7,Integrations Form,"GA/Meta Pixel/SMTP fields (password masked) + mock test button",component,medium,todo,1.5,SA7-002,src/views/admin/AdminSettings.vue
+SA7-008,SA7,Feature Flags,"Toggles maintenance/registrationOpen/publicCatalog/darkModeDefault",component,high,todo,1,SA7-002,src/views/admin/AdminSettings.vue
+SA7-009,SA7,Maintenance Mode Overlay,"Block UI for non-super-admin users when flag is on",feature,high,todo,1,SA7-008,src/App.vue
+SA7-010,SA7,Backup/Restore Settings,"Export settings JSON + import with validation + confirm",feature,medium,todo,1,SA7-001,src/views/admin/AdminSettings.vue
+SA7-011,SA7,Settings Audit Integration,"Log section updates with diff snippets",feature,high,todo,0.5,"SA7-001,SA8-001",src/stores/admin/adminSettings.ts

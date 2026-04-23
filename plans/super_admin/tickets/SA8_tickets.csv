@@ -1,0 +1,12 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA8-001,SA8,Admin Audit Store,"Pinia store logs[] with capped retention and persistence",store,critical,todo,1.5,,src/stores/admin/adminAudit.ts
+SA8-002,SA8,Audit Logger Helper,"audit(action,target,meta) wrapper auto-fills actor from auth",util,critical,todo,0.5,SA8-001,src/lib/audit.ts
+SA8-003,SA8,AdminAudit Page,"DataTable with filters (actor/action/date) + search + CSV export + clear",page,high,todo,2.5,"SA8-001,SA3-002,SA6-005",src/views/admin/AdminAudit.vue
+SA8-004,SA8,Clear Log Safeguards,"Double confirm + password re-entry before clearing logs",feature,high,todo,1,SA8-003,src/views/admin/AdminAudit.vue
+SA8-005,SA8,Sessions Management,"List active sessions + ability to end each",page,medium,todo,1.5,SA8-001,src/views/admin/AdminSessions.vue
+SA8-006,SA8,Password Policy Config,"Settings for minLength/upper/number/symbol/maxAge enforced on register/reset",feature,high,todo,1.5,SA7-001,src/lib/password.ts
+SA8-007,SA8,2FA Mock Flow,"Toggle + QR placeholder + 6-digit verify (accepts 000000)",feature,medium,todo,2,,src/views/admin/AdminSecurity.vue
+SA8-008,SA8,Failed Login Throttling,"5 fails/min => 60s lockout + audit entry + UX messaging",feature,high,todo,1,"SA8-001,SA8-002",src/stores/auth.ts
+SA8-009,SA8,Backup System,"exportAll/importAll helpers covering all EduNor localStorage keys",util,high,todo,1.5,,src/lib/backup.ts
+SA8-010,SA8,Security Dashboard Widget,"Card on AdminDashboard showing recent failed logins + warnings",component,medium,todo,1,"SA2-007,SA8-001",src/components/admin/shared/SecurityAlerts.vue
+SA8-011,SA8,Audit Docs Section,"Info card listing what events are captured + links to other phases",content,low,todo,0.5,SA8-003,src/views/admin/AdminAudit.vue

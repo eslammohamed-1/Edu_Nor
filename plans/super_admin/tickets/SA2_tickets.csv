@@ -1,0 +1,9 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+SA2-001,SA2,StatCard Component,"Reusable KPI card with icon/value/delta/trend and skeleton state",component,critical,todo,1,,src/components/admin/shared/StatCard.vue
+SA2-002,SA2,ActivityFeed Component,"Shows latest audit entries with avatar + action + relative time",component,high,todo,1,SA8-001,src/components/admin/shared/ActivityFeed.vue
+SA2-003,SA2,KpiChart Component,"SVG line + bar mini-charts without external libs",component,high,todo,2,,src/components/admin/analytics/KpiChart.vue
+SA2-004,SA2,Quick Actions Card,"4 buttons: new user/subject/quiz/export report",component,medium,todo,0.5,SA2-001,src/components/admin/shared/QuickActions.vue
+SA2-005,SA2,Recent Users Widget,"List of latest 5 signups with role badges",component,medium,todo,0.75,SA3-001,src/components/admin/shared/RecentUsers.vue
+SA2-006,SA2,Recent Quizzes Widget,"List of latest 5 quizzes with question count + avg score",component,medium,todo,0.75,SA5-001,src/components/admin/shared/RecentQuizzes.vue
+SA2-007,SA2,AdminDashboard Page,"Assemble KPIs + charts + widgets in responsive grid with loading states",page,critical,todo,2,"SA2-001,SA2-002,SA2-003,SA2-004,SA2-005,SA2-006",src/views/admin/AdminDashboard.vue
+SA2-008,SA2,Dashboard Welcome Header,"Greeting + super admin name + today date + role pill",component,low,todo,0.5,SA2-007,src/views/admin/AdminDashboard.vue
