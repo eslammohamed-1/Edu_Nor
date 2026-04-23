@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
+# Build output
+dist/
+
+# Editor / OS
+Thumbs.db
+*.swp
+.idea/
+
+# Env
+.env
+.env.*.local
