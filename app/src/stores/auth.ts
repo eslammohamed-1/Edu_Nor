@@ -100,7 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = mockUser;
       token.value = mockToken;
       writeStorage({ user: mockUser, token: mockToken });
-      useCoursesStore().applyUserStageDefault(mockUser);
+      useCoursesStore().applyUserCurriculumContext(mockUser);
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -143,7 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = mockUser;
       token.value = mockToken;
       writeStorage({ user: mockUser, token: mockToken });
-      useCoursesStore().applyUserStageDefault(mockUser);
+      useCoursesStore().applyUserCurriculumContext(mockUser);
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -158,7 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null;
     error.value = null;
     writeStorage(null);
-    useCoursesStore().applyUserStageDefault(null);
+    useCoursesStore().applyUserCurriculumContext(null);
   }
 
   function clearError() {

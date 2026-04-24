@@ -36,6 +36,8 @@ export interface Chapter {
 export interface Course {
   id: string;
   subjectId: string;
+  /** يربط الكورس بعرض منهج (معرف 12 رقم) من curriculumOfferings */
+  offeringId?: string;
   title: string;
   description: string;
   stage: Stage;

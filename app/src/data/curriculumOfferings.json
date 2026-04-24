@@ -1,0 +1,476 @@
+{
+  "offerings": [
+    {
+      "id": "110000000001",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف الأول الابتدائي"
+    },
+    {
+      "id": "110000000002",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف الأول الابتدائي"
+    },
+    {
+      "id": "110000000003",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف الأول الابتدائي"
+    },
+    {
+      "id": "120000000004",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف الثاني الابتدائي"
+    },
+    {
+      "id": "120000000005",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف الثاني الابتدائي"
+    },
+    {
+      "id": "120000000006",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف الثاني الابتدائي"
+    },
+    {
+      "id": "130000000007",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف الثالث الابتدائي"
+    },
+    {
+      "id": "130000000008",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف الثالث الابتدائي"
+    },
+    {
+      "id": "130000000009",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف الثالث الابتدائي"
+    },
+    {
+      "id": "140000000010",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "140000000011",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "140000000012",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "140000000013",
+      "subjectSlug": "science",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "140000000014",
+      "subjectSlug": "ict",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "150000000015",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف الخامس الابتدائي"
+    },
+    {
+      "id": "150000000016",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف الخامس الابتدائي"
+    },
+    {
+      "id": "150000000017",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف الخامس الابتدائي"
+    },
+    {
+      "id": "150000000018",
+      "subjectSlug": "science",
+      "stage": "primary",
+      "grade": "الصف الخامس الابتدائي"
+    },
+    {
+      "id": "150000000019",
+      "subjectSlug": "social-studies",
+      "stage": "primary",
+      "grade": "الصف الخامس الابتدائي"
+    },
+    {
+      "id": "160000000020",
+      "subjectSlug": "arabic",
+      "stage": "primary",
+      "grade": "الصف السادس الابتدائي"
+    },
+    {
+      "id": "160000000021",
+      "subjectSlug": "english",
+      "stage": "primary",
+      "grade": "الصف السادس الابتدائي"
+    },
+    {
+      "id": "160000000022",
+      "subjectSlug": "math",
+      "stage": "primary",
+      "grade": "الصف السادس الابتدائي"
+    },
+    {
+      "id": "160000000023",
+      "subjectSlug": "science",
+      "stage": "primary",
+      "grade": "الصف السادس الابتدائي"
+    },
+    {
+      "id": "160000000024",
+      "subjectSlug": "social-studies",
+      "stage": "primary",
+      "grade": "الصف السادس الابتدائي"
+    },
+    {
+      "id": "210000000025",
+      "subjectSlug": "arabic",
+      "stage": "prep",
+      "grade": "الصف الأول الإعدادي"
+    },
+    {
+      "id": "210000000026",
+      "subjectSlug": "english",
+      "stage": "prep",
+      "grade": "الصف الأول الإعدادي"
+    },
+    {
+      "id": "210000000027",
+      "subjectSlug": "math",
+      "stage": "prep",
+      "grade": "الصف الأول الإعدادي"
+    },
+    {
+      "id": "210000000028",
+      "subjectSlug": "science",
+      "stage": "prep",
+      "grade": "الصف الأول الإعدادي"
+    },
+    {
+      "id": "220000000029",
+      "subjectSlug": "arabic",
+      "stage": "prep",
+      "grade": "الصف الثاني الإعدادي"
+    },
+    {
+      "id": "220000000030",
+      "subjectSlug": "english",
+      "stage": "prep",
+      "grade": "الصف الثاني الإعدادي"
+    },
+    {
+      "id": "220000000031",
+      "subjectSlug": "math",
+      "stage": "prep",
+      "grade": "الصف الثاني الإعدادي"
+    },
+    {
+      "id": "220000000032",
+      "subjectSlug": "science",
+      "stage": "prep",
+      "grade": "الصف الثاني الإعدادي"
+    },
+    {
+      "id": "220000000033",
+      "subjectSlug": "social-studies",
+      "stage": "prep",
+      "grade": "الصف الثاني الإعدادي"
+    },
+    {
+      "id": "230000000034",
+      "subjectSlug": "arabic",
+      "stage": "prep",
+      "grade": "الصف الثالث الإعدادي"
+    },
+    {
+      "id": "230000000035",
+      "subjectSlug": "english",
+      "stage": "prep",
+      "grade": "الصف الثالث الإعدادي"
+    },
+    {
+      "id": "230000000036",
+      "subjectSlug": "math",
+      "stage": "prep",
+      "grade": "الصف الثالث الإعدادي"
+    },
+    {
+      "id": "230000000037",
+      "subjectSlug": "science",
+      "stage": "prep",
+      "grade": "الصف الثالث الإعدادي"
+    },
+    {
+      "id": "230000000038",
+      "subjectSlug": "social-studies",
+      "stage": "prep",
+      "grade": "الصف الثالث الإعدادي"
+    },
+    {
+      "id": "310000000039",
+      "subjectSlug": "arabic",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000040",
+      "subjectSlug": "english",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000041",
+      "subjectSlug": "math",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000042",
+      "subjectSlug": "integrated-science",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000043",
+      "subjectSlug": "philosophy",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000044",
+      "subjectSlug": "geography",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "310000000045",
+      "subjectSlug": "history",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي"
+    },
+    {
+      "id": "312000000046",
+      "subjectSlug": "french",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "312000000047",
+      "subjectSlug": "spanish",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "313000000048",
+      "subjectSlug": "french",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "313000000049",
+      "subjectSlug": "philosophy",
+      "stage": "secondary",
+      "grade": "الصف الأول الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "320000000050",
+      "subjectSlug": "arabic",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي"
+    },
+    {
+      "id": "320000000051",
+      "subjectSlug": "english",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي"
+    },
+    {
+      "id": "320000000052",
+      "subjectSlug": "math",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي"
+    },
+    {
+      "id": "320000000053",
+      "subjectSlug": "science",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي"
+    },
+    {
+      "id": "321000000054",
+      "subjectSlug": "physics",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_ar"
+    },
+    {
+      "id": "322000000055",
+      "subjectSlug": "physics",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "321000000056",
+      "subjectSlug": "chemistry",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_ar"
+    },
+    {
+      "id": "322000000057",
+      "subjectSlug": "chemistry",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "322000000058",
+      "subjectSlug": "biology",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "320000000059",
+      "subjectSlug": "psychology-social",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي"
+    },
+    {
+      "id": "330000000060",
+      "subjectSlug": "arabic",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي"
+    },
+    {
+      "id": "330000000061",
+      "subjectSlug": "english",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي"
+    },
+    {
+      "id": "330000000062",
+      "subjectSlug": "math",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي"
+    },
+    {
+      "id": "331000000063",
+      "subjectSlug": "physics",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_ar"
+    },
+    {
+      "id": "332000000064",
+      "subjectSlug": "physics",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "331000000065",
+      "subjectSlug": "chemistry",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_ar"
+    },
+    {
+      "id": "332000000066",
+      "subjectSlug": "chemistry",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "332000000067",
+      "subjectSlug": "biology",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "331000000068",
+      "subjectSlug": "statistics",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_ar"
+    },
+    {
+      "id": "332000000069",
+      "subjectSlug": "statistics",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "333000000070",
+      "subjectSlug": "philosophy",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "323000000071",
+      "subjectSlug": "philosophy",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "323000000072",
+      "subjectSlug": "history",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "323000000073",
+      "subjectSlug": "geography",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "323000000074",
+      "subjectSlug": "french",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "literary"
+    },
+    {
+      "id": "322000000075",
+      "subjectSlug": "spanish",
+      "stage": "secondary",
+      "grade": "الصف الثاني الثانوي",
+      "secondaryTrack": "scientific_languages"
+    }
+  ]
+}

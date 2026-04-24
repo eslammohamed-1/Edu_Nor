@@ -14,14 +14,14 @@ defineProps<Props>();
   <section class="recent-lessons widget">
     <header class="widget-head">
       <h3 class="font-ar text-navy">آخر الدروس</h3>
-      <RouterLink to="/subjects" class="view-all font-ar">عرض الكل</RouterLink>
+      <RouterLink to="/subjects?scope=my" class="view-all font-ar">عرض الكل</RouterLink>
     </header>
 
     <div v-if="lessons.length === 0" class="empty">
       <AppIcon name="BookOpen" :size="48" color="var(--text-muted)" />
       <p class="font-ar text-secondary">لم تبدأ أي درس بعد</p>
-      <RouterLink to="/subjects">
-        <AppButton size="sm">استكشف المواد</AppButton>
+      <RouterLink to="/subjects?scope=my">
+        <AppButton size="sm">استكشف مواد صفي</AppButton>
       </RouterLink>
     </div>
 

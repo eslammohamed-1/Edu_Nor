@@ -2,6 +2,74 @@ import type { Course } from '@/types/course';
 
 export const courses: Course[] = [
   {
+    id: 'arabic-sec-1-intro',
+    subjectId: 'arabic',
+    offeringId: '310000000039',
+    title: 'اللغة العربية - الصف الأول الثانوي',
+    description: 'مقدمة في النصوص والنحو والتعبير للعام الدراسي الأول بالثانوية.',
+    stage: 'secondary',
+    grade: 'الصف الأول الثانوي',
+    instructor: 'أ. سارة نبيل',
+    duration: 240,
+    lessonsCount: 8,
+    studentsCount: 1200,
+    rating: 4.7,
+    chapters: [
+      {
+        id: 'a1-sec-1',
+        title: 'الوحدة الأولى: النص والفهم',
+        description: 'قراءة وتحليل نصوص',
+        order: 1,
+        lessons: [
+          {
+            id: 'a1-sec-1-l1',
+            title: 'استيعاب المقروء',
+            description: 'مهارات فهم النص',
+            duration: 22,
+            type: 'video',
+            content: '<p>نصوص وأسئلة فهم.</p>',
+            keyPoints: ['الفكرة الرئيسية', 'تفاصيل'],
+            order: 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'math-sec-1-basics',
+    subjectId: 'math',
+    offeringId: '310000000041',
+    title: 'الرياضيات - الصف الأول الثانوي (أساسيات)',
+    description: 'دوال ومتباينات وتمهيد لما يلي في السنوات التالية.',
+    stage: 'secondary',
+    grade: 'الصف الأول الثانوي',
+    instructor: 'أ. كريم فؤاد',
+    duration: 360,
+    lessonsCount: 10,
+    studentsCount: 2100,
+    rating: 4.6,
+    chapters: [
+      {
+        id: 'm1-sec-1',
+        title: 'الدوال',
+        description: 'مفاهيم أساسية',
+        order: 1,
+        lessons: [
+          {
+            id: 'm1-sec-1-l1',
+            title: 'تعريف الدالة',
+            description: 'المجال والمدى',
+            duration: 24,
+            type: 'video',
+            content: '<p>مقدمة في الدوال الحقيقية.</p>',
+            keyPoints: ['تعريف', 'رسم بسيط'],
+            order: 1
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: 'math-sec-3-algebra',
     subjectId: 'math',
     title: 'الجبر والمعادلات - ثانوية عامة',

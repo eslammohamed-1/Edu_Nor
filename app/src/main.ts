@@ -17,7 +17,7 @@ themeStore.init();
 
 const authStore = useAuthStore();
 authStore.hydrate();
-useCoursesStore().applyUserStageDefault(authStore.user);
+useCoursesStore().applyUserCurriculumContext(authStore.user);
 
 app.use(router);
 app.mount('#app');

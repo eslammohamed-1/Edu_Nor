@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Stage } from '@/types/course';
 import type { User } from '@/types/auth';
-import { subjects as subjectsData } from '@/data/subjects';
 import { courses as coursesData } from '@/data/courses';
+import { getDisplayedSubjects } from '@/lib/curriculumFilter';
 
 const COMPLETED_KEY = 'edunor_completed_lessons';
 
@@ -24,18 +24,18 @@ function persistCompleted(set: Set<string>) {
 export const useCoursesStore = defineStore('courses', () => {
   const stageFilter = ref<Stage | 'all'>('all');
   const searchQuery = ref('');
+  /** all = كتالوج كما في التبويب؛ my = مواد الصف/المسار حسب المنهج */
+  const subjectsScope = ref<'all' | 'my'>('all');
   const completedLessons = ref<Set<string>>(loadCompleted());
+  const subjectsFilterUser = ref<User | null>(null);
 
   const subjects = computed(() => {
-    let filtered = subjectsData;
-    if (stageFilter.value !== 'all') {
-      filtered = filtered.filter((s) => s.stages.includes(stageFilter.value as Stage));
-    }
-    if (searchQuery.value.trim()) {
-      const q = searchQuery.value.trim().toLowerCase();
-      filtered = filtered.filter((s) => s.name.toLowerCase().includes(q));
-    }
-    return filtered;
+    return getDisplayedSubjects({
+      user: subjectsFilterUser.value,
+      subjectsScope: subjectsScope.value,
+      stageFilter: stageFilter.value,
+      searchQuery: searchQuery.value
+    });
   });
 
   const courses = computed(() => coursesData);
@@ -48,15 +48,36 @@ export const useCoursesStore = defineStore('courses', () => {
     stageFilter.value = stage;
   }
 
-  /** مزامنة تبويب صفحة المواد مع `user.stage` للطالب (بعد التسجيل أو الـ hydrate) */
-  function applyUserStageDefault(user: User | null) {
+  function setSubjectsScope(scope: 'all' | 'my') {
+    subjectsScope.value = scope;
+  }
+
+  function setSubjectsFilterUser(user: User | null) {
+    subjectsFilterUser.value = user;
+  }
+
+  /**
+   * مزامنة صفحة المواد مع بيانات الطالب (تبويب + «موادي») بعد التسجيل أو الـ hydrate.
+   * يفترض مناداتها دوماً مع `user` الحالي حتى تُفلتر «موادي» بشكل صحيح.
+   */
+  function applyUserCurriculumContext(user: User | null) {
+    subjectsFilterUser.value = user;
     if (user === null) {
       stageFilter.value = 'all';
+      subjectsScope.value = 'all';
       return;
     }
     if (user.role === 'student' && user.stage) {
       stageFilter.value = user.stage;
+      subjectsScope.value = 'my';
+    } else {
+      subjectsScope.value = 'all';
     }
+  }
+
+  /** @deprecated استخدم applyUserCurriculumContext */
+  function applyUserStageDefault(user: User | null) {
+    applyUserCurriculumContext(user);
   }
 
   function setSearch(q: string) {
@@ -89,11 +110,15 @@ export const useCoursesStore = defineStore('courses', () => {
   return {
     stageFilter,
     searchQuery,
+    subjectsScope,
     subjects,
     courses,
     completedLessons,
     coursesBySubject,
     setStageFilter,
+    setSubjectsScope,
+    setSubjectsFilterUser,
+    applyUserCurriculumContext,
     applyUserStageDefault,
     setSearch,
     markLessonComplete,
