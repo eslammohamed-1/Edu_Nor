@@ -53,9 +53,13 @@ const stats = [
           <p class="text-body-lg text-secondary mb-xl max-w-sm">
             إديو نور تساعد الطلاب في المراحل الابتدائية والإعدادية والثانوية على فهم المناهج بعمق بدلاً من الحفظ.
           </p>
-          <div class="flex gap-md">
-            <AppButton size="lg">ابدأ رحلتك الآن</AppButton>
-            <AppButton variant="secondary" size="lg">اكتشف المواد</AppButton>
+          <div class="flex gap-md hero-ctas">
+            <RouterLink to="/register" class="link-like-btn">
+              <AppButton size="lg">ابدأ رحلتك الآن</AppButton>
+            </RouterLink>
+            <RouterLink to="/subjects" class="link-like-btn">
+              <AppButton variant="secondary" size="lg">اكتشف المواد</AppButton>
+            </RouterLink>
           </div>
         </div>
         <div class="hero-image animate-fade-in">
@@ -123,7 +127,9 @@ const stats = [
             </div>
             <h3 class="text-navy">{{ s.name }}</h3>
             <p class="text-muted">{{ s.count }}</p>
-            <AppButton variant="ghost" size="sm" class="mt-md">عرض المواد</AppButton>
+            <RouterLink to="/subjects" class="link-like-btn">
+              <AppButton variant="ghost" size="sm" class="mt-md">عرض المواد</AppButton>
+            </RouterLink>
           </div>
         </div>
       </div>
@@ -136,7 +142,9 @@ const stats = [
           <div class="cta-content">
             <h2 class="text-white mb-md">هل أنت مستعد للتفوق؟</h2>
             <p class="text-gray-300 mb-lg">انضم إلى آلاف الطلاب الذين غيروا طريقة تعلمهم مع إديو نور.</p>
-            <AppButton size="lg" class="cta-btn">سجل الآن مجاناً</AppButton>
+            <RouterLink to="/register" class="link-like-btn">
+              <AppButton size="lg" class="cta-btn">سجل الآن مجاناً</AppButton>
+            </RouterLink>
           </div>
           <div class="cta-decoration">
             <AppIcon name="Sparkles" :size="120" color="rgba(244, 168, 37, 0.2)" />
@@ -150,6 +158,13 @@ const stats = [
 <style scoped>
 .landing-page {
   overflow-x: hidden;
+}
+
+/* RouterLink يلتف AppButton: يبقي الزر يظهر في الـ flex كما هو */
+.link-like-btn {
+  display: contents;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Hero Section */

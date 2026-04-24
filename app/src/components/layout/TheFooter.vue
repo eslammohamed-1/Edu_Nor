@@ -20,7 +20,7 @@ import AppIcon from '@/components/common/AppIcon.vue';
         <ul class="flex flex-col gap-sm">
           <li><RouterLink to="/" class="f-link">الرئيسية</RouterLink></li>
           <li><RouterLink to="/subjects" class="f-link">المواد الدراسية</RouterLink></li>
-          <li><RouterLink to="/courses" class="f-link">الكورسات</RouterLink></li>
+          <li><RouterLink to="/subjects" class="f-link">الكورسات</RouterLink></li>
         </ul>
       </div>
 
@@ -34,8 +34,6 @@ import AppIcon from '@/components/common/AppIcon.vue';
             rel="noopener noreferrer"
             aria-label="EduNor على فيسبوك"
           ><AppIcon name="Facebook" :size="24" /></a>
-          <a href="#" class="social-icon"><AppIcon name="Instagram" :size="24" /></a>
-          <a href="#" class="social-icon"><AppIcon name="Twitter" :size="24" /></a>
         </div>
       </div>
     </div>
