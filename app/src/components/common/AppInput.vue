@@ -10,6 +10,9 @@ interface Props {
   disabled?: boolean;
   required?: boolean;
   id?: string;
+  /** e.g. tel for phone keyboards */
+  inputmode?: 'text' | 'search' | 'email' | 'numeric' | 'tel' | 'url' | 'none' | 'decimal';
+  dir?: 'ltr' | 'rtl' | 'auto';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,6 +44,8 @@ const hasError = computed(() => !!props.error);
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
+        :inputmode="inputmode"
+        :dir="dir"
         class="input-field transition-all"
         @input="onInput"
         @blur="emit('blur')"

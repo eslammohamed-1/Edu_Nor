@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import AppInput from '@/components/common/AppInput.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import { useAuth } from '@/composables/useAuth';
 import { useToast } from '@/composables/useToast';
+import { stageLabel, trackLabel } from '@/config/educationTracks';
+import type { Stage } from '@/types/course';
+import type { SecondaryTrack } from '@/types/auth';
 
 const { user, logout, isSuperAdmin } = useAuth();
 const toast = useToast();
@@ -12,10 +15,21 @@ const toast = useToast();
 const form = reactive({
   name: user.value?.name ?? '',
   email: user.value?.email ?? '',
+  phone: user.value?.phone ?? '',
   grade: user.value?.grade ?? ''
 });
 
 const isSaving = ref(false);
+
+const stageLine = computed(() => {
+  if (!user.value?.stage) return null;
+  const s = user.value.stage as Stage;
+  const parts = [stageLabel(s), user.value.grade].filter(Boolean);
+  if (s === 'secondary' && user.value.secondaryTrack) {
+    parts.push(trackLabel(user.value.secondaryTrack as SecondaryTrack));
+  }
+  return parts.join(' — ');
+});
 
 async function handleSave() {
   isSaving.value = true;
@@ -37,6 +51,10 @@ async function handleSave() {
         <div>
           <h1 class="font-ar text-navy">{{ user.name }}</h1>
           <p class="font-en text-secondary">{{ user.email }}</p>
+          <p v-if="user.phone" class="font-en text-secondary user-phone-line">{{ user.phone }}</p>
+          <p v-if="stageLine" class="font-ar text-secondary text-body-sm" style="margin-top: 4px">
+            {{ stageLine }}
+          </p>
           <p v-if="isSuperAdmin" class="role-badge font-ar">
             <AppIcon name="Shield" :size="14" color="var(--color-gold)" />
             سوبر أدمن — صلاحيات كاملة
@@ -50,6 +68,13 @@ async function handleSave() {
           <form class="settings-form" @submit.prevent="handleSave">
             <AppInput v-model="form.name" label="الاسم الكامل" required />
             <AppInput v-model="form.email" label="البريد الإلكتروني" type="email" required />
+            <AppInput
+              v-model="form.phone"
+              label="رقم التليفون"
+              type="tel"
+              inputmode="tel"
+              dir="ltr"
+            />
             <AppInput v-model="form.grade" label="الصف الدراسي" />
             <div class="form-actions">
               <AppButton type="submit" :loading="isSaving">حفظ التغييرات</AppButton>
@@ -116,6 +141,13 @@ async function handleSave() {
 .profile-head h1 {
   font-size: var(--text-h2);
   margin-bottom: 2px;
+}
+
+.user-phone-line {
+  margin-top: 2px;
+  direction: ltr;
+  unicode-bidi: embed;
+  font-size: var(--text-body-sm);
 }
 
 .role-badge {

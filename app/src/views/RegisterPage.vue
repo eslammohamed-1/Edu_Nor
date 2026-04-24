@@ -1,6 +1,77 @@
 <script setup lang="ts">
-import RegisterForm from '@/components/auth/RegisterForm.vue';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import AppIcon from '@/components/common/AppIcon.vue';
+import RegisterForm from '@/components/auth/RegisterForm.vue';
+import RegisterStageStep from '@/components/auth/RegisterStageStep.vue';
+import RegisterSecondaryTrackStep from '@/components/auth/RegisterSecondaryTrackStep.vue';
+import RegisterGradeStep from '@/components/auth/RegisterGradeStep.vue';
+import type { Stage } from '@/types/course';
+import type { SecondaryTrack } from '@/types/auth';
+
+const router = useRouter();
+
+type WizardStep = 'stage' | 'secondary_track' | 'grade' | 'account';
+
+const step = ref<WizardStep>('stage');
+const selectedStage = ref<Stage | null>(null);
+const selectedTrack = ref<SecondaryTrack | null>(null);
+const selectedGrade = ref<string | null>(null);
+
+const canShowAccount = computed(
+  () =>
+    selectedStage.value &&
+    selectedGrade.value &&
+    (selectedStage.value !== 'secondary' || selectedTrack.value !== null)
+);
+
+function onSelectStage(s: Stage) {
+  selectedStage.value = s;
+  selectedTrack.value = null;
+  selectedGrade.value = null;
+  if (s === 'secondary') {
+    step.value = 'secondary_track';
+  } else {
+    step.value = 'grade';
+  }
+}
+
+function onSelectTrack(t: SecondaryTrack) {
+  selectedTrack.value = t;
+  step.value = 'grade';
+}
+
+function onSelectGrade(g: string) {
+  selectedGrade.value = g;
+  step.value = 'account';
+}
+
+function goBack() {
+  if (step.value === 'stage') {
+    router.push('/login');
+    return;
+  }
+  if (step.value === 'secondary_track') {
+    step.value = 'stage';
+    selectedStage.value = null;
+    return;
+  }
+  if (step.value === 'grade') {
+    selectedGrade.value = null;
+    if (selectedStage.value === 'secondary') {
+      step.value = 'secondary_track';
+      selectedTrack.value = null;
+    } else {
+      step.value = 'stage';
+      selectedStage.value = null;
+    }
+    return;
+  }
+  if (step.value === 'account') {
+    step.value = 'grade';
+    selectedGrade.value = null;
+  }
+}
 </script>
 
 <template>
@@ -39,7 +110,26 @@ import AppIcon from '@/components/common/AppIcon.vue';
     </div>
 
     <div class="auth-form-area">
-      <RegisterForm />
+      <RegisterStageStep v-if="step === 'stage'" @select="onSelectStage" @back="goBack" />
+      <RegisterSecondaryTrackStep
+        v-else-if="step === 'secondary_track'"
+        @select="onSelectTrack"
+        @back="goBack"
+      />
+      <RegisterGradeStep
+        v-else-if="step === 'grade' && selectedStage"
+        :stage="selectedStage"
+        @select="onSelectGrade"
+        @back="goBack"
+      />
+      <div v-else-if="step === 'account' && canShowAccount" class="account-step-wrap">
+        <button type="button" class="form-back font-ar" @click="goBack">‹ رجوع</button>
+        <RegisterForm
+          :stage="selectedStage!"
+          :grade="selectedGrade!"
+          :secondary-track="selectedTrack ?? undefined"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -126,6 +216,26 @@ import AppIcon from '@/components/common/AppIcon.vue';
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+}
+
+.form-back {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--text-body-sm);
+  cursor: pointer;
+  margin-bottom: var(--space-md);
+  padding: 0;
+  text-align: start;
+}
+.form-back:hover {
+  color: var(--color-navy);
+}
+.account-step-wrap {
+  width: 100%;
+  max-width: 480px;
 }
 
 @media (max-width: 992px) {

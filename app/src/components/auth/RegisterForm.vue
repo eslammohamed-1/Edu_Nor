@@ -1,45 +1,48 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import AppButton from '@/components/common/AppButton.vue';
 import AppInput from '@/components/common/AppInput.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import { useAuth } from '@/composables/useAuth';
 import { useToast } from '@/composables/useToast';
+import { stageLabel, trackLabel } from '@/config/educationTracks';
+import type { Stage } from '@/types/course';
+import type { SecondaryTrack } from '@/types/auth';
+import { digitsOnlyNormalized } from '@/lib/phoneDigits';
+
+const props = defineProps<{
+  stage: Stage;
+  grade: string;
+  secondaryTrack?: SecondaryTrack;
+}>();
 
 const router = useRouter();
 const { register, isLoading, error, clearError } = useAuth();
 const toast = useToast();
 
-const grades = [
-  'الصف الأول الابتدائي',
-  'الصف الثاني الابتدائي',
-  'الصف الثالث الابتدائي',
-  'الصف الرابع الابتدائي',
-  'الصف الخامس الابتدائي',
-  'الصف السادس الابتدائي',
-  'الصف الأول الإعدادي',
-  'الصف الثاني الإعدادي',
-  'الصف الثالث الإعدادي',
-  'الصف الأول الثانوي',
-  'الصف الثاني الثانوي',
-  'الصف الثالث الثانوي'
-];
+const stageLine = computed(() => {
+  const base = `${stageLabel(props.stage)} — ${props.grade}`;
+  if (props.stage === 'secondary' && props.secondaryTrack) {
+    return `${base} — ${trackLabel(props.secondaryTrack)}`;
+  }
+  return base;
+});
 
 const form = reactive({
   name: '',
   email: '',
+  phone: '',
   password: '',
-  confirmPassword: '',
-  grade: ''
+  confirmPassword: ''
 });
 
 const errors = reactive({
   name: '',
   email: '',
+  phone: '',
   password: '',
-  confirmPassword: '',
-  grade: ''
+  confirmPassword: ''
 });
 
 const showPassword = ref(false);
@@ -47,9 +50,9 @@ const showPassword = ref(false);
 function validate(): boolean {
   errors.name = '';
   errors.email = '';
+  errors.phone = '';
   errors.password = '';
   errors.confirmPassword = '';
-  errors.grade = '';
   let ok = true;
 
   if (!form.name.trim()) {
@@ -68,6 +71,18 @@ function validate(): boolean {
     ok = false;
   }
 
+  const phoneDigits = digitsOnlyNormalized(form.phone);
+  if (!form.phone.trim()) {
+    errors.phone = 'رقم التليفون مطلوب';
+    ok = false;
+  } else if (phoneDigits.length < 10) {
+    errors.phone = 'أدخل رقماً صالحاً (10 أرقام على الأقل)';
+    ok = false;
+  } else if (phoneDigits.length > 15) {
+    errors.phone = 'رقم التليفون طويل جداً';
+    ok = false;
+  }
+
   if (!form.password) {
     errors.password = 'كلمة المرور مطلوبة';
     ok = false;
@@ -81,25 +96,39 @@ function validate(): boolean {
     ok = false;
   }
 
-  if (!form.grade) {
-    errors.grade = 'اختر الصف الدراسي';
-    ok = false;
-  }
-
   return ok;
+}
+
+function buildPayload() {
+  const pay: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    confirmPassword: string;
+    stage: Stage;
+    grade: string;
+    secondaryTrack?: SecondaryTrack;
+  } = {
+    name: form.name.trim(),
+    email: form.email,
+    phone: digitsOnlyNormalized(form.phone),
+    password: form.password,
+    confirmPassword: form.confirmPassword,
+    stage: props.stage,
+    grade: props.grade
+  };
+  if (props.stage === 'secondary' && props.secondaryTrack) {
+    pay.secondaryTrack = props.secondaryTrack;
+  }
+  return pay;
 }
 
 async function handleSubmit() {
   clearError();
   if (!validate()) return;
 
-  const success = await register({
-    name: form.name.trim(),
-    email: form.email,
-    password: form.password,
-    confirmPassword: form.confirmPassword,
-    grade: form.grade
-  });
+  const success = await register(buildPayload());
 
   if (success) {
     toast.success('تم إنشاء حسابك بنجاح 🎉');
@@ -113,9 +142,10 @@ async function handleSubmit() {
 <template>
   <form class="register-form" @submit.prevent="handleSubmit" novalidate>
     <h2 class="form-title text-navy mb-xs font-ar">إنشاء حساب جديد</h2>
-    <p class="form-subtitle text-secondary mb-xl font-ar">
-      انضم إلى آلاف الطلاب وابدأ رحلتك التعليمية الآن.
+    <p class="form-subtitle text-secondary mb-md font-ar">
+      أكمل بياناتك لإتمام التسجيل.
     </p>
+    <p class="summary font-ar text-secondary mb-lg">{{ stageLine }}</p>
 
     <div class="form-fields">
       <AppInput
@@ -135,16 +165,16 @@ async function handleSubmit() {
         required
       />
 
-      <div class="grade-select-group" :class="{ 'has-error': errors.grade }">
-        <label class="input-label font-ar">
-          الصف الدراسي <span class="required-star">*</span>
-        </label>
-        <select v-model="form.grade" class="grade-select">
-          <option value="">اختر الصف الدراسي</option>
-          <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
-        </select>
-        <p v-if="errors.grade" class="error-text">{{ errors.grade }}</p>
-      </div>
+      <AppInput
+        v-model="form.phone"
+        label="رقم التليفون"
+        type="tel"
+        inputmode="tel"
+        dir="ltr"
+        placeholder="01xxxxxxxxx أو +20xxxxxxxxx"
+        :error="errors.phone"
+        required
+      />
 
       <div class="password-field">
         <AppInput
@@ -199,6 +229,14 @@ async function handleSubmit() {
   font-size: var(--text-body);
 }
 
+.summary {
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-section);
+  border-radius: var(--radius-md);
+}
+
 .form-fields {
   display: flex;
   flex-direction: column;
@@ -221,49 +259,6 @@ async function handleSubmit() {
   color: var(--color-navy);
 }
 
-.grade-select-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-}
-
-.input-label {
-  font-size: var(--text-body-sm);
-  font-weight: var(--weight-medium);
-  color: var(--text-primary);
-}
-
-.required-star {
-  color: var(--color-error);
-}
-
-.grade-select {
-  width: 100%;
-  height: 44px;
-  padding: 0 var(--space-md);
-  background-color: var(--bg-input);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  font-size: var(--text-body);
-  color: var(--text-primary);
-  outline: none;
-  font-family: inherit;
-}
-
-.grade-select:focus {
-  border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px rgba(244, 168, 37, 0.15);
-}
-
-.has-error .grade-select {
-  border-color: var(--color-error);
-}
-
-.error-text {
-  font-size: var(--text-caption);
-  color: var(--color-error);
-}
-
 .form-footer {
   margin-top: var(--space-xl);
   text-align: center;
@@ -282,5 +277,6 @@ async function handleSubmit() {
 }
 
 .mb-xs { margin-bottom: var(--space-xs); }
-.mb-xl { margin-bottom: var(--space-xl); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
 </style>

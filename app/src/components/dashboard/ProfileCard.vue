@@ -3,12 +3,20 @@ import { computed } from 'vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import type { User } from '@/types/auth';
+import { stageLabel } from '@/config/educationTracks';
+import type { Stage } from '@/types/course';
 
 interface Props {
   user: User;
 }
 
 const props = defineProps<Props>();
+
+const stageSummary = computed(() => {
+  if (!props.user.stage) return props.user.grade ?? '';
+  const g = props.user.grade ? ` — ${props.user.grade}` : '';
+  return `${stageLabel(props.user.stage as Stage)}${g}`;
+});
 
 const initials = computed(() => {
   const parts = props.user.name.trim().split(/\s+/);
@@ -24,9 +32,10 @@ const initials = computed(() => {
     </div>
     <h3 class="user-name font-ar">{{ user.name }}</h3>
     <p class="user-email font-en">{{ user.email }}</p>
-    <span v-if="user.grade" class="user-grade font-ar">
+    <p v-if="user.phone" class="user-phone font-en">{{ user.phone }}</p>
+    <span v-if="stageSummary" class="user-grade font-ar">
       <AppIcon name="GraduationCap" :size="14" />
-      {{ user.grade }}
+      {{ stageSummary }}
     </span>
     <RouterLink to="/profile">
       <AppButton variant="secondary" block>تعديل الملف الشخصي</AppButton>
@@ -76,6 +85,13 @@ const initials = computed(() => {
 .user-email {
   font-size: var(--text-body-sm);
   color: var(--text-secondary);
+}
+
+.user-phone {
+  font-size: var(--text-body-sm);
+  color: var(--text-secondary);
+  direction: ltr;
+  unicode-bidi: embed;
 }
 
 .user-grade {

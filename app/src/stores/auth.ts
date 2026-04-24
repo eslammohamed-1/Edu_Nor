@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { User, LoginPayload, RegisterPayload, UserRole } from '@/types/auth';
+import type { Stage } from '@/types/course';
 import { SUPER_ADMIN_EMAIL, isSuperAdminCredentials } from '@/config/superAdmin';
+import { useCoursesStore } from '@/stores/courses';
 
 const STORAGE_KEY = 'edunor_auth';
 
@@ -31,7 +33,7 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** ترقية جلسات قديمة قبل إضافة role */
+/** ترقية جلسات قديمة قبل إضافة role أو حقول stage */
 function normalizeUser(raw: User): User {
   const role: UserRole = raw.role ?? 'student';
   return {
@@ -87,6 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
             id: 'u_' + Date.now(),
             name: emailNorm.split('@')[0] || 'طالب',
             email: emailNorm,
+            stage: 'secondary' as Stage,
             grade: 'الصف الثالث الثانوي',
             createdAt: new Date().toISOString(),
             role: 'student'
@@ -97,6 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = mockUser;
       token.value = mockToken;
       writeStorage({ user: mockUser, token: mockToken });
+      useCoursesStore().applyUserStageDefault(mockUser);
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -126,7 +130,11 @@ export const useAuthStore = defineStore('auth', () => {
         id: 'u_' + Date.now(),
         name: payload.name,
         email: emailNorm,
+        phone: payload.phone,
+        stage: payload.stage,
         grade: payload.grade,
+        secondaryTrack:
+          payload.stage === 'secondary' ? payload.secondaryTrack : undefined,
         createdAt: new Date().toISOString(),
         role: 'student'
       };
@@ -135,6 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = mockUser;
       token.value = mockToken;
       writeStorage({ user: mockUser, token: mockToken });
+      useCoursesStore().applyUserStageDefault(mockUser);
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -149,6 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null;
     error.value = null;
     writeStorage(null);
+    useCoursesStore().applyUserStageDefault(null);
   }
 
   function clearError() {

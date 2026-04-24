@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Stage } from '@/types/course';
+import type { User } from '@/types/auth';
 import { subjects as subjectsData } from '@/data/subjects';
 import { courses as coursesData } from '@/data/courses';
 
@@ -47,6 +48,17 @@ export const useCoursesStore = defineStore('courses', () => {
     stageFilter.value = stage;
   }
 
+  /** مزامنة تبويب صفحة المواد مع `user.stage` للطالب (بعد التسجيل أو الـ hydrate) */
+  function applyUserStageDefault(user: User | null) {
+    if (user === null) {
+      stageFilter.value = 'all';
+      return;
+    }
+    if (user.role === 'student' && user.stage) {
+      stageFilter.value = user.stage;
+    }
+  }
+
   function setSearch(q: string) {
     searchQuery.value = q;
   }
@@ -82,6 +94,7 @@ export const useCoursesStore = defineStore('courses', () => {
     completedLessons,
     coursesBySubject,
     setStageFilter,
+    applyUserStageDefault,
     setSearch,
     markLessonComplete,
     unmarkLessonComplete,

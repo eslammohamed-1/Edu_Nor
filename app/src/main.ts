@@ -5,6 +5,7 @@ import router from './router';
 import './assets/css/main.css';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
+import { useCoursesStore } from '@/stores/courses';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -16,6 +17,7 @@ themeStore.init();
 
 const authStore = useAuthStore();
 authStore.hydrate();
+useCoursesStore().applyUserStageDefault(authStore.user);
 
 app.use(router);
 app.mount('#app');
