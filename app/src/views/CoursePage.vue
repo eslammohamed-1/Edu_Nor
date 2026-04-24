@@ -63,7 +63,15 @@ function openLesson(lessonId: string) {
               <AppIcon name="GraduationCap" :size="16" />
               {{ course.grade }}
             </span>
-            <span class="meta-item">
+            <span
+              v-if="course.academicYear"
+              class="meta-item"
+              title="العام الدراسي (جدول المنهج المستورد)"
+            >
+              <AppIcon name="Calendar" :size="16" />
+              {{ course.academicYear }}<span v-if="course.term != null" class="font-en"> — فصل {{ course.term }}</span>
+            </span>
+            <span v-if="course.rating > 0" class="meta-item">
               <AppIcon name="Star" :size="16" color="var(--color-gold)" />
               {{ course.rating }}
             </span>

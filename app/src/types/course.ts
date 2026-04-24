@@ -42,6 +42,10 @@ export interface Course {
   description: string;
   stage: Stage;
   grade: string;
+  /** من استيراد ToC (Excel) */
+  academicYear?: string;
+  term?: number;
+  season?: number;
   instructor: string;
   thumbnail?: string;
   duration: number;

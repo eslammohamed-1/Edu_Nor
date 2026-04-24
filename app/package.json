@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "import:toc": "cd .. && .venv/bin/python scripts/import_toc_from_xlsx.py"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0",

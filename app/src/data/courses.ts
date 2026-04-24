@@ -1,6 +1,7 @@
 import type { Course } from '@/types/course';
+import coursesFromToc from '@/data/toc/generated/coursesFromToc.json';
 
-export const courses: Course[] = [
+const manualCourses: Course[] = [
   {
     id: 'arabic-sec-1-intro',
     subjectId: 'arabic',
@@ -323,6 +324,11 @@ export const courses: Course[] = [
       }
     ]
   }
+];
+
+export const courses: Course[] = [
+  ...manualCourses,
+  ...(coursesFromToc as Course[]),
 ];
 
 export function findCourseById(id: string): Course | undefined {

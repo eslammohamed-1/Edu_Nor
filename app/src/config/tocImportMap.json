@@ -1,0 +1,68 @@
+{
+  "subjectNames": {
+    "اللغة العربية": "arabic",
+    "Mathematics": "math",
+    "English": "english",
+    "Chemistry": "chemistry",
+    "Statistics": "statistics",
+    "Biology": "biology",
+    "Physics": "physics",
+    "العلوم": "science",
+    "الدراسات الاجتماعية": "social-studies",
+    "الجغرافيا": "geography",
+    "التاريخ": "history",
+    "الفلسفة": "philosophy",
+    "الفلسفة والمنطق": "philosophy",
+    "Integrated": "integrated-science",
+    "Connect Plus": "connect-plus",
+    "Connect": "connect-plus",
+    "Discover": "discover",
+    "Lobnas": "arabic"
+  },
+  "sheetContext": {
+    "Primary": { "stage": "primary" },
+    "Middle": { "stage": "prep" },
+    "Integrated": { "stage": "secondary" },
+    "Chemistry": { "stage": "secondary" },
+    "Biology": { "stage": "secondary" },
+    "اللغة": { "stage": "primary" },
+    "الدراسات": { "stage": "secondary" },
+    "الجغرافيا": { "stage": "secondary" },
+    "التاريخ": { "stage": "secondary" },
+    "الفلسفة": { "stage": "secondary" },
+    "Mathematics": { "stage": "primary" },
+    "English": { "stage": "primary" },
+    "Connect": { "stage": "primary" },
+    "Connect Plus": { "stage": "primary" },
+    "Discover": { "stage": "primary" }
+  },
+  "skipSheets": [
+    "Sessions",
+    "Lobnas",
+    "All",
+    "All ",
+    "Master",
+    "All Stacked",
+    "Sessions Statuses"
+  ],
+  "stages": {
+    "primary": [
+      "الصف الأول الابتدائي",
+      "الصف الثاني الابتدائي",
+      "الصف الثالث الابتدائي",
+      "الصف الرابع الابتدائي",
+      "الصف الخامس الابتدائي",
+      "الصف السادس الابتدائي"
+    ],
+    "prep": [
+      "الصف الأول الإعدادي",
+      "الصف الثاني الإعدادي",
+      "الصف الثالث الإعدادي"
+    ],
+    "secondary": [
+      "الصف الأول الثانوي",
+      "الصف الثاني الثانوي",
+      "الصف الثالث الثانوي"
+    ]
+  }
+}
