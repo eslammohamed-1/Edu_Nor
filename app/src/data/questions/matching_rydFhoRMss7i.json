@@ -1,0 +1,23 @@
+{
+  "id": "rydFhoRMss7i",
+  "type": "matching",
+  "stem": "صل كل دولة بعاصمتها:",
+  "points": 2,
+  "pairs": [
+    {
+      "id": "iR8JrmsDt72l",
+      "left": "مصر",
+      "right": "القاهرة"
+    },
+    {
+      "id": "vfJlmdDdz12E",
+      "left": "فرنسا",
+      "right": "باريس"
+    },
+    {
+      "id": "KRg8kR9c2acR",
+      "left": "اليابان",
+      "right": "طوكيو"
+    }
+  ]
+}

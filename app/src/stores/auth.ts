@@ -57,6 +57,8 @@ export const useAuthStore = defineStore('auth', () => {
     if (stored) {
       user.value = normalizeUser(stored.user);
       token.value = stored.token;
+      // مزامنة سياق المنهج فور استعادة الجلسة
+      useCoursesStore().applyUserCurriculumContext(user.value);
     }
   }
 

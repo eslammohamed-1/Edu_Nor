@@ -1,0 +1,38 @@
+{
+  "id": "xvbZAePtnbLe",
+  "type": "gmrq",
+  "stem": "اختر الإجابات الصحيحة للجملة التالية:",
+  "groups": [
+    {
+      "name": "Group A",
+      "choices": [
+        {
+          "id": "4LHP3JnOAyYP",
+          "label": "Choice 1A",
+          "isCorrect": true
+        },
+        {
+          "id": "EFG5xjieCQ2i",
+          "label": "Choice 2A",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "name": "Group B",
+      "choices": [
+        {
+          "id": "6Xdxywq6s63B",
+          "label": "Choice 1B",
+          "isCorrect": false
+        },
+        {
+          "id": "wVy2K71lQufB",
+          "label": "Choice 2B",
+          "isCorrect": true
+        }
+      ]
+    }
+  ],
+  "points": 2
+}

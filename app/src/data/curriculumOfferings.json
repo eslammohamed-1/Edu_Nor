@@ -471,6 +471,66 @@
       "stage": "secondary",
       "grade": "الصف الثاني الثانوي",
       "secondaryTrack": "scientific_languages"
+    },
+    {
+      "id": "110000000076",
+      "subjectSlug": "connect-plus",
+      "stage": "primary",
+      "grade": "الصف الأول الابتدائي"
+    },
+    {
+      "id": "130000000077",
+      "subjectSlug": "connect-plus",
+      "stage": "primary",
+      "grade": "الصف الثالث الابتدائي"
+    },
+    {
+      "id": "120000000078",
+      "subjectSlug": "connect-plus",
+      "stage": "primary",
+      "grade": "الصف الثاني الابتدائي"
+    },
+    {
+      "id": "140000000079",
+      "subjectSlug": "connect-plus",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
+    },
+    {
+      "id": "110000000080",
+      "subjectSlug": "discover",
+      "stage": "primary",
+      "grade": "الصف الأول الابتدائي"
+    },
+    {
+      "id": "130000000081",
+      "subjectSlug": "discover",
+      "stage": "primary",
+      "grade": "الصف الثالث الابتدائي"
+    },
+    {
+      "id": "120000000082",
+      "subjectSlug": "discover",
+      "stage": "primary",
+      "grade": "الصف الثاني الابتدائي"
+    },
+    {
+      "id": "330000000083",
+      "subjectSlug": "history",
+      "stage": "secondary",
+      "grade": "الصف الثالث الثانوي"
+    },
+    {
+      "id": "210000000084",
+      "subjectSlug": "social-studies",
+      "stage": "prep",
+      "grade": "الصف الأول الإعدادي"
+    },
+    {
+      "id": "140000000085",
+      "subjectSlug": "social-studies",
+      "stage": "primary",
+      "grade": "الصف الرابع الابتدائي"
     }
   ]
 }

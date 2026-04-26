@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { Question } from '@/types/quiz';
+import type { AnyQuestion } from '@/types/quiz';
 
 interface Props {
-  question: Question;
+  question: AnyQuestion;
   selectedOptionId: string | null;
   showResult?: boolean;
   questionNumber: number;
@@ -16,15 +16,36 @@ defineEmits<{
   select: [optionId: string];
 }>();
 
+function getChoices() {
+  if ('choices' in props.question) {
+    return props.question.choices;
+  }
+  return [];
+}
+
+function checkIsCorrect(optionId: string): boolean {
+  const choices = getChoices();
+  const choice = choices.find(c => c.id === optionId);
+  return choice?.isCorrect === true;
+}
+
 function optionState(optionId: string): 'default' | 'correct' | 'wrong' | 'selected' {
   if (!props.showResult) {
     return props.selectedOptionId === optionId ? 'selected' : 'default';
   }
-  if (optionId === props.question.correctOptionId) return 'correct';
-  if (optionId === props.selectedOptionId && optionId !== props.question.correctOptionId) {
-    return 'wrong';
-  }
+  
+  const isCorrectOption = checkIsCorrect(optionId);
+  const isSelected = props.selectedOptionId === optionId;
+
+  if (isCorrectOption) return 'correct';
+  if (isSelected && !isCorrectOption) return 'wrong';
+  
   return 'default';
+}
+
+function isUserAnswerCorrect() {
+  if (!props.selectedOptionId) return false;
+  return checkIsCorrect(props.selectedOptionId);
 }
 </script>
 
@@ -34,19 +55,20 @@ function optionState(optionId: string): 'default' | 'correct' | 'wrong' | 'selec
       <span class="question-counter font-en">
         {{ questionNumber }} / {{ total }}
       </span>
-      <h2 class="question-text font-ar">{{ question.text }}</h2>
+      <h2 class="question-text font-ar">{{ question.stem }}</h2>
     </div>
 
-    <div class="options">
+    <!-- For MCQ, MRQ, Ordering, Opinion, Gap that use choices array -->
+    <div v-if="getChoices().length > 0" class="options">
       <button
-        v-for="(option, idx) in question.options"
+        v-for="(option, idx) in getChoices()"
         :key="option.id"
         class="option"
         :class="[`option--${optionState(option.id)}`]"
         :disabled="showResult"
         @click="$emit('select', option.id)"
       >
-        <span class="option-letter font-en">{{ ['أ', 'ب', 'ج', 'د'][idx] || idx + 1 }}</span>
+        <span class="option-letter font-en">{{ ['أ', 'ب', 'ج', 'د', 'هـ', 'و'][idx] || idx + 1 }}</span>
         <span class="option-label font-ar">{{ option.label }}</span>
         <span class="option-icon" v-if="showResult">
           <AppIcon
@@ -64,22 +86,25 @@ function optionState(optionId: string): 'default' | 'correct' | 'wrong' | 'selec
         </span>
       </button>
     </div>
+    <div v-else class="font-ar text-secondary" style="padding: 20px; background: var(--bg-section); border-radius: 8px;">
+      (واجهة إجابة من نوع {{ question.type }} غير مبرمجة حالياً في العرض التجريبي)
+    </div>
 
     <div
       v-if="showResult && question.explanation"
       class="explanation animate-fade-in"
       :class="{
-        'explanation--correct': selectedOptionId === question.correctOptionId,
-        'explanation--wrong': selectedOptionId !== question.correctOptionId
+        'explanation--correct': isUserAnswerCorrect(),
+        'explanation--wrong': !isUserAnswerCorrect()
       }"
     >
       <div class="explanation-head">
         <AppIcon
-          :name="selectedOptionId === question.correctOptionId ? 'CheckCircle2' : 'Info'"
+          :name="isUserAnswerCorrect() ? 'CheckCircle2' : 'Info'"
           :size="20"
         />
         <strong class="font-ar">
-          {{ selectedOptionId === question.correctOptionId ? 'إجابة صحيحة!' : 'الإجابة الصحيحة:' }}
+          {{ isUserAnswerCorrect() ? 'إجابة صحيحة!' : 'الإجابة الصحيحة:' }}
         </strong>
       </div>
       <p class="font-ar">{{ question.explanation }}</p>

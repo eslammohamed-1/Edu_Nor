@@ -30,18 +30,74 @@ export const useCoursesStore = defineStore('courses', () => {
   const subjectsFilterUser = ref<User | null>(null);
 
   const subjects = computed(() => {
-    return getDisplayedSubjects({
+    const list = getDisplayedSubjects({
       user: subjectsFilterUser.value,
       subjectsScope: subjectsScope.value,
       stageFilter: stageFilter.value,
       searchQuery: searchQuery.value
     });
+
+    // 1. تصفية القائمة الأساسية للمواد
+    const filteredList = list.map(s => {
+      let filteredCourses = coursesData.filter(c => c.subjectId === s.id);
+
+      if (subjectsScope.value === 'my' && subjectsFilterUser.value) {
+        const user = subjectsFilterUser.value;
+        filteredCourses = filteredCourses.filter(c => {
+          const gradeMatch = c.stage === user.stage && c.grade === user.grade;
+          if (!gradeMatch) return false;
+          
+          // فلترة المسار (علمي/أدبي) للمرحلة الثانوية
+          if (user.stage === 'secondary' && user.secondaryTrack && c.secondaryTrack) {
+            return c.secondaryTrack === user.secondaryTrack;
+          }
+          return true;
+        });
+      } else if (stageFilter.value !== 'all') {
+        filteredCourses = filteredCourses.filter(c => c.stage === stageFilter.value);
+      } else {
+        return s;
+      }
+
+      const lessonsCount = filteredCourses.reduce((acc, c) => acc + (c.lessonsCount || 0), 0);
+      
+      return {
+        ...s,
+        coursesCount: filteredCourses.length,
+        lessonsCount: lessonsCount
+      };
+    });
+
+    // 2. إخفاء المواد التي ليس لها محتوى نهائياً لهذه السنة/المرحلة المفلترة
+    // هذا يمنع ظهور "مواد ثانوي" لا تخص الصف الثالث مثلاً
+    return filteredList.filter(s => s.coursesCount > 0);
   });
 
   const courses = computed(() => coursesData);
 
   function coursesBySubject(subjectId: string) {
     return coursesData.filter((c) => c.subjectId === subjectId);
+  }
+
+  function filteredCoursesBySubject(subjectId: string) {
+    let list = coursesBySubject(subjectId);
+
+    if (subjectsScope.value === 'my' && subjectsFilterUser.value) {
+      const user = subjectsFilterUser.value;
+      list = list.filter(c => {
+        const gradeMatch = c.stage === user.stage && c.grade === user.grade;
+        if (!gradeMatch) return false;
+        
+        // فلترة المسار (علمي/أدبي) للمرحلة الثانوية
+        if (user.stage === 'secondary' && user.secondaryTrack && c.secondaryTrack) {
+          return c.secondaryTrack === user.secondaryTrack;
+        }
+        return true;
+      });
+    } else if (stageFilter.value !== 'all') {
+      list = list.filter(c => c.stage === stageFilter.value);
+    }
+    return list;
   }
 
   function setStageFilter(stage: Stage | 'all') {
@@ -115,6 +171,7 @@ export const useCoursesStore = defineStore('courses', () => {
     courses,
     completedLessons,
     coursesBySubject,
+    filteredCoursesBySubject,
     setStageFilter,
     setSubjectsScope,
     setSubjectsFilterUser,

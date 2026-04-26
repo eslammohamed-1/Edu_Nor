@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { findLessonById, getAdjacentLessons } from '@/data/lessons';
 import { findCourseById } from '@/data/courses';
+import { findQuizByLessonId } from '@/data/quizzes';
 import { useCoursesStore } from '@/stores/courses';
 import { useToast } from '@/composables/useToast';
 import LessonPlayer from '@/components/courses/LessonPlayer.vue';
@@ -25,6 +26,7 @@ const course = computed(() =>
 const currentChapterId = computed(() => lessonData.value?.chapterId);
 
 const adjacent = computed(() => getAdjacentLessons(lessonId.value));
+const relatedQuiz = computed(() => findQuizByLessonId(lessonId.value));
 
 const expandedChapters = ref<Set<string>>(new Set());
 
@@ -116,6 +118,19 @@ function markComplete() {
                 {{ point }}
               </li>
             </ul>
+          </div>
+
+          <div v-if="relatedQuiz" class="lesson-quiz-banner">
+            <div class="quiz-banner-info">
+              <AppIcon name="HelpCircle" :size="32" color="var(--color-gold)" />
+              <div>
+                <h3 class="font-ar text-navy">اختبار الدرس: {{ relatedQuiz.title }}</h3>
+                <p class="font-ar text-secondary">قس مدى استيعابك لهذا الدرس بإجراء اختبار سريع مكون من {{ relatedQuiz.questions.length }} سؤال.</p>
+              </div>
+            </div>
+            <AppButton @click="router.push(`/quiz/${relatedQuiz.id}`)">
+              ابدأ الاختبار الآن
+            </AppButton>
           </div>
 
           <nav class="lesson-nav">
@@ -302,6 +317,36 @@ function markComplete() {
   align-items: center;
   gap: var(--space-xs);
   color: var(--text-primary);
+}
+
+.lesson-quiz-banner {
+  background: linear-gradient(135deg, var(--bg-section) 0%, rgba(244, 168, 37, 0.05) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.quiz-banner-info {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  flex: 1;
+  min-width: 280px;
+}
+
+.quiz-banner-info h3 {
+  font-size: var(--text-h4);
+  margin-bottom: 4px;
+}
+
+.quiz-banner-info p {
+  font-size: var(--text-body-sm);
 }
 
 .lesson-nav {

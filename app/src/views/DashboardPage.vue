@@ -13,10 +13,22 @@ import CourseCard from '@/components/courses/CourseCard.vue';
 const { user } = useAuth();
 const coursesStore = useCoursesStore();
 
+// فلترة الكورسات لتعكس فقط ما يخص الطالب حالياً
+const myCourses = computed(() => {
+  if (!user.value || user.value.role !== 'student') return allCourses;
+  return allCourses.filter(c => {
+    if (c.stage !== user.value!.stage || c.grade !== user.value!.grade) return false;
+    if (user.value!.stage === 'secondary' && user.value!.secondaryTrack && c.secondaryTrack) {
+      return c.secondaryTrack === user.value!.secondaryTrack;
+    }
+    return true;
+  });
+});
+
 const totalLessonsCompleted = computed(() => coursesStore.completedLessons.size);
 
 const enrolledCourses = computed(() =>
-  allCourses.filter((c) => coursesStore.courseProgress(c.id) > 0)
+  myCourses.value.filter((c) => coursesStore.courseProgress(c.id) > 0)
 );
 
 const stats = computed(() => [
@@ -53,7 +65,7 @@ const stats = computed(() => [
 
 const recentLessons = computed(() => {
   const items: Array<{ lesson: typeof allCourses[number]['chapters'][number]['lessons'][number]; courseTitle: string; courseId: string }> = [];
-  for (const course of allCourses) {
+  for (const course of myCourses.value) {
     for (const chapter of course.chapters) {
       for (const lesson of chapter.lessons) {
         if (coursesStore.isLessonComplete(lesson.id)) {
@@ -68,7 +80,7 @@ const recentLessons = computed(() => {
 const subjectProgress = computed(() => {
   return allSubjects
     .map((subject) => {
-      const subjectCourses = allCourses.filter((c) => c.subjectId === subject.id);
+      const subjectCourses = myCourses.value.filter((c) => c.subjectId === subject.id);
       const allLessons = subjectCourses.flatMap((c) => c.chapters.flatMap((ch) => ch.lessons));
       const completed = allLessons.filter((l) => coursesStore.isLessonComplete(l.id)).length;
       const progress = allLessons.length === 0 ? 0 : Math.round((completed / allLessons.length) * 100);

@@ -9,16 +9,36 @@ import LessonCard from '@/components/courses/LessonCard.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppButton from '@/components/common/AppButton.vue';
 
+import { useAuth } from '@/composables/useAuth';
+import { stageLabel } from '@/config/educationTracks';
+import { storeToRefs } from 'pinia';
+
 const route = useRoute();
 const router = useRouter();
 const store = useCoursesStore();
+const { user } = useAuth();
+const { subjectsScope, stageFilter } = storeToRefs(store);
 
 const subjectSlug = computed(() => route.params.subjectSlug as string | undefined);
 const courseId = computed(() => route.params.courseId as string | undefined);
 
 const subject = computed(() => (subjectSlug.value ? findSubjectBySlug(subjectSlug.value) : undefined));
 const course = computed(() => (courseId.value ? findCourseById(courseId.value) : undefined));
-const subjectCourses = computed(() => (subject.value ? store.coursesBySubject(subject.value.id) : []));
+const subjectCourses = computed(() => (subject.value ? store.filteredCoursesBySubject(subject.value.id) : []));
+
+const listContextLabel = computed(() => {
+  if (subjectsScope.value === 'my' && user.value?.grade) {
+    let text = `يعرض كورسات ${user.value.grade}`;
+    if (user.value.stage === 'secondary' && user.value.secondaryTrack) {
+      const trackName = user.value.secondaryTrack === 'scientific_ar' || user.value.secondaryTrack === 'scientific_languages' ? 'علمي' : 'أدبي';
+      text += ` (${trackName})`;
+    }
+    return text + ' — بناءً على حسابك';
+  } else if (stageFilter.value !== 'all') {
+    return `يعرض كورسات المرحلة ${stageLabel(stageFilter.value as any)}`;
+  }
+  return 'يعرض جميع الكورسات لجميع المراحل';
+});
 
 const expandedChapters = ref<Set<string>>(new Set());
 
@@ -147,6 +167,10 @@ function openLesson(lessonId: string) {
         </div>
         <h1 class="course-title text-navy font-ar">{{ subject.name }}</h1>
         <p class="text-secondary font-ar max-w-sm">{{ subject.description }}</p>
+        <div class="context-badge font-ar mt-sm">
+          <AppIcon name="Info" :size="14" />
+          {{ listContextLabel }}
+        </div>
       </header>
 
       <section>
@@ -342,6 +366,20 @@ function openLesson(lessonId: string) {
 }
 
 .max-w-sm { max-width: 600px; }
+
+.context-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--bg-section);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: var(--text-caption);
+  border: 1px solid var(--border-color);
+}
+
+.mt-sm { margin-top: var(--space-sm); }
 
 .courses-grid {
   display: grid;

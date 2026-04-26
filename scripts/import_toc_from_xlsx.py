@@ -43,6 +43,24 @@ def float_grade_to_index(g: Any) -> int:
         return 1
 
 
+def grade_to_stage_and_index(
+    grade_num: int, stages_cfg: dict[str, list[str]]
+) -> tuple[str, int]:
+    """
+    تحويل رقم الصف المطلق (1-12) إلى (مرحلة، فهرس نسبي).
+    مثال: grade 7 → ("prep", 1) | grade 10 → ("secondary", 1)
+    """
+    primary_count = len(stages_cfg.get("primary", []))
+    prep_count = len(stages_cfg.get("prep", []))
+
+    if grade_num <= primary_count:
+        return "primary", grade_num
+    elif grade_num <= primary_count + prep_count:
+        return "prep", grade_num - primary_count
+    else:
+        return "secondary", grade_num - primary_count - prep_count
+
+
 def grade_label(stage: str, grade_num: int, stages: dict[str, list[str]]) -> str:
     labels = stages.get(stage) or []
     if 1 <= grade_num <= len(labels):
@@ -77,6 +95,16 @@ def find_offering_id(
         ):
             return o.get("id")
     return None
+
+
+def _safe_float(v: Any) -> float | None:
+    """تحويل آمن لـ float — يرجع None للقيم غير الرقمية."""
+    if v is None:
+        return None
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
 
 
 def cell_str(v: Any) -> str:
@@ -195,7 +223,7 @@ def build_courses(
                         "order": 1,
                     }
                 )
-            ch_id = stable_id("toc-ch-", subj_id, stage, g_label, skey, sess_title)
+            ch_id = stable_id("toc-ch-", subj_id, stage, g_label, skey, str(sess_title))
             chapters.append(
                 {
                     "id": ch_id,
@@ -227,8 +255,8 @@ def build_courses(
             "rating": 0,
             "chapters": chapters,
             "academicYear": year_s,
-            "term": float(term) if term is not None else None,
-            "season": float(season) if season is not None else None,
+            "term": _safe_float(term),
+            "season": _safe_float(season),
         }
         if offering_id:
             course["offeringId"] = offering_id
@@ -313,27 +341,34 @@ def main() -> int:
             continue
         if only_sheets and name not in only_sheets:
             continue
+
         ctx = sheet_ctx.get(name, {})
-        stage = ctx.get("stage")
-        if not stage:
+        sheet_stage = ctx.get("stage")  # قد يكون None إذا stageFromGrade=true
+        use_grade_for_stage = ctx.get("stageFromGrade", False)
+
+        # إذا لم يكن هناك stage ولا stageFromGrade، حاول الاستنتاج من الاسم
+        if not sheet_stage and not use_grade_for_stage:
             low = name.lower()
-            if "primary" in low or name in ("اللغة", "Discover", "Connect") and name != "Connect":
-                stage = "primary" if "middle" not in low else "prep"
-            if "middle" in low:
-                stage = "prep"
-            if name in (
-                "Integrated",
-                "Chemistry",
-                "الدراسات",
-                "الجغرافيا",
-                "التاريخ",
-                "الفلسفة",
-                "Biology",
+            if "primary" in low:
+                sheet_stage = "primary"
+            elif "middle" in low:
+                sheet_stage = "prep"
+            elif any(
+                name.startswith(p)
+                for p in (
+                    "Chemistry", "Biology", "Integrated",
+                    "التاريخ", "الجغرافيا", "الفلسفة",
+                )
             ):
-                stage = "secondary"
-            if not stage:
-                print(f"تخطي ورقة بلا stage: {name}", file=sys.stderr)
-                continue
+                sheet_stage = "secondary"
+            else:
+                # لم نستطع تحديد المرحلة من الاسم — نستخدم الصف
+                use_grade_for_stage = True
+                print(
+                    f"ℹ️  ورقة «{name}»: لم يُحدَّد stage — سيُستنتَج من رقم الصف",
+                    file=sys.stderr,
+                )
+
         data = read_sheet_rows(sheet)
         for r in data:
             subj = str(
@@ -344,22 +379,35 @@ def main() -> int:
             subj_id = subject_names.get(subj)
             if not subj_id:
                 print(
-                    f"مادة غير مذكورة في التعريف: {subj!r} (ورقة {name})",
+                    f"⚠️  مادة غير معرّفة: {subj!r} (ورقة «{name}»)",
                     file=sys.stderr,
                 )
                 continue
-            g = float_grade_to_index(
-                rget(r, "Grade", "grade")
-            )
+
+            g = float_grade_to_index(rget(r, "Grade", "grade"))
+
+            # ── تحديد المرحلة والفهرس النسبي ──
+            if use_grade_for_stage or not sheet_stage:
+                stage, gidx = grade_to_stage_and_index(g, stages_cfg)
+            else:
+                stage = sheet_stage
+                # تحويل الصف المطلق إلى نسبي داخل المرحلة
+                max_g = len(stages_cfg.get(stage, []))
+                if max_g and g > max_g:
+                    # الصف أكبر من المرحلة المحددة — نستنتج المرحلة الصحيحة
+                    stage, gidx = grade_to_stage_and_index(g, stages_cfg)
+                else:
+                    gidx = max(1, g)
+
+            # ضمان أن gidx ضمن الحدود
+            max_g = len(stages_cfg.get(stage, []))
+            if max_g:
+                gidx = max(1, min(gidx, max_g))
+
             year = rget(r, "Academic Year", "academic year") or "2025-2026"
             term = rget(r, "Term", "term")
             season = rget(r, "Season", "season")
-            gidx = g
-            max_g = len(stages_cfg.get(stage, []))
-            if max_g and gidx > max_g:
-                gidx = max(1, min(gidx, max_g))
-            if max_g and gidx < 1:
-                gidx = 1
+
             key = (subj, subj_id, stage, gidx, str(year), term, season)
             groups[key].append(r)
     wb.close()
@@ -373,7 +421,16 @@ def main() -> int:
     with args.out.open("w", encoding="utf-8") as f:
         json.dump(out_courses, f, ensure_ascii=False, indent=2)
         f.write("\n")
-    print(f"تمت كتابة {len(out_courses)} كورساً → {args.out}")
+
+    # ── ملخص ──
+    subj_counts: dict[str, int] = defaultdict(int)
+    for c in out_courses:
+        subj_counts[c["subjectId"]] += 1
+    print(f"\n✅ تمت كتابة {len(out_courses)} كورساً → {args.out}")
+    print("─" * 50)
+    for sid in sorted(subj_counts):
+        print(f"   {sid:25s}  {subj_counts[sid]:3d} كورس")
+    print("─" * 50)
     return 0
 
 

@@ -1,0 +1,24 @@
+{
+  "id": "sN60JSqrR7gs",
+  "type": "ordering",
+  "stem": "رتب الخلفاء الراشدين حسب توليهم الخلافة:",
+  "points": 2,
+  "choices": [
+    {
+      "id": "oCXJ6ODGCKu9",
+      "label": "أبو بكر الصديق"
+    },
+    {
+      "id": "R5f0ulTDwQSE",
+      "label": "عمر بن الخطاب"
+    },
+    {
+      "id": "3BYrfwtzOSHg",
+      "label": "عثمان بن عفان"
+    },
+    {
+      "id": "7qhPL6a2s5df",
+      "label": "علي بن أبي طالب"
+    }
+  ]
+}

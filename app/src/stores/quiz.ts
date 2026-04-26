@@ -79,10 +79,20 @@ export const useQuizStore = defineStore('quiz', () => {
 
     const quizAnswers: QuizAnswer[] = currentQuiz.value.questions.map((q) => {
       const selected = answers.value[q.id] ?? null;
+      let isCorrect = false;
+
+      // Handle types that use 'choices' array (MCQ, MRQ, Gap, Opinion)
+      if ('choices' in q && Array.isArray(q.choices)) {
+        const choice = q.choices.find(c => c.id === selected);
+        isCorrect = choice?.isCorrect === true;
+      }
+      // Note: Full support for evaluating matching, puzzle, string, etc., requires their respective state handlers.
+      // For this demo, we assume they fall back to false if not a choices-based question.
+
       return {
         questionId: q.id,
         selectedOptionId: selected,
-        isCorrect: selected === q.correctOptionId
+        isCorrect: isCorrect
       };
     });
 

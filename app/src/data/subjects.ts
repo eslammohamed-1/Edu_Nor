@@ -14,8 +14,8 @@ export const subjects: Subject[] = [
     color: '#1E3A5F',
     stages: ['primary', 'prep', 'secondary'],
     description: 'نحو وبلاغة وأدب ونصوص — من الابتدائي حتى الثانوي.',
-    lessonsCount: 220,
-    coursesCount: 14
+    lessonsCount: 1374,
+    coursesCount: 71
   },
   {
     id: 'english',
@@ -25,8 +25,8 @@ export const subjects: Subject[] = [
     color: '#3498DB',
     stages: ['primary', 'prep', 'secondary'],
     description: 'English — من المستوى الأول حتى الامتحانات النهائية.',
-    lessonsCount: 200,
-    coursesCount: 12
+    lessonsCount: 1056,
+    coursesCount: 21
   },
   {
     id: 'connect-plus',
@@ -36,8 +36,8 @@ export const subjects: Subject[] = [
     color: '#1ABC9C',
     stages: ['primary'],
     description: 'برنامج مكوّن للتأسيس (غالباً صف أول–ثالث ابتدائي).',
-    lessonsCount: 48,
-    coursesCount: 3
+    lessonsCount: 944,
+    coursesCount: 5
   },
   {
     id: 'math',
@@ -47,8 +47,8 @@ export const subjects: Subject[] = [
     color: '#F4A825',
     stages: ['primary', 'prep', 'secondary'],
     description: 'Mathematics / الجبر والهندسة والتفاضل — جميع الأقسام (أدبي وعلمي).',
-    lessonsCount: 260,
-    coursesCount: 16
+    lessonsCount: 1521,
+    coursesCount: 33
   },
   {
     id: 'discover',
@@ -58,8 +58,8 @@ export const subjects: Subject[] = [
     color: '#8E44AD',
     stages: ['primary'],
     description: 'Discover — أنشطة استكشاف وربط (غالباً صف أول–ثالث ابتدائي).',
-    lessonsCount: 36,
-    coursesCount: 2
+    lessonsCount: 255,
+    coursesCount: 6
   },
   {
     id: 'science',
@@ -69,8 +69,8 @@ export const subjects: Subject[] = [
     color: '#2EC4B6',
     stages: ['primary', 'prep', 'secondary'],
     description: 'Science / علوم من الجذور حتى تخصصات الثانوية (مع العلوم المتكاملة في أولى ثانوي).',
-    lessonsCount: 190,
-    coursesCount: 11
+    lessonsCount: 472,
+    coursesCount: 20
   },
   {
     id: 'social-studies',
@@ -80,8 +80,8 @@ export const subjects: Subject[] = [
     color: '#C0392B',
     stages: ['primary', 'prep'],
     description: 'مادة موحّدة في الابتدائي والإعدادي قبل التفكيك في الثانوية.',
-    lessonsCount: 88,
-    coursesCount: 5
+    lessonsCount: 446,
+    coursesCount: 29
   },
   {
     id: 'ict',
@@ -146,8 +146,8 @@ export const subjects: Subject[] = [
     color: '#A0522D',
     stages: ['secondary'],
     description: 'التاريخ — في الثانوية بشكل مستقل.',
-    lessonsCount: 72,
-    coursesCount: 4
+    lessonsCount: 228,
+    coursesCount: 7
   },
   {
     id: 'philosophy',
@@ -157,8 +157,8 @@ export const subjects: Subject[] = [
     color: '#7D6608',
     stages: ['secondary'],
     description: 'فلسفة ومنطق — عادة في أولى ثانوي وما بعده.',
-    lessonsCount: 40,
-    coursesCount: 2
+    lessonsCount: 81,
+    coursesCount: 5
   },
   {
     id: 'integrated-science',
@@ -168,7 +168,7 @@ export const subjects: Subject[] = [
     color: '#117A65',
     stages: ['secondary'],
     description: 'محتوى مدمج في أولى ثانوي (عربي/إنجليزي).',
-    lessonsCount: 56,
+    lessonsCount: 178,
     coursesCount: 2
   },
   {
@@ -179,8 +179,8 @@ export const subjects: Subject[] = [
     color: '#9B59B6',
     stages: ['secondary'],
     description: 'Physics — من تانية ثانوي فصاعداً في المسارات الشائعة.',
-    lessonsCount: 140,
-    coursesCount: 6
+    lessonsCount: 2,
+    coursesCount: 1
   },
   {
     id: 'chemistry',
@@ -190,8 +190,8 @@ export const subjects: Subject[] = [
     color: '#27AE60',
     stages: ['secondary'],
     description: 'Chemistry — ثانوي (قسم علمي).',
-    lessonsCount: 120,
-    coursesCount: 5
+    lessonsCount: 158,
+    coursesCount: 4
   },
   {
     id: 'biology',
@@ -201,8 +201,8 @@ export const subjects: Subject[] = [
     color: '#E67E22',
     stages: ['secondary'],
     description: 'Biology — عادة تالتة ثانوي (قسم علمي).',
-    lessonsCount: 110,
-    coursesCount: 4
+    lessonsCount: 296,
+    coursesCount: 2
   },
   {
     id: 'geography',
@@ -212,8 +212,8 @@ export const subjects: Subject[] = [
     color: '#1E8449',
     stages: ['secondary'],
     description: 'الجغرافيا — ثانوي (منفصلة غالباً في أولى/تانية ثانوي).',
-    lessonsCount: 64,
-    coursesCount: 3
+    lessonsCount: 176,
+    coursesCount: 4
   },
   {
     id: 'psychology-social',
@@ -223,7 +223,7 @@ export const subjects: Subject[] = [
     color: '#AF7AC5',
     stages: ['secondary'],
     description: 'Psychology & Sociology — تانية ثانوي في عدة برامج.',
-    lessonsCount: 48,
+    lessonsCount: 76,
     coursesCount: 2
   },
   {
@@ -234,7 +234,7 @@ export const subjects: Subject[] = [
     color: '#2874A6',
     stages: ['secondary'],
     description: 'Statistics / الإحصاء — تالتة ثانوي.',
-    lessonsCount: 40,
+    lessonsCount: 101,
     coursesCount: 2
   }
 ];
