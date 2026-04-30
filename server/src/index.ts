@@ -3,7 +3,6 @@ import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { loadEnv } from './env.js';
 import { prisma } from './db.js';
-import { getPrismaQuestionsBank } from './questionsDb.js';
 import { authPlugin } from './plugins/auth.js';
 import { authRoutes } from './routes/auth.js';
 import { adminUsersRoutes } from './routes/admin/users.js';
@@ -40,7 +39,7 @@ app.get('/health', async () => ({
 await app.register(authRoutes, { prefix: '/api/v1/auth', env });
 await app.register(catalogRoutes, { prefix: '/api/v1' });
 await app.register(quizzesPublicRoutes, { prefix: '/api/v1' });
-await app.register(questionsBankPublicRoutes, { prefix: '/api/v1' });
+await app.register(questionsBankPublicRoutes, { prefix: '/api/v1', env });
 await app.register(adminUsersRoutes, { prefix: '/api/v1/admin/users' });
 await app.register(adminCatalogContentRoutes, { prefix: '/api/v1/admin/catalog' });
 await app.register(adminSystemRoutes, { prefix: '/api/v1/admin', env });
@@ -48,7 +47,6 @@ await app.register(adminSystemRoutes, { prefix: '/api/v1/admin', env });
 const close = async () => {
   await app.close();
   await prisma.$disconnect();
-  await getPrismaQuestionsBank().$disconnect();
 };
 
 process.on('SIGINT', () => {

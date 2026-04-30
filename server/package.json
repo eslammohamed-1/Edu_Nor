@@ -5,14 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "prisma generate && prisma generate --schema=questions-database/schema.prisma && tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/index.js",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "db:questions:generate": "prisma generate --schema=questions-database/schema.prisma",
-    "db:questions:push": "QUESTIONS_DATABASE_URL=\"file:./data/question_database.sqlite\" prisma db push --schema=questions-database/schema.prisma",
-    "db:questions:import": "QUESTIONS_DATABASE_URL=\"file:./data/question_database.sqlite\" tsx questions-database/import-from-json.ts"
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",

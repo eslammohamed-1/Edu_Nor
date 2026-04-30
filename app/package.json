@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "generate:questions-index": "node --experimental-strip-types ../scripts/generate-questions-index.ts",
+    "build": "npm run generate:questions-index && vue-tsc -b && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview",
     "import:toc": "cd .. && .venv/bin/python scripts/import_toc_from_xlsx.py",
     "build:catalog": "cd .. && python3 scripts/build_catalog_from_csv.py",
@@ -23,6 +26,7 @@
     "@vue/tsconfig": "^0.9.1",
     "typescript": "~6.0.2",
     "vite": "^8.0.10",
+    "vitest": "^3.2.4",
     "vue-tsc": "^3.2.7"
   }
 }

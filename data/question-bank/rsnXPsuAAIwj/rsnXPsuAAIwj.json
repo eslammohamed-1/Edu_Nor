@@ -1,0 +1,28 @@
+{
+  "id": "rsnXPsuAAIwj",
+  "type": "gap",
+  "stem": "تعتبر @BLANK عاصمة مصر، بينما تعتبر @BLANK عاصمة فرنسا.",
+  "points": 2,
+  "choices": [
+    {
+      "id": "uDNcC0ykHZYI",
+      "label": "القاهرة",
+      "isCorrect": true
+    },
+    {
+      "id": "yHzTLFshxLRS",
+      "label": "الجيزة",
+      "isCorrect": false
+    },
+    {
+      "id": "mWaXjjTfXORB",
+      "label": "باريس",
+      "isCorrect": true
+    },
+    {
+      "id": "rUiAYHYSP4m0",
+      "label": "لندن",
+      "isCorrect": false
+    }
+  ]
+}

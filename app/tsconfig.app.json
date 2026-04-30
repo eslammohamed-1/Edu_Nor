@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@questionBank/*": ["../data/question-bank/*"]
     },
     "ignoreDeprecations": "6.0",
 
