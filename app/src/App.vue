@@ -15,7 +15,7 @@ const settingsStore = useAdminSettingsStore();
 const coursesStore = useCoursesStore();
 const quizStore = useQuizStore();
 
-settingsStore.init();
+// init() يُستدعى في main.ts — لا نكرره هنا
 void coursesStore.hydrateCatalogFromApi();
 void quizStore.hydrateQuizzesFromApi();
 

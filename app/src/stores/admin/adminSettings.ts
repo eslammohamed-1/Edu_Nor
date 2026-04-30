@@ -22,6 +22,7 @@ export interface PlatformSettings {
     primaryColor: string;
     goldColor: string;
     navyColor: string;
+    navyDarkColor: string;
   };
   seo: {
     defaultTitle: string;
@@ -61,7 +62,8 @@ const defaults: PlatformSettings = {
     faviconUrl: '',
     primaryColor: '#1E3A5F',
     goldColor: '#F4A825',
-    navyColor: '#1E3A5F'
+    navyColor: '#1E3A5F',
+    navyDarkColor: '#152D4A'
   },
   seo: {
     defaultTitle: 'إديو نور — منصتك التعليمية',
@@ -174,10 +176,10 @@ export const useAdminSettingsStore = defineStore('adminSettings', () => {
   }
 
   function applyBranding() {
-    const { primaryColor, goldColor, navyColor } = settings.value.branding;
-    if (primaryColor) document.documentElement.style.setProperty('--color-navy', primaryColor);
+    const { goldColor, navyColor, navyDarkColor } = settings.value.branding;
+    if (navyColor) document.documentElement.style.setProperty('--color-navy', navyColor);
     if (goldColor) document.documentElement.style.setProperty('--color-gold', goldColor);
-    if (navyColor) document.documentElement.style.setProperty('--color-navy-dark', navyColor);
+    if (navyDarkColor) document.documentElement.style.setProperty('--color-navy-dark', navyDarkColor);
   }
 
   function init() {

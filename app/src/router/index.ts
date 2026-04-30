@@ -26,7 +26,12 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore();
-  auth.hydrate();
+
+  // إعادة قراءة الجلسة من التخزين فقط عند الحاجة (صفحات محمية أو ضيوف فقط)
+  const needsAuthCheck = !!(to.meta.requiresAuth || to.meta.requiresSuperAdmin || to.meta.requiresGuest);
+  if (needsAuthCheck) {
+    auth.hydrate();
+  }
 
   if (to.meta.requiresSuperAdmin) {
     if (!auth.isAuthenticated) {

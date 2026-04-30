@@ -111,9 +111,108 @@ export const useQuizStore = defineStore('quiz', () => {
       const selected = answers.value[q.id] ?? null;
       let isCorrect = false;
 
-      if ('choices' in q && Array.isArray(q.choices)) {
-        const choice = q.choices.find((c) => c.id === selected);
-        isCorrect = choice?.isCorrect === true;
+      switch (q.type) {
+        // أسئلة الاختيار (MCQ, MRQ, opinion, gap): مطابقة الـ choice المختار
+        case 'mcq':
+        case 'mrq':
+        case 'opinion':
+        case 'gap': {
+          if ('choices' in q && Array.isArray(q.choices)) {
+            const choice = q.choices.find((c) => c.id === selected);
+            isCorrect = choice?.isCorrect === true;
+          }
+          break;
+        }
+
+        // أسئلة الترتيب: المختارات تُخزّن كمصفوفة JSON
+        case 'ordering': {
+          if ('choices' in q && Array.isArray(q.choices) && selected) {
+            try {
+              const userOrder = JSON.parse(selected) as string[];
+              const correctOrder = q.choices.map((c) => c.id);
+              isCorrect = userOrder.length === correctOrder.length &&
+                userOrder.every((id, idx) => id === correctOrder[idx]);
+            } catch {
+              // مطابقة اختيار فردي كـ fallback
+              const choice = q.choices.find((c) => c.id === selected);
+              isCorrect = choice?.isCorrect === true;
+            }
+          }
+          break;
+        }
+
+        // أسئلة نصية: مقارنة نصية (بدون حساسية لحالة الأحرف والمسافات)
+        case 'string':
+        case 'frq': {
+          if ('answer' in q && selected) {
+            const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, ' ');
+            isCorrect = normalize(selected) === normalize(q.answer);
+          }
+          break;
+        }
+
+        // أسئلة الإدخال الرقمي/النصي
+        case 'input':
+        case 'counting': {
+          if ('answer' in q && selected) {
+            const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, ' ');
+            isCorrect = normalize(selected) === normalize(q.answer);
+          }
+          break;
+        }
+
+        // أسئلة التوصيل: المطابقة تُخزّن كـ JSON { leftId: rightId }
+        case 'matching': {
+          if ('pairs' in q && selected) {
+            try {
+              const userPairs = JSON.parse(selected) as Record<string, string>;
+              isCorrect = q.pairs.every((p) => userPairs[p.id] === p.right);
+            } catch {
+              isCorrect = false;
+            }
+          }
+          break;
+        }
+
+        // أسئلة البازل: ترتيب القطع يُخزّن كـ JSON array
+        case 'puzzle': {
+          if ('solution' in q && selected) {
+            try {
+              const userSolution = JSON.parse(selected) as string[];
+              isCorrect = userSolution.length === q.solution.length &&
+                userSolution.every((id, idx) => id === q.solution[idx]);
+            } catch {
+              isCorrect = false;
+            }
+          }
+          break;
+        }
+
+        // أسئلة اختيار متعدد مجمّعة: كل مجموعة لها اختياراتها
+        case 'gmrq': {
+          if ('groups' in q && selected) {
+            try {
+              const userSelections = JSON.parse(selected) as Record<string, string>;
+              isCorrect = q.groups.every((g) => {
+                const correct = g.choices.find((c) => c.isCorrect);
+                return correct && userSelections[g.name] === correct.id;
+              });
+            } catch {
+              isCorrect = false;
+            }
+          }
+          break;
+        }
+
+        // أسئلة متعددة الأجزاء: لا تُقيَّم مباشرة — كل جزء يُقيَّم على حدة
+        case 'multipart': {
+          // الأجزاء الفرعية تُعامل كأسئلة مستقلة في الكتالوج
+          isCorrect = false;
+          break;
+        }
+
+        default:
+          isCorrect = false;
       }
 
       return {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useQuizStore } from '@/stores/quiz';
@@ -89,10 +89,6 @@ function handleExit() {
 watch(quizId, (id) => {
   if (id) start(id);
 }, { immediate: true });
-
-onMounted(() => {
-  if (quizId.value) start(quizId.value);
-});
 
 onUnmounted(() => {
   stopTimer();
