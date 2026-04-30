@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppButton from '@/components/common/AppButton.vue';
-import type { Lesson } from '@/types/course';
+import type { LessonInfo } from '@/types/course';
 
 interface Props {
-  lessons: Array<{ lesson: Lesson; courseTitle: string; courseId: string }>;
+  lessons: Array<{ lesson: LessonInfo; courseTitle: string; courseId: string }>;
 }
 
 defineProps<Props>();

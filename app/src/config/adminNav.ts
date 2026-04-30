@@ -25,8 +25,7 @@ export const adminNavSections: NavSection[] = [
   {
     title: 'المحتوى',
     links: [
-      { to: '/admin/subjects', label: 'المواد الدراسية', icon: 'BookOpen' },
-      { to: '/admin/courses', label: 'الكورسات', icon: 'GraduationCap' },
+      { to: '/admin/subjects', label: 'المواد الدراسية', icon: 'Book' },
       { to: '/admin/lessons', label: 'الدروس', icon: 'PlayCircle' }
     ]
   },

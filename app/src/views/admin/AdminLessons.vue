@@ -3,31 +3,25 @@ import { ref, computed } from 'vue';
 import { useAdminContentStore } from '@/stores/admin/adminContent';
 import ConfirmDialog from '@/components/admin/shared/ConfirmDialog.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { Lesson, LessonType } from '@/types/course';
+import type { LessonInfo, LessonType } from '@/types/course';
 
 const store = useAdminContentStore();
 
-const selectedSubject = ref('');
-const selectedCourse = ref('');
+const selectedSubjectId = ref('');
 const showForm = ref(false);
-const editLesson = ref<(Lesson & { courseId: string; published?: boolean }) | null>(null);
+const editLesson = ref<(LessonInfo & { subjectId: string; published?: boolean }) | null>(null);
 const confirmDelete = ref({ open: false, id: '', name: '' });
 
-const courses = computed(() =>
-  selectedSubject.value
-    ? store.coursesBySubject(selectedSubject.value)
-    : store.courses
-);
-
 const lessons = computed(() =>
-  selectedCourse.value
-    ? store.lessonsByCourse(selectedCourse.value)
+  selectedSubjectId.value
+    ? store.lessonsBySubject(selectedSubjectId.value)
     : []
 );
 
 const form = ref({
   title: '', description: '', duration: 0, type: 'video' as LessonType,
-  videoUrl: '', content: '', keyPoints: [] as string[], order: 0, courseId: ''
+  videoUrl: '', content: '', keyPoints: [] as string[], order: 0, subjectId: '',
+  unitTitle: ''
 });
 
 const newKeyPoint = ref('');
@@ -45,13 +39,24 @@ function removeKeyPoint(idx: number) {
 
 function openCreate() {
   editLesson.value = null;
-  form.value = { title: '', description: '', duration: 0, type: 'video', videoUrl: '', content: '', keyPoints: [], order: lessons.value.length, courseId: selectedCourse.value };
+  form.value = { 
+    title: '', description: '', duration: 0, type: 'video', 
+    videoUrl: '', content: '', keyPoints: [], 
+    order: lessons.value.length + 1, 
+    subjectId: selectedSubjectId.value,
+    unitTitle: ''
+  };
   showForm.value = true;
 }
 
-function openEdit(l: Lesson & { courseId: string; published?: boolean }) {
+function openEdit(l: LessonInfo & { subjectId: string; published?: boolean }) {
   editLesson.value = l;
-  form.value = { title: l.title, description: l.description, duration: l.duration, type: l.type, videoUrl: l.videoUrl || '', content: l.content, keyPoints: [...(l.keyPoints || [])], order: l.order, courseId: l.courseId };
+  form.value = { 
+    title: l.title, description: l.description || '', duration: l.duration, 
+    type: l.type, videoUrl: l.videoUrl || '', content: l.content || '', 
+    keyPoints: [...(l.keyPoints || [])], order: l.order, 
+    subjectId: l.subjectId, unitTitle: l.unitTitle || '' 
+  };
   showForm.value = true;
 }
 
@@ -59,8 +64,7 @@ function handleSave() {
   if (editLesson.value) {
     store.updateLesson(editLesson.value.id, form.value);
   } else {
-    const { courseId, ...lessonData } = form.value;
-    store.createLesson({ ...lessonData, courseId });
+    store.createLesson(form.value);
   }
   showForm.value = false;
 }
@@ -74,50 +78,41 @@ function doDelete() {
 <template>
   <div class="admin-lessons">
     <div class="page-header">
-      <h2 class="font-ar">الدروس</h2>
+      <h2 class="font-ar">إدارة الدروس</h2>
     </div>
 
     <!-- Filters -->
     <div class="lesson-filters">
       <div class="field-row">
-        <label class="field-label font-ar">المادة</label>
-        <select v-model="selectedSubject" class="field-input font-ar" @change="selectedCourse = ''">
-          <option value="">— كل المواد —</option>
+        <label class="field-label font-ar">اختر المادة</label>
+        <select v-model="selectedSubjectId" class="field-input font-ar">
+          <option value="">— اختر مادة لعرض دروسها —</option>
           <option v-for="s in store.subjects" :key="s.id" :value="s.id">{{ s.name }}</option>
         </select>
       </div>
-      <div class="field-row">
-        <label class="field-label font-ar">الكورس</label>
-        <select v-model="selectedCourse" class="field-input font-ar">
-          <option value="">— اختر كورساً —</option>
-          <option v-for="c in courses" :key="c.id" :value="c.id">{{ c.title }}</option>
-        </select>
-      </div>
-      <button v-if="selectedCourse" class="btn btn-primary font-ar add-btn" @click="openCreate">
+      <button v-if="selectedSubjectId" class="btn btn-primary font-ar add-btn" @click="openCreate">
         <AppIcon name="Plus" :size="15" /> درس جديد
       </button>
     </div>
 
     <!-- Lessons List -->
-    <div v-if="!selectedCourse" class="no-selection font-ar">
-      <AppIcon name="PlayCircle" :size="48" color="var(--text-muted)" />
-      <p>اختر كورساً لعرض دروسه وإدارتها</p>
+    <div v-if="!selectedSubjectId" class="no-selection font-ar">
+      <AppIcon name="Layers" :size="48" color="var(--text-muted)" />
+      <p>يرجى اختيار مادة من القائمة أعلاه لإدارة دروسها</p>
     </div>
 
     <div v-else-if="lessons.length === 0" class="no-selection font-ar">
       <AppIcon name="Plus" :size="48" color="var(--text-muted)" />
-      <p>لا توجد دروس — ابدأ بإنشاء درس جديد</p>
+      <p>لا توجد دروس لهذه المادة حالياً</p>
     </div>
 
     <div v-else class="lessons-table">
       <div v-for="lesson in lessons" :key="lesson.id" class="lesson-row">
-        <div class="lesson-order font-en">{{ lesson.order + 1 }}</div>
-        <div class="lesson-type-icon">
-          <AppIcon :name="lesson.type === 'video' ? 'PlayCircle' : lesson.type === 'quiz' ? 'ClipboardList' : 'FileText'" :size="18" color="var(--color-navy)" />
-        </div>
+        <div class="lesson-order font-en">{{ lesson.order }}</div>
         <div class="lesson-info">
           <p class="lesson-title font-ar">{{ lesson.title }}</p>
-          <p class="lesson-meta font-ar">{{ lesson.duration }} دقيقة</p>
+          <p class="lesson-unit font-ar text-gold" v-if="lesson.unitTitle">{{ lesson.unitTitle }}</p>
+          <p class="lesson-meta font-ar">{{ lesson.duration }} دقيقة • {{ lesson.type }}</p>
         </div>
         <span class="status-pill font-ar" :class="lesson.published ? 'published' : 'draft'">
           {{ lesson.published ? 'منشور' : 'مسودة' }}
@@ -151,6 +146,12 @@ function doDelete() {
                 <input v-model="form.title" class="field-input font-ar" />
               </div>
               <div class="field-row">
+                <label class="field-label font-ar">اسم الوحدة</label>
+                <input v-model="form.unitTitle" class="field-input font-ar" placeholder="مثال: الوحدة الأولى" />
+              </div>
+            </div>
+            <div class="two-col">
+               <div class="field-row">
                 <label class="field-label font-ar">النوع</label>
                 <select v-model="form.type" class="field-input font-ar">
                   <option value="video">فيديو</option>
@@ -158,33 +159,27 @@ function doDelete() {
                   <option value="quiz">اختبار</option>
                 </select>
               </div>
-            </div>
-            <div class="field-row">
-              <label class="field-label font-ar">رابط الفيديو</label>
-              <input v-model="form.videoUrl" class="field-input font-en" placeholder="https://..." />
-            </div>
-            <div class="two-col">
               <div class="field-row">
                 <label class="field-label font-ar">المدة (دقيقة)</label>
                 <input v-model.number="form.duration" type="number" class="field-input font-en" />
               </div>
-              <div class="field-row">
-                <label class="field-label font-ar">الترتيب</label>
-                <input v-model.number="form.order" type="number" class="field-input font-en" />
-              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label font-ar">رابط الفيديو</label>
+              <input v-model="form.videoUrl" class="field-input font-en" placeholder="https://..." />
             </div>
             <div class="field-row">
               <label class="field-label font-ar">الوصف</label>
               <textarea v-model="form.description" class="field-input font-ar" rows="2"></textarea>
             </div>
             <div class="field-row">
-              <label class="field-label font-ar">المحتوى (HTML)</label>
-              <textarea v-model="form.content" class="field-input font-en" rows="3" dir="ltr"></textarea>
+              <label class="field-label font-ar">المحتوى الشرحي</label>
+              <textarea v-model="form.content" class="field-input font-ar" rows="3"></textarea>
             </div>
             <div class="field-row">
               <label class="field-label font-ar">النقاط الرئيسية</label>
               <div class="key-points-add">
-                <input v-model="newKeyPoint" class="field-input font-ar" placeholder="أضف نقطة..." @keyup.enter="addKeyPoint" />
+                <input v-model="newKeyPoint" class="field-input font-ar" placeholder="أضف معلومة هامة..." @keyup.enter="addKeyPoint" />
                 <button class="add-kp-btn" @click="addKeyPoint"><AppIcon name="Plus" :size="16" /></button>
               </div>
               <ul v-if="form.keyPoints.length" class="kp-list">
@@ -197,13 +192,13 @@ function doDelete() {
           </div>
           <div class="modal-footer">
             <button class="btn btn-ghost font-ar" @click="showForm = false">إلغاء</button>
-            <button class="btn btn-primary font-ar" @click="handleSave">حفظ الدرس</button>
+            <button class="btn btn-primary font-ar" @click="handleSave">حفظ التغييرات</button>
           </div>
         </div>
       </div>
     </Teleport>
 
-    <ConfirmDialog :open="confirmDelete.open" title="حذف الدرس" :message="`حذف '${confirmDelete.name}'؟`" confirm-label="حذف" :danger="true" @confirm="doDelete" @cancel="confirmDelete.open = false" />
+    <ConfirmDialog :open="confirmDelete.open" title="حذف الدرس" :message="`هل أنت متأكد من حذف '${confirmDelete.name}'؟`" confirm-label="حذف" :danger="true" @confirm="doDelete" @cancel="confirmDelete.open = false" />
   </div>
 </template>
 
@@ -211,7 +206,7 @@ function doDelete() {
 .admin-lessons { display: flex; flex-direction: column; gap: var(--space-lg); }
 .page-header h2 { font-size: var(--text-h2); color: var(--text-primary); }
 .lesson-filters { display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: flex-end; background: var(--bg-card); padding: var(--space-md); border-radius: var(--radius-xl); border: 1px solid var(--border-color); }
-.lesson-filters .field-row { flex: 1; min-width: 180px; }
+.lesson-filters .field-row { flex: 1; min-width: 250px; }
 .add-btn { align-self: flex-end; }
 
 .no-selection { display: flex; flex-direction: column; align-items: center; gap: var(--space-md); padding: var(--space-4xl); color: var(--text-muted); }
@@ -220,10 +215,10 @@ function doDelete() {
 .lesson-row { display: flex; align-items: center; gap: var(--space-md); padding: 0.875rem var(--space-lg); border-bottom: 1px solid var(--border-color); transition: background var(--duration-fast); }
 .lesson-row:last-child { border-bottom: none; }
 .lesson-row:hover { background: var(--bg-section); }
-.lesson-order { width: 24px; text-align: center; color: var(--text-muted); font-size: 0.8125rem; font-weight: 600; }
-.lesson-type-icon { flex-shrink: 0; }
+.lesson-order { width: 32px; height: 32px; background: var(--bg-section); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.8125rem; font-weight: 600; flex-shrink: 0; }
 .lesson-info { flex: 1; min-width: 0; }
 .lesson-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+.lesson-unit { font-size: 0.75rem; font-weight: 600; margin-bottom: 2px; }
 .lesson-meta { font-size: 0.75rem; color: var(--text-muted); }
 .status-pill { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: var(--radius-full); font-weight: 600; flex-shrink: 0; }
 .status-pill.published { background: #e8f5e9; color: #2e7d32; }
@@ -235,8 +230,7 @@ function doDelete() {
 
 .field-row { display: flex; flex-direction: column; gap: 0.375rem; }
 .field-label { font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); }
-.field-input { padding: 0.625rem 0.875rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-input); color: var(--text-primary); font-size: 0.875rem; outline: none; resize: vertical; }
-.field-input:focus { border-color: var(--color-gold); }
+.field-input { padding: 0.625rem 0.875rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-input); color: var(--text-primary); font-size: 0.875rem; outline: none; }
 .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.25rem; border-radius: var(--radius-md); border: none; cursor: pointer; font-size: 0.875rem; font-weight: 600; transition: all var(--duration-fast); }
 .btn-primary { background: var(--color-navy); color: #fff; }
 .btn-primary:hover { background: var(--color-navy-light); }

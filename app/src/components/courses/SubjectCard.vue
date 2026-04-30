@@ -1,29 +1,24 @@
 <script setup lang="ts">
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { Subject } from '@/types/course';
+import type { SubjectInfo } from '@/types/course';
 
 interface Props {
-  subject: Subject;
+  subject: SubjectInfo;
 }
 
 defineProps<Props>();
 </script>
 
 <template>
-  <RouterLink :to="`/subjects/${subject.slug}`" class="subject-card transition-all">
+  <RouterLink :to="`/subjects/${subject.id}`" class="subject-card transition-all">
     <div class="icon-wrap" :style="{ backgroundColor: subject.color + '15' }">
       <AppIcon :name="subject.icon" :size="36" :color="subject.color" />
     </div>
     <h3 class="subject-name font-ar text-navy">{{ subject.name }}</h3>
-    <p class="subject-desc text-secondary font-ar">{{ subject.description }}</p>
     <div class="subject-stats">
       <span class="stat">
         <AppIcon name="BookOpen" :size="14" />
-        {{ subject.coursesCount }} كورس
-      </span>
-      <span class="stat">
-        <AppIcon name="PlayCircle" :size="14" />
-        {{ subject.lessonsCount }} درس
+        {{ subject.lessons.length }} درس
       </span>
     </div>
   </RouterLink>

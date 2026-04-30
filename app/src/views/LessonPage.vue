@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCoursesStore } from '@/stores/courses';
+import { useCurriculumStore } from '@/stores/curriculum';
 import { useQuizStore } from '@/stores/quiz';
 import { useToast } from '@/composables/useToast';
 import LessonPlayer from '@/components/courses/LessonPlayer.vue';
@@ -12,7 +12,7 @@ import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 const route = useRoute();
 const router = useRouter();
-const store = useCoursesStore();
+const store = useCurriculumStore();
 const quizStore = useQuizStore();
 const toast = useToast();
 
@@ -20,30 +20,16 @@ const lessonId = computed(() => route.params.lessonId as string);
 
 const lessonData = computed(() => store.findLessonById(lessonId.value));
 const lesson = computed(() => lessonData.value?.lesson);
+const subject = computed(() => lessonData.value?.subject);
 const safeLessonContent = computed(() => sanitizeHtml(lesson.value?.content ?? ''));
-const course = computed(() =>
-  lessonData.value ? store.findCourseById(lessonData.value.courseId) : undefined
-);
-const currentChapterId = computed(() => lessonData.value?.chapterId);
 
 const adjacent = computed(() => store.getAdjacentLessons(lessonId.value));
 const relatedQuiz = computed(() =>
   lessonId.value ? quizStore.findQuizByLessonId(lessonId.value) : undefined
 );
 
-const expandedChapters = ref<Set<string>>(new Set());
-
-watch(currentChapterId, (id) => {
-  if (id) expandedChapters.value.add(id);
-}, { immediate: true });
-
-function toggleChapter(id: string) {
-  if (expandedChapters.value.has(id)) {
-    expandedChapters.value.delete(id);
-  } else {
-    expandedChapters.value.add(id);
-  }
-}
+// Sidebar: all lessons in the same subject
+const sidebarLessons = computed(() => subject.value?.lessons ?? []);
 
 function goToLesson(id: string) {
   router.push(`/lessons/${id}`);
@@ -63,12 +49,12 @@ function markComplete() {
 
 <template>
   <div class="lesson-page">
-    <div v-if="lesson && course" class="lesson-layout">
+    <div v-if="lesson && subject" class="lesson-layout">
       <div class="lesson-main">
         <nav class="breadcrumb font-ar">
           <RouterLink to="/subjects">المواد</RouterLink>
           <AppIcon name="ChevronLeft" :size="14" />
-          <RouterLink :to="`/courses/${course.id}`">{{ course.title }}</RouterLink>
+          <RouterLink :to="`/subjects/${subject.id}`">{{ subject.name }}</RouterLink>
           <AppIcon name="ChevronLeft" :size="14" />
           <span class="current">{{ lesson.title }}</span>
         </nav>
@@ -90,7 +76,7 @@ function markComplete() {
                 </span>
                 <span>
                   <AppIcon name="BookOpen" :size="16" />
-                  {{ course.grade }}
+                  {{ subject.name }}
                 </span>
               </div>
             </div>
@@ -108,20 +94,24 @@ function markComplete() {
             </AppButton>
           </div>
 
-          <div class="lesson-content" v-html="safeLessonContent"></div>
-
-          <div v-if="lesson.keyPoints && lesson.keyPoints.length" class="key-points">
-            <h3 class="font-ar text-navy">
-              <AppIcon name="ListChecks" :size="20" color="var(--color-gold)" />
-              النقاط الأساسية
+          <!-- Sections -->
+          <div v-if="lesson.sections && lesson.sections.length > 0" class="sections-list">
+            <h3 class="font-ar text-navy sections-heading">
+              <AppIcon name="Layers" :size="20" color="var(--color-gold)" />
+              أقسام الدرس
             </h3>
-            <ul>
-              <li v-for="point in lesson.keyPoints" :key="point" class="font-ar">
-                <AppIcon name="Check" :size="16" color="var(--color-success)" />
-                {{ point }}
-              </li>
-            </ul>
+            <div v-for="section in lesson.sections" :key="section.id" class="section-item">
+              <AppIcon
+                :name="section.hasQuiz ? 'HelpCircle' : 'FileText'"
+                :size="18"
+                :color="section.hasQuiz ? 'var(--color-gold)' : 'var(--color-navy)'"
+              />
+              <span class="font-ar">{{ section.title }}</span>
+              <AppBadge v-if="section.hasQuiz" variant="gold" size="sm">اختبار</AppBadge>
+            </div>
           </div>
+
+          <div class="lesson-content" v-html="safeLessonContent"></div>
 
           <div v-if="relatedQuiz" class="lesson-quiz-banner">
             <div class="quiz-banner-info">
@@ -165,37 +155,25 @@ function markComplete() {
 
       <aside class="lesson-sidebar">
         <div class="sidebar-head">
-          <h3 class="font-ar text-navy">محتوى الكورس</h3>
-          <p class="font-ar text-secondary">{{ course.lessonsCount }} درس</p>
+          <h3 class="font-ar text-navy">دروس المادة</h3>
+          <p class="font-ar text-secondary">{{ sidebarLessons.length }} درس</p>
         </div>
-        <div class="sidebar-chapters">
-          <div v-for="chapter in course.chapters" :key="chapter.id" class="sidebar-chapter">
-            <button class="chapter-btn" @click="toggleChapter(chapter.id)">
-              <span class="chapter-no font-en">{{ chapter.order }}</span>
-              <span class="chapter-name font-ar">{{ chapter.title }}</span>
-              <AppIcon
-                :name="expandedChapters.has(chapter.id) ? 'ChevronUp' : 'ChevronDown'"
-                :size="16"
-              />
-            </button>
-            <div v-if="expandedChapters.has(chapter.id)" class="chapter-inner">
-              <button
-                v-for="l in chapter.lessons"
-                :key="l.id"
-                class="sidebar-lesson"
-                :class="{ 'sidebar-lesson--active': l.id === lesson.id }"
-                @click="goToLesson(l.id)"
-              >
-                <AppIcon
-                  :name="store.isLessonComplete(l.id) ? 'CheckCircle2' : 'Circle'"
-                  :size="16"
-                  :color="store.isLessonComplete(l.id) ? 'var(--color-success)' : 'var(--text-muted)'"
-                />
-                <span class="font-ar">{{ l.title }}</span>
-                <span class="duration-tag font-ar">{{ l.duration }}د</span>
-              </button>
-            </div>
-          </div>
+        <div class="sidebar-lessons">
+          <button
+            v-for="l in sidebarLessons"
+            :key="l.id"
+            class="sidebar-lesson"
+            :class="{ 'sidebar-lesson--active': l.id === lesson.id }"
+            @click="goToLesson(l.id)"
+          >
+            <AppIcon
+              :name="store.isLessonComplete(l.id) ? 'CheckCircle2' : 'Circle'"
+              :size="16"
+              :color="store.isLessonComplete(l.id) ? 'var(--color-success)' : 'var(--text-muted)'"
+            />
+            <span class="font-ar">{{ l.title }}</span>
+            <span class="duration-tag font-ar">{{ l.duration }}د</span>
+          </button>
         </div>
       </aside>
     </div>
@@ -282,6 +260,31 @@ function markComplete() {
   gap: var(--space-xxs);
 }
 
+.sections-list {
+  background-color: rgba(244, 168, 37, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.sections-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-h4);
+  margin-bottom: var(--space-md);
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  color: var(--text-primary);
+  font-size: var(--text-body-sm);
+}
+
 .lesson-content {
   font-size: var(--text-body-lg);
   color: var(--text-primary);
@@ -291,35 +294,6 @@ function markComplete() {
 
 .lesson-content :deep(p) {
   margin-bottom: var(--space-md);
-}
-
-.key-points {
-  background-color: rgba(244, 168, 37, 0.06);
-  border-inline-start: 4px solid var(--color-gold);
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-xl);
-}
-
-.key-points h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--text-h4);
-  margin-bottom: var(--space-md);
-}
-
-.key-points ul {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.key-points li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--text-primary);
 }
 
 .lesson-quiz-banner {
@@ -423,65 +397,27 @@ function markComplete() {
   font-size: var(--text-caption);
 }
 
-.sidebar-chapters {
+.sidebar-lessons {
   max-height: 500px;
   overflow-y: auto;
-}
-
-.sidebar-chapter {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.chapter-btn {
-  width: 100%;
-  padding: var(--space-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  text-align: inherit;
-  transition: background-color var(--duration-fast);
-}
-
-.chapter-btn:hover {
-  background-color: var(--bg-section);
-}
-
-.chapter-no {
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-gold);
-  color: var(--color-navy);
-  border-radius: var(--radius-full);
-  font-size: var(--text-caption);
-  font-weight: var(--weight-bold);
-  flex-shrink: 0;
-}
-
-.chapter-name {
-  flex: 1;
-  font-size: var(--text-body-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--color-navy);
-}
-
-.chapter-inner {
   display: flex;
   flex-direction: column;
-  padding-bottom: var(--space-xs);
 }
 
 .sidebar-lesson {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-md) var(--space-xs) calc(var(--space-md) + 30px);
+  padding: var(--space-sm) var(--space-md);
   color: var(--text-secondary);
   font-size: var(--text-body-sm);
   text-align: inherit;
   transition: all var(--duration-fast);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-lesson:last-child {
+  border-bottom: none;
 }
 
 .sidebar-lesson:hover {

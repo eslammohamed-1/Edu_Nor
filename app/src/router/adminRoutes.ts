@@ -31,12 +31,6 @@ export const adminRoute: RouteRecordRaw = {
       meta: { title: 'المواد الدراسية — إديو نور', requiresSuperAdmin: true }
     },
     {
-      path: 'courses',
-      name: 'admin-courses',
-      component: () => import('@/views/admin/AdminCourses.vue'),
-      meta: { title: 'الكورسات — إديو نور', requiresSuperAdmin: true }
-    },
-    {
       path: 'lessons',
       name: 'admin-lessons',
       component: () => import('@/views/admin/AdminLessons.vue'),

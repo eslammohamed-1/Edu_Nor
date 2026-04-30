@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-import { useCoursesStore } from '@/stores/courses';
+import { useCurriculumStore } from '@/stores/curriculum';
 import { useAuth } from '@/composables/useAuth';
 import SubjectCard from '@/components/courses/SubjectCard.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { Stage } from '@/types/course';
+import type { Stage, SubjectInfo } from '@/types/course';
 import { stageLabel } from '@/config/educationTracks';
 
-const store = useCoursesStore();
-const { subjects, stageFilter, searchQuery, subjectsScope } = storeToRefs(store);
+const store = useCurriculumStore();
 const route = useRoute();
 const router = useRouter();
 const { user } = useAuth();
@@ -22,14 +20,14 @@ const stages: Array<{ id: Stage | 'all'; label: string }> = [
   { id: 'secondary', label: 'الثانوي' }
 ];
 
-/** طالب اكتملت بياناته: يظهر فقط منهج صفه — بدون تبويبات مراحل ولا «كل المراحل» */
+// الصف المحدد (داخل المرحلة)
+const selectedGradeId = ref<string | null>(null);
+// الترم المحدد (1 أو 2)
+const selectedTerm = ref<number>(1);
+
+/** طالب اكتملت بياناته */
 const lockStudentToMyOnly = computed(
   () => user.value?.role === 'student' && !!user.value?.stage && !!user.value?.grade
-);
-
-/** زوار أو طالب بلا صف/مرحلة: اختيار «مواد صفي» / «كل المراحل» */
-const showMyToggle = computed(
-  () => !lockStudentToMyOnly.value && user.value?.role === 'student' && !!user.value?.stage
 );
 
 const pageSubtitle = computed(() => {
@@ -37,89 +35,83 @@ const pageSubtitle = computed(() => {
     const g = user.value.grade ? ` — ${user.value.grade}` : '';
     return `مواد ${stageLabel(user.value.stage)}${g} فقط — حسب تسجيلك في المنصة.`;
   }
-  if (subjectsScope.value === 'my' && user.value?.stage) {
-    const g = user.value.grade ? ` — ${user.value.grade}` : '';
-    return `عرض مواد ${stageLabel(user.value.stage)}${g} حسب سجل المنهج. يمكنك التبديل لعرض كل المراحل.`;
-  }
-  return 'تصفح المواد: استخدم التبويبات، أو سجّل دخولك كطالب لعرض مواد صفك.';
+  return 'تصفح المواد: اختر المرحلة والصف لعرض المواد المتاحة.';
 });
 
-function goMyMaterials() {
-  const u = user.value;
-  if (u?.stage) {
-    store.setSubjectsScope('my');
-    store.setStageFilter(u.stage);
-    router.replace({ path: '/subjects', query: { ...route.query, scope: 'my' } });
-  }
-}
-
-function goAllMaterials() {
-  store.setSubjectsScope('all');
-  store.setStageFilter('all');
-  const q = { ...route.query };
-  delete (q as Record<string, string>).scope;
-  router.replace({ path: '/subjects', query: q });
-}
-
 function onStageTab(id: Stage | 'all') {
-  if (id === 'all') {
-    store.setStageFilter('all');
-    if (subjectsScope.value === 'my') {
-      goAllMaterials();
-    } else {
-      store.setSubjectsScope('all');
-    }
-    return;
-  }
-  if (
-    subjectsScope.value === 'my' &&
-    user.value?.role === 'student' &&
-    user.value.stage &&
-    id !== user.value.stage
-  ) {
-    store.setSubjectsScope('all');
-  }
   store.setStageFilter(id);
+  selectedGradeId.value = null;
 }
 
-function syncQueryToStore() {
+/** الصفوف المتاحة حسب المرحلة المختارة */
+const availableGrades = computed(() => {
+  if (store.stageFilter === 'all') {
+    return store.stages.flatMap(s => s.grades);
+  }
+  const stage = store.findStageBySlug(store.stageFilter);
+  return stage?.grades ?? [];
+});
+
+/** الترمات المتاحة حسب الصف المختار */
+const availableTerms = computed(() => {
+  if (!selectedGradeId.value) return [];
+  const grade = store.findGradeById(selectedGradeId.value);
+  return grade?.terms ?? [];
+});
+
+/** المواد المعروضة */
+const displayedSubjects = computed<SubjectInfo[]>(() => {
+  // طالب مقيّد
+  if (lockStudentToMyOnly.value && user.value) {
+    return store.subjectsForUser(user.value);
+  }
+
+  // لو مفيش صف محدد → عرض كل مواد الصفوف في المرحلة
+  if (!selectedGradeId.value) {
+    const subs: SubjectInfo[] = [];
+    const seenSlugs = new Set<string>();
+    for (const grade of availableGrades.value) {
+      for (const term of grade.terms) {
+        if (term.order !== selectedTerm.value) continue;
+        for (const subj of term.subjects) {
+          if (!seenSlugs.has(subj.slug)) {
+            seenSlugs.add(subj.slug);
+            subs.push(subj);
+          }
+        }
+      }
+    }
+    return applySearch(subs);
+  }
+
+  // صف محدد + ترم
+  const grade = store.findGradeById(selectedGradeId.value);
+  if (!grade) return [];
+  const term = grade.terms.find(t => t.order === selectedTerm.value);
+  return applySearch(term?.subjects ?? []);
+});
+
+function applySearch(list: SubjectInfo[]): SubjectInfo[] {
+  const q = store.searchQuery.trim().toLowerCase();
+  if (!q) return list;
+  return list.filter(s => s.name.toLowerCase().includes(q));
+}
+
+function syncFromUser() {
   const u = user.value;
   if (u?.role === 'student' && u.stage && u.grade) {
-    store.setSubjectsScope('my');
     store.setStageFilter(u.stage);
-    if (route.query.scope === 'all') {
-      const q = { ...route.query } as Record<string, string | string[]>;
-      delete q.scope;
-      router.replace({ path: '/subjects', query: q });
-    }
-    return;
-  }
-  if (route.query.scope === 'my' || route.query.scope === 'mine') {
-    if (u?.stage) {
-      store.setSubjectsScope('my');
-      store.setStageFilter(u.stage);
-    }
-  } else if (route.query.scope === 'all') {
-    store.setSubjectsScope('all');
+    // find grade by name
+    const stage = store.findStageBySlug(u.stage);
+    const grade = stage?.grades.find(g => g.name === u.grade);
+    if (grade) selectedGradeId.value = grade.id;
   }
 }
 
-onMounted(syncQueryToStore);
-watch(
-  () => route.query.scope,
-  () => syncQueryToStore()
-);
+onMounted(syncFromUser);
 watch(
   () => [user.value?.id, user.value?.grade, user.value?.stage] as const,
-  () => syncQueryToStore()
-);
-
-const isEmptyMy = computed(
-  () =>
-    subjectsScope.value === 'my' &&
-    (lockStudentToMyOnly.value || showMyToggle.value) &&
-    subjects.value.length === 0 &&
-    stageFilter.value === user.value?.stage
+  () => syncFromUser()
 );
 </script>
 
@@ -134,29 +126,10 @@ const isEmptyMy = computed(
           {{ pageSubtitle }}
         </p>
 
-        <div v-if="showMyToggle" class="scope-toggles font-ar" role="tablist">
-          <button
-            type="button"
-            class="scope-btn"
-            :class="{ 'scope-btn--on': subjectsScope === 'my' }"
-            @click="goMyMaterials"
-          >
-            مواد صفي
-          </button>
-          <button
-            type="button"
-            class="scope-btn"
-            :class="{ 'scope-btn--on': subjectsScope === 'all' }"
-            @click="goAllMaterials"
-          >
-            كل المراحل
-          </button>
-        </div>
-
         <div class="search-bar">
           <AppIcon name="Search" :size="20" color="var(--text-muted)" class="search-icon" />
           <input
-            :value="searchQuery"
+            :value="store.searchQuery"
             @input="store.setSearch(($event.target as HTMLInputElement).value)"
             type="search"
             class="search-input font-ar"
@@ -164,16 +137,45 @@ const isEmptyMy = computed(
           />
         </div>
 
+        <!-- تبويبات المراحل -->
         <div v-if="!lockStudentToMyOnly" class="stage-tabs">
           <button
             v-for="stage in stages"
             :key="stage.id"
             type="button"
             class="stage-tab font-ar"
-            :class="{ 'stage-tab--active': stageFilter === stage.id }"
+            :class="{ 'stage-tab--active': store.stageFilter === stage.id }"
             @click="onStageTab(stage.id)"
           >
             {{ stage.label }}
+          </button>
+        </div>
+
+        <!-- اختيار الصف -->
+        <div v-if="availableGrades.length > 0 && !lockStudentToMyOnly" class="grade-chips">
+          <button
+            v-for="grade in availableGrades"
+            :key="grade.id"
+            type="button"
+            class="grade-chip font-ar"
+            :class="{ 'grade-chip--active': selectedGradeId === grade.id }"
+            @click="selectedGradeId = selectedGradeId === grade.id ? null : grade.id"
+          >
+            {{ grade.name }}
+          </button>
+        </div>
+
+        <!-- اختيار الترم -->
+        <div v-if="availableTerms.length > 1" class="term-toggle font-ar">
+          <button
+            v-for="term in availableTerms"
+            :key="term.id"
+            type="button"
+            class="term-btn"
+            :class="{ 'term-btn--active': selectedTerm === term.order }"
+            @click="selectedTerm = term.order"
+          >
+            {{ term.name }}
           </button>
         </div>
       </div>
@@ -181,33 +183,13 @@ const isEmptyMy = computed(
 
     <section class="subjects-grid-section">
       <div class="container">
-        <div v-if="isEmptyMy" class="empty-state">
-          <AppIcon name="SearchX" :size="64" color="var(--text-muted)" />
-          <h3 class="text-navy font-ar">لا توجد مواد مطابقة لصفك في العرض</h3>
-          <p class="text-secondary font-ar">
-            <template v-if="lockStudentToMyOnly">
-              لا توجد مواد مطابقة لصفك في الكتالوج حالياً. جرّب تعديل البحث.
-            </template>
-            <template v-else>
-              لا توجد مواد في الكتالوج تطابق صفك ضمن الفلاتر الحالية (المرحلة والبحث). جرّب «كل المراحل» أو عدّل البحث.
-            </template>
-          </p>
-          <button
-            v-if="!lockStudentToMyOnly"
-            type="button"
-            class="link-all font-ar"
-            @click="goAllMaterials"
-          >
-            تصفح جميع مراحل الكتالوج
-          </button>
-        </div>
-        <div v-else-if="subjects.length === 0" class="empty-state">
+        <div v-if="displayedSubjects.length === 0" class="empty-state">
           <AppIcon name="SearchX" :size="64" color="var(--text-muted)" />
           <h3 class="text-navy font-ar">لا توجد مواد مطابقة</h3>
           <p class="text-secondary font-ar">جرّب تغيير الفلتر أو كلمة البحث.</p>
         </div>
         <div v-else class="subjects-grid">
-          <SubjectCard v-for="s in subjects" :key="s.id" :subject="s" />
+          <SubjectCard v-for="s in displayedSubjects" :key="s.id" :subject="s" />
         </div>
       </div>
     </section>
@@ -234,30 +216,6 @@ const isEmptyMy = computed(
   font-size: var(--text-body-lg);
   margin-bottom: var(--space-lg);
   max-width: 640px;
-}
-
-.scope-toggles {
-  display: flex;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-  flex-wrap: wrap;
-}
-
-.scope-btn {
-  padding: var(--space-xs) var(--space-lg);
-  background: transparent;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-full);
-  font-size: var(--text-body-sm);
-  font-weight: var(--weight-medium);
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.scope-btn--on {
-  background: var(--color-navy);
-  border-color: var(--color-navy);
-  color: var(--color-white);
 }
 
 .search-bar {
@@ -295,6 +253,7 @@ const isEmptyMy = computed(
   display: flex;
   gap: var(--space-xs);
   flex-wrap: wrap;
+  margin-bottom: var(--space-md);
 }
 
 .stage-tab {
@@ -320,6 +279,58 @@ const isEmptyMy = computed(
   color: var(--color-white);
 }
 
+.grade-chips {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.grade-chip {
+  padding: var(--space-xxs) var(--space-md);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.grade-chip:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.grade-chip--active {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-navy);
+  font-weight: var(--weight-semibold);
+}
+
+.term-toggle {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.term-btn {
+  padding: var(--space-xxs) var(--space-md);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.term-btn--active {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  color: var(--color-white);
+}
+
 .subjects-grid-section {
   padding-top: var(--space-xl);
 }
@@ -342,16 +353,6 @@ const isEmptyMy = computed(
 .empty-state h3 {
   font-size: var(--text-h3);
   margin-top: var(--space-md);
-}
-
-.link-all {
-  margin-top: var(--space-md);
-  background: none;
-  border: none;
-  color: var(--color-gold);
-  font-weight: var(--weight-semibold);
-  cursor: pointer;
-  text-decoration: underline;
 }
 
 @media (max-width: 768px) {

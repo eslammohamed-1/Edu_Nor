@@ -1,35 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Lesson } from '@/types/course';
+import type { LessonInfo } from '@/types/course';
 import { useAuth } from '@/composables/useAuth';
-import { useCoursesStore } from '@/stores/courses';
+import { useCurriculumStore } from '@/stores/curriculum';
 import DashboardStats from '@/components/dashboard/DashboardStats.vue';
 import RecentLessons from '@/components/dashboard/RecentLessons.vue';
 import ProgressChart from '@/components/dashboard/ProgressChart.vue';
 import ProfileCard from '@/components/dashboard/ProfileCard.vue';
-import CourseCard from '@/components/courses/CourseCard.vue';
 
 const { user } = useAuth();
-const coursesStore = useCoursesStore();
+const curriculum = useCurriculumStore();
 
-// فلترة الكورسات لتعكس فقط ما يخص الطالب حالياً
-const myCourses = computed(() => {
-  const allCourses = coursesStore.catalogCourses;
-  if (!user.value || user.value.role !== 'student') return allCourses;
-  return allCourses.filter(c => {
-    if (c.stage !== user.value!.stage || c.grade !== user.value!.grade) return false;
-    if (user.value!.stage === 'secondary' && user.value!.secondaryTrack && c.secondaryTrack) {
-      return c.secondaryTrack === user.value!.secondaryTrack;
-    }
-    return true;
-  });
+// المواد حسب الطالب
+const mySubjects = computed(() => {
+  if (!user.value || user.value.role !== 'student') return [];
+  return curriculum.subjectsForUser(user.value);
 });
 
-const totalLessonsCompleted = computed(() => coursesStore.completedLessons.size);
-
-const enrolledCourses = computed(() =>
-  myCourses.value.filter((c) => coursesStore.courseProgress(c.id) > 0)
-);
+const totalLessonsCompleted = computed(() => curriculum.completedLessons.size);
 
 const stats = computed(() => [
   {
@@ -39,8 +27,8 @@ const stats = computed(() => [
     color: 'var(--color-success)'
   },
   {
-    label: 'كورسات نشطة',
-    value: enrolledCourses.value.length,
+    label: 'مواد نشطة',
+    value: mySubjects.value.filter(s => curriculum.subjectProgress(s.id) > 0).length,
     icon: 'BookOpen',
     color: 'var(--color-navy)'
   },
@@ -51,26 +39,19 @@ const stats = computed(() => [
     color: 'var(--color-teal)'
   },
   {
-    label: 'معدل التقدم',
-    value: enrolledCourses.value.length === 0
-      ? '0%'
-      : Math.round(
-          enrolledCourses.value.reduce((acc, c) => acc + coursesStore.courseProgress(c.id), 0) /
-            enrolledCourses.value.length
-        ) + '%',
-    icon: 'TrendingUp',
+    label: 'المواد المتاحة',
+    value: mySubjects.value.length,
+    icon: 'Layers',
     color: 'var(--color-gold)'
   }
 ]);
 
 const recentLessons = computed(() => {
-  const items: Array<{ lesson: Lesson; courseTitle: string; courseId: string }> = [];
-  for (const course of myCourses.value) {
-    for (const chapter of course.chapters) {
-      for (const lesson of chapter.lessons) {
-        if (coursesStore.isLessonComplete(lesson.id)) {
-          items.push({ lesson, courseTitle: course.title, courseId: course.id });
-        }
+  const items: Array<{ lesson: LessonInfo; courseTitle: string; courseId: string }> = [];
+  for (const subj of mySubjects.value) {
+    for (const lesson of subj.lessons) {
+      if (curriculum.isLessonComplete(lesson.id)) {
+        items.push({ lesson, courseTitle: subj.name, courseId: subj.id });
       }
     }
   }
@@ -78,19 +59,17 @@ const recentLessons = computed(() => {
 });
 
 const subjectProgress = computed(() => {
-  return coursesStore.catalogSubjects
-    .map((subject) => {
-      const subjectCourses = myCourses.value.filter((c) => c.subjectId === subject.id);
-      const allLessons = subjectCourses.flatMap((c) => c.chapters.flatMap((ch) => ch.lessons));
-      const completed = allLessons.filter((l) => coursesStore.isLessonComplete(l.id)).length;
-      const progress = allLessons.length === 0 ? 0 : Math.round((completed / allLessons.length) * 100);
+  return mySubjects.value
+    .map((subj) => {
+      const completed = subj.lessons.filter((l) => curriculum.isLessonComplete(l.id)).length;
+      const progress = subj.lessons.length === 0 ? 0 : Math.round((completed / subj.lessons.length) * 100);
       return {
-        name: subject.name,
-        icon: subject.icon,
-        color: subject.color,
+        name: subj.name,
+        icon: subj.icon,
+        color: subj.color,
         progress,
         completed,
-        total: allLessons.length
+        total: subj.lessons.length
       };
     })
     .filter((s) => s.progress > 0)
@@ -109,18 +88,6 @@ const subjectProgress = computed(() => {
           <RecentLessons :lessons="recentLessons" />
           <ProgressChart :subjects="subjectProgress" />
         </div>
-
-        <section v-if="enrolledCourses.length > 0" class="courses-section">
-          <h2 class="font-ar text-navy section-title">كورساتي الحالية</h2>
-          <div class="courses-grid">
-            <CourseCard
-              v-for="course in enrolledCourses"
-              :key="course.id"
-              :course="course"
-              :progress="coursesStore.courseProgress(course.id)"
-            />
-          </div>
-        </section>
       </div>
 
       <aside class="dashboard-aside">
@@ -155,23 +122,6 @@ const subjectProgress = computed(() => {
 .widgets-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
-}
-
-.courses-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.section-title {
-  font-size: var(--text-h3);
-  margin-bottom: var(--space-xs);
-}
-
-.courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-md);
 }
 

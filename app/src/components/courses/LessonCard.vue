@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { Lesson } from '@/types/course';
+import type { LessonInfo } from '@/types/course';
 
 interface Props {
-  lesson: Lesson;
+  lesson: LessonInfo;
   completed?: boolean;
   active?: boolean;
   index?: number;

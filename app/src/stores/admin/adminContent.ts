@@ -1,31 +1,24 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Subject, Course, Lesson } from '@/types/course';
-import { subjects as seedSubjects } from '@/fixtures/demo-catalog/subjects';
-import { courses as seedCourses } from '@/fixtures/demo-catalog/courses';
+import type { SubjectInfo, LessonInfo } from '@/types/course';
 import { audit } from '@/lib/audit';
 import { fetchAdminSnapshot, saveAdminSnapshot } from '@/services/adminSystemService';
 import { getApiBase } from '@/services/http/client';
+import curriculumData from '@/fixtures/demo-catalog/generated/curriculum.json';
 
 const STORAGE_KEY = 'edunor.admin.content';
 
-interface AdminLesson extends Lesson {
-  courseId: string;
+interface AdminLesson extends LessonInfo {
+  subjectId: string;
   published?: boolean;
 }
 
-interface AdminCourse extends Course {
-  published?: boolean;
-  tags?: string[];
-}
-
-interface AdminSubject extends Subject {
+interface AdminSubject extends SubjectInfo {
   visible?: boolean;
 }
 
 interface ContentStore {
   subjects: AdminSubject[];
-  courses: AdminCourse[];
   lessons: AdminLesson[];
 }
 
@@ -35,21 +28,28 @@ function readStorage(): ContentStore {
     if (raw) return JSON.parse(raw) as ContentStore;
   } catch {}
 
-  // seed from existing data
+  // Seed from curriculum data
+  const subjects: AdminSubject[] = [];
   const lessons: AdminLesson[] = [];
-  seedCourses.forEach(course => {
-    course.chapters?.forEach(ch =>
-      ch.lessons?.forEach(l =>
-        lessons.push({ ...l, courseId: course.id, published: true })
-      )
-    );
-  });
 
-  return {
-    subjects: seedSubjects.map(s => ({ ...s, visible: true })),
-    courses: seedCourses.map(c => ({ ...c, published: true })),
-    lessons
-  };
+  for (const stage of curriculumData.stages) {
+    for (const grade of stage.grades) {
+      for (const term of grade.terms) {
+        for (const subj of term.subjects) {
+          subjects.push({ ...(subj as unknown as AdminSubject), visible: true });
+          for (const lesson of subj.lessons) {
+            lessons.push({
+              ...(lesson as unknown as AdminLesson),
+              subjectId: subj.id,
+              published: true
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return { subjects, lessons };
 }
 
 function writeStorage(data: ContentStore) {
@@ -61,9 +61,7 @@ export const useAdminContentStore = defineStore('adminContent', () => {
   const loading = ref(false);
 
   const subjects = computed(() => data.value.subjects);
-  const courses = computed(() => data.value.courses);
   const lessons = computed(() => data.value.lessons);
-  const publishedCourses = computed(() => data.value.courses.filter(c => c.published !== false));
 
   async function fetchContent() {
     if (!getApiBase()) {
@@ -86,11 +84,17 @@ export const useAdminContentStore = defineStore('adminContent', () => {
   }
 
   // ---- Subjects ----
-  function createSubject(payload: Omit<AdminSubject, 'id' | 'lessonsCount' | 'coursesCount'>): AdminSubject {
+  function createSubject(payload: Partial<AdminSubject> & { name: string; slug: string }): AdminSubject {
     const s: AdminSubject = {
-      ...payload, id: 'sub_' + Date.now(),
-      lessonsCount: 0, coursesCount: 0, visible: true
-    };
+      ...payload,
+      id: String(Math.floor(Math.random() * 899_999_999_999 + 100_000_000_000)),
+      termId: payload.termId ?? '',
+      icon: payload.icon ?? 'BookOpen',
+      color: payload.color ?? '#1E3A5F',
+      order: payload.order ?? data.value.subjects.length + 1,
+      lessons: [],
+      visible: true,
+    } as AdminSubject;
     data.value.subjects.push(s);
     save();
     audit('subject.create', { type: 'subject', id: s.id, label: s.name });
@@ -118,46 +122,13 @@ export const useAdminContentStore = defineStore('adminContent', () => {
     save();
   }
 
-  // ---- Courses ----
-  function createCourse(payload: Omit<AdminCourse, 'id' | 'studentsCount' | 'rating' | 'chapters'>): AdminCourse {
-    const c: AdminCourse = {
-      ...payload, id: 'course_' + Date.now(),
-      studentsCount: 0, rating: 0, chapters: [], published: false
-    };
-    data.value.courses.push(c);
-    save();
-    audit('course.create', { type: 'course', id: c.id, label: c.title });
-    return c;
-  }
-
-  function updateCourse(id: string, updates: Partial<AdminCourse>) {
-    const idx = data.value.courses.findIndex(c => c.id === id);
-    if (idx === -1) return;
-    data.value.courses[idx] = { ...data.value.courses[idx], ...updates };
-    save();
-    audit('course.update', { type: 'course', id, label: data.value.courses[idx].title });
-  }
-
-  function deleteCourse(id: string) {
-    const c = data.value.courses.find(c => c.id === id);
-    data.value.courses = data.value.courses.filter(c => c.id !== id);
-    data.value.lessons = data.value.lessons.filter(l => l.courseId !== id);
-    save();
-    audit('course.delete', { type: 'course', id, label: c?.title });
-  }
-
-  function publishCourse(id: string, published: boolean) {
-    const idx = data.value.courses.findIndex(c => c.id === id);
-    if (idx === -1) return;
-    data.value.courses[idx].published = published;
-    save();
-    audit(published ? 'course.publish' : 'course.unpublish',
-      { type: 'course', id, label: data.value.courses[idx].title });
-  }
-
   // ---- Lessons ----
   function createLesson(payload: Omit<AdminLesson, 'id'>): AdminLesson {
-    const l: AdminLesson = { ...payload, id: 'lesson_' + Date.now(), published: false };
+    const l: AdminLesson = {
+      ...payload,
+      id: String(Math.floor(Math.random() * 899_999_999_999 + 100_000_000_000)),
+      published: false
+    };
     data.value.lessons.push(l);
     save();
     audit('lesson.create', { type: 'lesson', id: l.id, label: l.title });
@@ -188,19 +159,14 @@ export const useAdminContentStore = defineStore('adminContent', () => {
       { type: 'lesson', id, label: data.value.lessons[idx].title });
   }
 
-  function lessonsByCourse(courseId: string): AdminLesson[] {
-    return data.value.lessons.filter(l => l.courseId === courseId);
-  }
-
-  function coursesBySubject(subjectId: string): AdminCourse[] {
-    return data.value.courses.filter(c => c.subjectId === subjectId);
+  function lessonsBySubject(subjectId: string): AdminLesson[] {
+    return data.value.lessons.filter(l => l.subjectId === subjectId);
   }
 
   return {
-    subjects, courses, lessons, publishedCourses, loading, fetchContent,
+    subjects, lessons, loading, fetchContent,
     createSubject, updateSubject, deleteSubject, reorderSubjects,
-    createCourse, updateCourse, deleteCourse, publishCourse,
     createLesson, updateLesson, deleteLesson, publishLesson,
-    lessonsByCourse, coursesBySubject
+    lessonsBySubject
   };
 });

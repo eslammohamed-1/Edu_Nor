@@ -5,18 +5,15 @@ import TheLayout from '@/layouts/TheLayout.vue';
 import AppToast from '@/components/common/AppToast.vue';
 import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
 import { useAuthStore } from '@/stores/auth';
-import { useCoursesStore } from '@/stores/courses';
 import { useQuizStore } from '@/stores/quiz';
 import AppIcon from '@/components/common/AppIcon.vue';
 
 const route = useRoute();
 const authStore = useAuthStore();
 const settingsStore = useAdminSettingsStore();
-const coursesStore = useCoursesStore();
 const quizStore = useQuizStore();
 
 // init() يُستدعى في main.ts — لا نكرره هنا
-void coursesStore.hydrateCatalogFromApi();
 void quizStore.hydrateQuizzesFromApi();
 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));

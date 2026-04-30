@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-/** تصفّح المحتوى التعليمي (مواد، كورسات، دروس، اختبارات) */
+/** تصفّح المحتوى التعليمي (مواد، دروس، اختبارات) */
 export const learningRoutes: RouteRecordRaw[] = [
   {
     path: '/subjects',
@@ -12,13 +12,7 @@ export const learningRoutes: RouteRecordRaw[] = [
     path: '/subjects/:subjectSlug',
     name: 'subject',
     component: () => import('@/views/CoursePage.vue'),
-    meta: { title: 'كورسات المادة — إديو نور' }
-  },
-  {
-    path: '/courses/:courseId',
-    name: 'course',
-    component: () => import('@/views/CoursePage.vue'),
-    meta: { title: 'تفاصيل الكورس — إديو نور' }
+    meta: { title: 'المادة — إديو نور' }
   },
   {
     path: '/lessons/:lessonId',

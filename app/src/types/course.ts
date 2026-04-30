@@ -1,64 +1,80 @@
 export type Stage = 'primary' | 'prep' | 'secondary';
-export type LessonType = 'video' | 'reading' | 'quiz';
+export type LessonType = 'video' | 'reading' | 'quiz' | 'revision';
+export type SessionType = 'Regular' | 'Revision';
+export type SectionType = 'Regular' | 'Revision' | 'Exercise' | 'Quiz';
 
-export interface Subject {
+// ──────────────────────────────────────────────
+// المنهج: Stage → Grade → Term → Subject → Lesson → Section
+// كل ID عبارة عن 12 رقم عشوائي
+// ──────────────────────────────────────────────
+
+export interface StageInfo {
   id: string;
-  name: string;
-  slug: string;
+  name: string;       // ابتدائي / إعدادي / ثانوي
+  slug: Stage;
+  order: number;
+  grades: GradeInfo[];
+}
+
+export interface GradeInfo {
+  id: string;
+  stageId: string;
+  name: string;       // الصف الأول الابتدائي
+  order: number;      // 1-6
+  terms: TermInfo[];
+}
+
+export interface TermInfo {
+  id: string;
+  gradeId: string;
+  name: string;       // الترم الأول / الترم الثاني
+  order: number;      // 1 أو 2
+  track?: string | null;
+  subjects: SubjectInfo[];
+}
+
+export interface SubjectInfo {
+  id: string;
+  termId: string;
+  name: string;       // اللغة العربية
+  slug: string;       // arabic
   icon: string;
   color: string;
-  stages: Stage[];
-  description: string;
-  lessonsCount: number;
-  coursesCount: number;
-}
-
-export interface Lesson {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  type: LessonType;
-  videoUrl?: string;
-  content: string;
-  keyPoints?: string[];
   order: number;
+  lessons: LessonInfo[];
 }
 
-export interface Chapter {
-  id: string;
-  title: string;
-  description: string;
-  order: number;
-  lessons: Lesson[];
-}
-
-export interface Course {
+export interface LessonInfo {
   id: string;
   subjectId: string;
-  /** يربط الكورس بعرض منهج (معرف 12 رقم) من curriculumOfferings */
-  offeringId?: string;
   title: string;
   description: string;
-  stage: Stage;
-  grade: string;
-  /** ثانوي: المسار إن وُجد */
-  secondaryTrack?: 'scientific_ar' | 'scientific_languages' | 'literary';
-  /** من استيراد ToC (Excel) */
-  academicYear?: string;
-  term?: number;
-  season?: number;
-  instructor: string;
-  thumbnail?: string;
   duration: number;
-  lessonsCount: number;
-  studentsCount: number;
-  rating: number;
-  progress?: number;
-  chapters: Chapter[];
+  type: string;
+  videoUrl?: string | null;
+  content: string;
+  order: number;
+  unitTitle?: string | null;
+  sessionType: SessionType;
+  sections: SectionInfo[];
 }
 
-export interface CourseFilters {
+export interface SectionInfo {
+  id: string;
+  lessonId: string;
+  title: string;
+  type: SectionType;
+  content: string;
+  duration: number;
+  order: number;
+  hasQuiz: boolean;
+  hasWorksheet: boolean;
+}
+
+// ──────────────────────────────────────────────
+// Filters
+// ──────────────────────────────────────────────
+export interface CurriculumFilters {
   stage: Stage | 'all';
   search: string;
 }

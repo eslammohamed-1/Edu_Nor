@@ -1,7 +1,7 @@
-import type { Subject, Course } from '@/types/course';
+import type { StageInfo } from '@/types/course';
 import { getApiBase } from '@/services/http/client';
 
-export type CatalogPayload = { subjects: Subject[]; courses: Course[] };
+export type CatalogPayload = { stages: StageInfo[] };
 
 /** كتالوج المنصة المنشور (قراءة عامة؛ لا يتطلّب تسجيل دخول). */
 export async function fetchPublicCatalog(): Promise<CatalogPayload | null> {
