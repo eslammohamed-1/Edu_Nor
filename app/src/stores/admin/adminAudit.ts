@@ -9,6 +9,7 @@ export interface AuditEntry {
   target?: { type: string; id: string; label?: string };
   meta?: Record<string, unknown>;
   ip?: string;
+  userAgent?: string;
   createdAt: string;
 }
 

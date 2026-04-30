@@ -1,0 +1,22 @@
+id,name,slug,icon,color,stages,description
+arabic,اللغة العربية,arabic,BookOpen,#1E3A5F,primary;prep;secondary,نحو وبلاغة وأدب ونصوص — من الابتدائي حتى الثانوي.
+english,اللغة الإنجليزية,english,Languages,#3498DB,primary;prep;secondary,English — من المستوى الأول حتى الامتحانات النهائية.
+connect-plus,Connect Plus,connect-plus,Link2,#1ABC9C,primary,برنامج مكوّن للتأسيس (غالباً صف أول–ثالث ابتدائي).
+math,الرياضيات,math,Calculator,#F4A825,primary;prep;secondary,Mathematics / الجبر والهندسة والتفاضل — جميع الأقسام (أدبي وعلمي).
+discover,اكتشف,discover,Compass,#8E44AD,primary,Discover — أنشطة استكشاف وربط (غالباً صف أول–ثالث ابتدائي).
+science,العلوم,science,Atom,#2EC4B6,primary;prep;secondary,Science / علوم من الجذور حتى تخصصات الثانوية (مع العلوم المتكاملة في أولى ثانوي).
+social-studies,الدراسات الاجتماعية,social-studies,LandPlot,#C0392B,primary;prep,مادة موحّدة في الابتدائي والإعدادي قبل التفكيك في الثانوية.
+ict,تكنولوجيا المعلومات والاتصالات (ICT),ict,Laptop,#16A085,primary,ICT — من الصف الرابع الابتدائي عادة.
+french,Français,french,BookMarked,#2980B9,secondary,اللغة الفرنسية — ثانوي.
+german,Deutsch,german,BookMarked,#5D6D7E,secondary,اللغة الألمانية — ثانوي.
+italian,Italiano,italian,BookMarked,#E67E22,secondary,اللغة الإيطالية — ثانوي.
+spanish,Español,spanish,BookMarked,#E74C3C,secondary,اللغة الإسبانية — ثانوي.
+history,التاريخ,history,Scroll,#A0522D,secondary,التاريخ — في الثانوية بشكل مستقل.
+philosophy,الفلسفة والمنطق,philosophy,Lightbulb,#7D6608,secondary,فلسفة ومنطق — عادة في أولى ثانوي وما بعده.
+integrated-science,العلوم المتكاملة / Integrated Science,integrated-science,FlaskConical,#117A65,secondary,محتوى مدمج في أولى ثانوي (عربي/إنجليزي).
+physics,الفيزياء,physics,Zap,#9B59B6,secondary,Physics — من تانية ثانوي فصاعداً في المسارات الشائعة.
+chemistry,الكيمياء,chemistry,FlaskConical,#27AE60,secondary,Chemistry — ثانوي (قسم علمي).
+biology,الأحياء,biology,Dna,#E67E22,secondary,Biology — عادة تالتة ثانوي (قسم علمي).
+geography,الجغرافيا,geography,Globe2,#1E8449,secondary,الجغرافيا — ثانوي (منفصلة غالباً في أولى/تانية ثانوي).
+psychology-social,علم النفس والاجتماع,psychology-social,Users,#AF7AC5,secondary,Psychology & Sociology — تانية ثانوي في عدة برامج.
+statistics,الإحصاء,statistics,BarChart3,#2874A6,secondary,Statistics / الإحصاء — تالتة ثانوي.

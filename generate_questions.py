@@ -166,7 +166,7 @@ questions = [
     }
 ]
 
-with open('app/src/data/dataQuestions.json', 'w', encoding='utf-8') as f:
+with open('app/src/fixtures/demo-catalog/questions/dataQuestions.json', 'w', encoding='utf-8') as f:
     json.dump(questions, f, ensure_ascii=False, indent=2)
 
 print("تم إنشاء ملف dataQuestions.json بنجاح!")

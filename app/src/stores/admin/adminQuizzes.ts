@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { Quiz } from '@/types/quiz';
-import { quizzes as seedQuizzes } from '@/data/quizzes';
+import { quizzes as seedQuizzes } from '@/fixtures/demo-catalog/quizzes';
 import { audit } from '@/lib/audit';
 
 const STORAGE_KEY = 'edunor.admin.quizzes';

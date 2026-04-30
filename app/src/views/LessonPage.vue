@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { findLessonById, getAdjacentLessons } from '@/data/lessons';
-import { findCourseById } from '@/data/courses';
-import { findQuizByLessonId } from '@/data/quizzes';
+import { findLessonById, getAdjacentLessons } from '@/fixtures/demo-catalog/lessons';
+import { findCourseById } from '@/fixtures/demo-catalog/courses';
+import { findQuizByLessonId } from '@/fixtures/demo-catalog/quizzes';
 import { useCoursesStore } from '@/stores/courses';
 import { useToast } from '@/composables/useToast';
 import LessonPlayer from '@/components/courses/LessonPlayer.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import AppBadge from '@/components/common/AppBadge.vue';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 const route = useRoute();
 const router = useRouter();
@@ -20,6 +21,7 @@ const lessonId = computed(() => route.params.lessonId as string);
 
 const lessonData = computed(() => findLessonById(lessonId.value));
 const lesson = computed(() => lessonData.value?.lesson);
+const safeLessonContent = computed(() => sanitizeHtml(lesson.value?.content ?? ''));
 const course = computed(() =>
   lessonData.value ? findCourseById(lessonData.value.courseId) : undefined
 );
@@ -105,7 +107,7 @@ function markComplete() {
             </AppButton>
           </div>
 
-          <div class="lesson-content" v-html="lesson.content"></div>
+          <div class="lesson-content" v-html="safeLessonContent"></div>
 
           <div v-if="lesson.keyPoints && lesson.keyPoints.length" class="key-points">
             <h3 class="font-ar text-navy">

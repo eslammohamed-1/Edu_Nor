@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import TheLayout from '@/layouts/TheLayout.vue';
+import AppToast from '@/components/common/AppToast.vue';
 import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
 import { useAuthStore } from '@/stores/auth';
 import AppIcon from '@/components/common/AppIcon.vue';
@@ -19,6 +20,7 @@ const showMaintenance = computed(() => maintenanceMode.value && !isSuperAdmin.va
 </script>
 
 <template>
+  <AppToast />
   <!-- Maintenance mode overlay for non-super-admins -->
   <div v-if="showMaintenance" class="maintenance-overlay">
     <div class="maintenance-card">

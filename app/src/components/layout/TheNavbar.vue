@@ -17,10 +17,10 @@ function closeMobile() {
   isMobileMenuOpen.value = false;
 }
 
-function handleLogout() {
-  logout();
+async function handleLogout() {
+  await logout();
   isUserMenuOpen.value = false;
-  router.push('/');
+  await router.push('/');
 }
 </script>
 

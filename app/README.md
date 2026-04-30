@@ -1,5 +1,35 @@
-# Vue 3 + TypeScript + Vite
+# EduNor Web App
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+واجهة Vue 3 + TypeScript + Vite لمنصة إديو نور.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## التشغيل
+
+```bash
+npm install
+npm run dev
+```
+
+لربط الواجهة بالـ API أنشئ `app/.env.local`:
+
+```env
+VITE_API_BASE_URL=http://localhost:3001
+```
+
+بدون `VITE_API_BASE_URL` تعمل مصادقة Mock في وضع التطوير فقط. في production يجب تشغيل API حقيقي.
+
+## المحتوى
+
+الكتالوج يتولد من CSV:
+
+```bash
+cd ..
+npm run build:catalog
+```
+
+السكربت يولد ملفات مقسمة داخل `app/src/fixtures/demo-catalog/generated/` حتى لا يتم تحميل كل الكتالوج في أول chunk.
+
+## البناء
+
+```bash
+npm run build
+```

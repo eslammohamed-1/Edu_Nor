@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAdminUsersStore } from '@/stores/admin/adminUsers';
 import DataTable from '@/components/admin/shared/DataTable.vue';
 import FilterBar from '@/components/admin/shared/FilterBar.vue';
@@ -11,9 +11,15 @@ import { useImpersonate } from '@/composables/useImpersonate';
 import type { User } from '@/types/auth';
 import { toCSV, downloadCSV } from '@/lib/csv';
 import type { Column } from '@/components/admin/shared/DataTable.vue';
+import { useToast } from '@/composables/useToast';
 
 const store = useAdminUsersStore();
+const toast = useToast();
 const { start: impersonateStart } = useImpersonate();
+
+onMounted(() => {
+  void store.fetchUsers();
+});
 
 const searchQ = ref('');
 const filters = ref<Record<string, string>>({});
@@ -64,21 +70,29 @@ function openEdit(row: User) {
   showForm.value = true;
 }
 
-function handleSave(data: Partial<User>) {
-  if (editUser.value) {
-    store.updateUser(editUser.value.id, data);
-  } else {
-    store.createUser(data as User);
+async function handleSave(data: Partial<User> & { password?: string }) {
+  try {
+    if (editUser.value) {
+      await store.updateUser(editUser.value.id, data);
+    } else {
+      const created = await store.createUser(data);
+      if (!created) {
+        toast.error('تعذّر إنشاء المستخدم. تحقق من البيانات أو تشغيل الخادم.');
+        return;
+      }
+    }
+    showForm.value = false;
+  } catch {
+    toast.error('حدث خطأ أثناء الحفظ');
   }
-  showForm.value = false;
 }
 
 function askDelete(row: User) {
   confirmDelete.value = { open: true, userId: row.id, name: row.name };
 }
 
-function doDelete() {
-  store.deleteUser(confirmDelete.value.userId);
+async function doDelete() {
+  await store.deleteUser(confirmDelete.value.userId);
   confirmDelete.value.open = false;
 }
 
@@ -86,14 +100,18 @@ function askBan(row: User & { banned?: boolean }) {
   confirmBan.value = { open: true, userId: row.id, name: row.name, banned: !!row.banned };
 }
 
-function doBan() {
-  store.toggleBan(confirmBan.value.userId);
+async function doBan() {
+  await store.toggleBan(confirmBan.value.userId);
   confirmBan.value.open = false;
 }
 
-function doResetPassword(row: User) {
-  store.resetPassword(row.id);
-  alert(`تم تسجيل طلب إعادة تعيين كلمة المرور لـ ${row.name} في سجل التدقيق.`);
+async function doResetPassword(row: User) {
+  const temp = await store.resetPassword(row.id);
+  if (temp) {
+    alert(`تم تعيين كلمة مرور مؤقتة لـ ${row.name}:\n\n${temp}\n\nارسلها للمستخدم ثم اطلب منه تغييرها.`);
+  } else {
+    alert(`تم تسجيل طلب إعادة تعيين كلمة المرور لـ ${row.name} في سجل التدقيق (وضع محلي بدون خادم).`);
+  }
 }
 
 function doImpersonate(row: User) {
@@ -142,6 +160,7 @@ function formatDate(iso: string): string {
         :columns="(columns as unknown as Column<Record<string, unknown>>[])"
         :rows="(filteredUsers as unknown as Record<string, unknown>[])"
         :selectable="true"
+        :loading="store.loading"
         :page-size="10"
         empty-text="لا يوجد مستخدمون مطابقون للبحث"
       >

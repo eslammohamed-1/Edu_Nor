@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useCoursesStore } from '@/stores/courses';
-import { courses as allCourses } from '@/data/courses';
-import { subjects as allSubjects } from '@/data/subjects';
+import { courses as allCourses } from '@/fixtures/demo-catalog/courses';
+import { subjects as allSubjects } from '@/fixtures/demo-catalog/subjects';
 import DashboardStats from '@/components/dashboard/DashboardStats.vue';
 import RecentLessons from '@/components/dashboard/RecentLessons.vue';
 import ProgressChart from '@/components/dashboard/ProgressChart.vue';

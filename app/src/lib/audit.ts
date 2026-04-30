@@ -1,5 +1,6 @@
 import { useAdminAuditStore } from '@/stores/admin/adminAudit';
 import { useAuthStore } from '@/stores/auth';
+import type { UserRole } from '@/types/auth';
 
 export function audit(
   action: string,
@@ -20,7 +21,26 @@ export function audit(
       action,
       target,
       meta,
-      ip: '127.0.0.1'
+      ip: '127.0.0.1',
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+    });
+  } catch {}
+}
+
+/** Security events بدون مستخدم مسجّل (محاولات دخول فاشلة، إلخ) */
+export function auditGuest(
+  action: string,
+  actor: { id: string; name: string; role: UserRole },
+  meta?: Record<string, unknown>
+) {
+  try {
+    const auditStore = useAdminAuditStore();
+    auditStore.log({
+      actor,
+      action,
+      meta,
+      ip: '127.0.0.1',
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
     });
   } catch {}
 }

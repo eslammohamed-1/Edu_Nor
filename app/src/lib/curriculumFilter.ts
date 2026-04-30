@@ -1,8 +1,8 @@
 import type { Subject, Stage } from '@/types/course';
 import type { User } from '@/types/auth';
 import type { CurriculumOffering } from '@/types/curriculum';
-import curriculumData from '@/data/curriculumOfferings.json';
-import { subjects as allSubjects } from '@/data/subjects';
+import curriculumData from '@/fixtures/demo-catalog/curriculumOfferings.json';
+import { subjects as allSubjects } from '@/fixtures/demo-catalog/subjects';
 
 const { offerings } = curriculumData as { offerings: CurriculumOffering[] };
 

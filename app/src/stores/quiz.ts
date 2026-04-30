@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Quiz, QuizAnswer, QuizAttempt } from '@/types/quiz';
-import { findQuizById } from '@/data/quizzes';
+import { findQuizById } from '@/fixtures/demo-catalog/quizzes';
 
 const ATTEMPTS_KEY = 'edunor_quiz_attempts';
 

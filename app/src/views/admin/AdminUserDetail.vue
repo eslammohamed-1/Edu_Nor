@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAdminUsersStore } from '@/stores/admin/adminUsers';
 import RoleBadge from '@/components/admin/users/RoleBadge.vue';
@@ -11,11 +11,15 @@ const route = useRoute();
 const router = useRouter();
 const store = useAdminUsersStore();
 
+onMounted(() => {
+  void store.fetchUsers();
+});
+
 const user = computed(() => store.getById(route.params.id as string));
 const showForm = ref(false);
 
-function handleSave(data: Partial<User>) {
-  if (user.value) store.updateUser(user.value.id, data);
+async function handleSave(data: Partial<User> & { password?: string }) {
+  if (user.value) await store.updateUser(user.value.id, data);
   showForm.value = false;
 }
 

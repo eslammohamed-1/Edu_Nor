@@ -3,40 +3,11 @@ import AppButton from '@/components/common/AppButton.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppCard from '@/components/common/AppCard.vue';
 import AppBadge from '@/components/common/AppBadge.vue';
-
-const features = [
-  {
-    title: 'تعلم ذكي',
-    desc: 'نستخدم تقنيات الذكاء الاصطناعي لتخصيص المحتوى لكل طالب.',
-    icon: 'Brain',
-    color: 'var(--color-gold)'
-  },
-  {
-    title: 'أسئلة تفاعلية',
-    desc: 'أكثر من 13 نوعاً من الأسئلة الممتعة والشيقة.',
-    icon: 'Zap',
-    color: 'var(--color-teal)'
-  },
-  {
-    title: 'محتوى معتمد',
-    desc: 'جميع المناهج مطابقة للمعايير التعليمية الرسمية.',
-    icon: 'ShieldCheck',
-    color: 'var(--color-navy)'
-  }
-];
-
-const stages = [
-  { name: 'الابتدائي', icon: 'Sun', color: 'var(--color-gold)', count: '6 سنوات دراسية' },
-  { name: 'الإعدادي', icon: 'Cloud', color: 'var(--color-info)', count: '3 سنوات دراسية' },
-  { name: 'الثانوي', icon: 'Star', color: 'var(--color-navy)', count: '3 سنوات دراسية' }
-];
-
-const stats = [
-  { label: 'طالب مشترك', value: '+50,000', icon: 'Users' },
-  { label: 'سؤال تفاعلي', value: '+10,000', icon: 'HelpCircle' },
-  { label: 'كورس تعليمي', value: '+500', icon: 'PlayCircle' },
-  { label: 'تقييم إيجابي', value: '4.9/5', icon: 'Star' }
-];
+import {
+  landingFeatures as features,
+  landingStages as stages,
+  landingMarketingStats as stats
+} from '@/fixtures/demo/landingPage.seed';
 </script>
 
 <template>

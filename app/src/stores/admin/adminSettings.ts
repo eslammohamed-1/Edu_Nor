@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { audit } from '@/lib/audit';
+import type { PasswordPolicy } from '@/lib/passwordPolicy';
 
 const STORAGE_KEY = 'edunor.admin.settings';
 
@@ -38,6 +39,10 @@ export interface PlatformSettings {
     publicCatalog: boolean;
     darkModeDefault: boolean;
   };
+  security: {
+    passwordPolicy: PasswordPolicy;
+    twoFactorEnabled: boolean;
+  };
 }
 
 const defaults: PlatformSettings = {
@@ -73,15 +78,45 @@ const defaults: PlatformSettings = {
     registrationOpen: true,
     publicCatalog: true,
     darkModeDefault: false
+  },
+  security: {
+    passwordPolicy: {
+      minLength: 8,
+      requireUppercase: false,
+      requireNumber: true,
+      requireSymbol: false,
+      maxAgeDays: 0
+    },
+    twoFactorEnabled: false
   }
 };
+
+function mergeSettings(saved: Partial<PlatformSettings>): PlatformSettings {
+  return {
+    ...defaults,
+    ...saved,
+    general: { ...defaults.general, ...saved.general },
+    branding: { ...defaults.branding, ...saved.branding },
+    seo: { ...defaults.seo, ...saved.seo },
+    integrations: { ...defaults.integrations, ...saved.integrations },
+    features: { ...defaults.features, ...saved.features },
+    security: {
+      ...defaults.security,
+      ...saved.security,
+      passwordPolicy: {
+        ...defaults.security.passwordPolicy,
+        ...saved.security?.passwordPolicy
+      }
+    }
+  };
+}
 
 function readStorage(): PlatformSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const saved = JSON.parse(raw) as PlatformSettings;
-      return { ...defaults, ...saved };
+      const saved = JSON.parse(raw) as Partial<PlatformSettings>;
+      return mergeSettings(saved);
     }
   } catch {}
   return { ...defaults };
@@ -98,16 +133,28 @@ export const useAdminSettingsStore = defineStore('adminSettings', () => {
     section: K,
     payload: Partial<PlatformSettings[K]>
   ) {
-    settings.value[section] = { ...settings.value[section], ...payload } as PlatformSettings[K];
+    if (section === 'security') {
+      const p = payload as Partial<PlatformSettings['security']>;
+      settings.value.security = {
+        ...settings.value.security,
+        ...p,
+        passwordPolicy: {
+          ...settings.value.security.passwordPolicy,
+          ...(p.passwordPolicy || {})
+        }
+      };
+    } else {
+      settings.value[section] = { ...settings.value[section], ...payload } as PlatformSettings[K];
+    }
     save();
     audit('settings.update', { type: 'settings', id: section }, { section });
     applyBranding();
   }
 
   function reset<K extends keyof PlatformSettings>(section: K) {
-    settings.value[section] = { ...defaults[section] } as PlatformSettings[K];
+    settings.value[section] = structuredClone(defaults[section]) as PlatformSettings[K];
     save();
-    audit('settings.reset', { type: 'settings', id: section });
+    audit('settings.reset', { type: 'settings', id: String(section) });
     applyBranding();
   }
 

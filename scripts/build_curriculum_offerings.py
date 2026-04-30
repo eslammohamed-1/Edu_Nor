@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-يولّد app/src/data/curriculumOfferings.json من curriculum_matrix.csv
+يولّد app/src/fixtures/demo-catalog/curriculumOfferings.json من curriculum_matrix.csv
 معرّف 12 رقمی: S(1) G(1) T(1) + تسلسل 9 أرقام.
 S: 1=ابتدائي 2=إعدادي 3=ثانوي
 G: رقم الصف داخل المرحلة (1..6 أو 1..3)
@@ -38,7 +38,7 @@ GRADES = {
     ],
 }
 
-# يجب أن تطابق slugs في app/src/data/subjects.ts
+# يجب أن تطابق slugs في app/src/fixtures/demo-catalog/subjects.ts
 ALLOWED_SLUGS = {
     "arabic",
     "english",
@@ -109,7 +109,8 @@ def main() -> int:
         default=Path(__file__).resolve().parent.parent
         / "app"
         / "src"
-        / "data"
+        / "fixtures"
+        / "demo-catalog"
         / "curriculumOfferings.json",
     )
     args = parser.parse_args()

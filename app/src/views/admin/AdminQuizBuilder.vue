@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAdminQuizzesStore } from '@/stores/admin/adminQuizzes';
 import { useAdminContentStore } from '@/stores/admin/adminContent';
 import AppIcon from '@/components/common/AppIcon.vue';
+import type { AnyQuestion } from '@/types/quiz';
 
 const route = useRoute();
 const router = useRouter();
@@ -23,7 +24,7 @@ const questions = ref<Array<{
 watch(quiz, (q) => {
   if (q) {
     meta.value = { title: q.title, description: q.description || '', duration: q.duration, passingScore: q.passingScore, grade: q.grade, subjectId: q.subjectId };
-    questions.value = q.questions.map(qs => ({ ...qs, type: 'mcq', points: 1 }));
+    questions.value = q.questions as unknown as typeof questions.value;
   }
 }, { immediate: true });
 
@@ -69,12 +70,7 @@ function saveQuiz() {
   if (!quiz.value) return;
   store.updateQuiz(quiz.value.id, {
     ...meta.value,
-    questions: questions.value.map(q => ({
-      id: q.id, text: q.text,
-      options: q.options || [],
-      correctOptionId: q.correctOptionId || '',
-      explanation: q.explanation || ''
-    }))
+    questions: questions.value as unknown as AnyQuestion[],
   });
   router.push('/admin/quizzes');
 }

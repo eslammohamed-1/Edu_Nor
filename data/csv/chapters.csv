@@ -1,0 +1,10 @@
+id,course_id,title,description,sort_order
+a1-sec-1,arabic-sec-1-intro,الوحدة الأولى: النص والفهم,قراءة وتحليل نصوص,1
+m1-sec-1,math-sec-1-basics,الدوال,مفاهيم أساسية,1
+ch1,math-sec-3-algebra,أساسيات الجبر,المقدمة إلى المعادلات والمتغيرات,1
+ch2,math-sec-3-algebra,الدوال والمتباينات,دراسة الدوال وحل المتباينات,2
+gch1,math-sec-3-geometry,الخط المستقيم,معادلة الخط المستقيم وخصائصه,1
+pch1,physics-sec-3,المجال الكهربائي,المجال والجهد الكهربي,1
+ach1,arabic-prep-2,أقسام الكلام,الاسم والفعل والحرف,1
+ech1,english-prep-3,Tenses,"Present, past, and future tenses",1
+sch1,science-prep-1,الكائنات الحية,تصنيف الكائنات الحية,1

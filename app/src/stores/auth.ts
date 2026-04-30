@@ -1,64 +1,59 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { User, LoginPayload, RegisterPayload, UserRole } from '@/types/auth';
+import type { User, LoginPayload, RegisterPayload } from '@/types/auth';
 import type { Stage } from '@/types/course';
-import { SUPER_ADMIN_EMAIL, isSuperAdminCredentials } from '@/config/superAdmin';
-import { useCoursesStore } from '@/stores/courses';
-
-const STORAGE_KEY = 'edunor_auth';
-
-interface StoredAuth {
-  user: User;
-  token: string;
-}
-
-function readStorage(): StoredAuth | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as StoredAuth) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStorage(data: StoredAuth | null) {
-  if (data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-}
+import { ENABLE_MOCK_AUTH, isSuperAdminCredentials, SUPER_ADMIN_EMAIL } from '@/config/superAdmin';
+import {
+  normalizeStoredUser,
+  readStoredAuth,
+  writeStoredAuth,
+  type StoredAuthPayload
+} from '@/lib/authStorage';
+import { apiLogoutRefresh, getApiBase } from '@/services/http/client';
+import { loginRemote, registerRemote } from '@/services/authService';
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** ترقية جلسات قديمة قبل إضافة role أو حقول stage */
-function normalizeUser(raw: User): User {
-  const role: UserRole = raw.role ?? 'student';
-  return {
-    ...raw,
-    role,
-    permissions: raw.permissions
-  };
-}
-
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
   const token = ref<string | null>(null);
+  const refreshToken = ref<string | null>(null);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
   const isAuthenticated = computed(() => !!user.value && !!token.value);
   const isSuperAdmin = computed(() => user.value?.role === 'super_admin');
 
+  function applySession(payload: StoredAuthPayload, persistent = true) {
+    user.value = normalizeStoredUser(payload.user);
+    token.value = payload.token;
+    refreshToken.value = payload.refreshToken ?? null;
+    writeStoredAuth(
+      {
+        user: user.value,
+        token: payload.token,
+        refreshToken: payload.refreshToken
+      },
+      persistent
+    );
+  }
+
+  function clearSession() {
+    user.value = null;
+    token.value = null;
+    refreshToken.value = null;
+    error.value = null;
+    writeStoredAuth(null);
+  }
+
   function hydrate() {
-    const stored = readStorage();
+    const stored = readStoredAuth();
     if (stored) {
-      user.value = normalizeUser(stored.user);
+      user.value = normalizeStoredUser(stored.user);
       token.value = stored.token;
-      // مزامنة سياق المنهج فور استعادة الجلسة
-      useCoursesStore().applyUserCurriculumContext(user.value);
+      refreshToken.value = stored.refreshToken ?? null;
     }
   }
 
@@ -67,6 +62,16 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
 
     try {
+      const apiBase = getApiBase();
+      if (apiBase) {
+        const session = await loginRemote(payload);
+        applySession(session, payload.remember ?? true);
+        return true;
+      }
+      if (!ENABLE_MOCK_AUTH) {
+        throw new Error('الخادم غير متصل. عرّف VITE_API_BASE_URL لتسجيل الدخول.');
+      }
+
       await delay(700);
 
       if (!payload.email || !payload.password) {
@@ -97,12 +102,8 @@ export const useAuthStore = defineStore('auth', () => {
             role: 'student'
           };
 
-      const mockToken = 'mock_token_' + Math.random().toString(36).slice(2);
-
-      user.value = mockUser;
-      token.value = mockToken;
-      writeStorage({ user: mockUser, token: mockToken });
-      useCoursesStore().applyUserCurriculumContext(mockUser);
+      const mockTok = 'mock_token_' + Math.random().toString(36).slice(2);
+      applySession({ user: mockUser, token: mockTok }, payload.remember ?? true);
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -117,6 +118,16 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
 
     try {
+      const apiBase = getApiBase();
+      if (apiBase) {
+        const session = await registerRemote(payload);
+        applySession(session);
+        return true;
+      }
+      if (!ENABLE_MOCK_AUTH) {
+        throw new Error('الخادم غير متصل. عرّف VITE_API_BASE_URL لإنشاء الحساب.');
+      }
+
       await delay(900);
 
       if (payload.password !== payload.confirmPassword) {
@@ -140,12 +151,8 @@ export const useAuthStore = defineStore('auth', () => {
         createdAt: new Date().toISOString(),
         role: 'student'
       };
-      const mockToken = 'mock_token_' + Math.random().toString(36).slice(2);
-
-      user.value = mockUser;
-      token.value = mockToken;
-      writeStorage({ user: mockUser, token: mockToken });
-      useCoursesStore().applyUserCurriculumContext(mockUser);
+      const mockTok = 'mock_token_' + Math.random().toString(36).slice(2);
+      applySession({ user: mockUser, token: mockTok });
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
@@ -155,12 +162,9 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
-    user.value = null;
-    token.value = null;
-    error.value = null;
-    writeStorage(null);
-    useCoursesStore().applyUserCurriculumContext(null);
+  async function logout() {
+    await apiLogoutRefresh();
+    clearSession();
   }
 
   function clearError() {
@@ -170,6 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     token,
+    refreshToken,
     isLoading,
     error,
     isAuthenticated,

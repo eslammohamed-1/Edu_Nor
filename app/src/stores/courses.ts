@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Stage } from '@/types/course';
 import type { User } from '@/types/auth';
-import { courses as coursesData } from '@/data/courses';
+import { courses as coursesData } from '@/fixtures/demo-catalog/courses';
 import { getDisplayedSubjects } from '@/lib/curriculumFilter';
 
 const COMPLETED_KEY = 'edunor_completed_lessons';

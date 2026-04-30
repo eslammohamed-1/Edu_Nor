@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
 import AdminSidebar from './AdminSidebar.vue';
 import AdminTopbar from './AdminTopbar.vue';
 import AdminBreadcrumbs from './AdminBreadcrumbs.vue';
+import { getApiBase } from '@/services/http/client';
+import { useAdminUsersStore } from '@/stores/admin/adminUsers';
 
 const sidebarRef = ref<InstanceType<typeof AdminSidebar>>();
+
+onMounted(() => {
+  if (getApiBase()) void useAdminUsersStore().fetchUsers();
+});
 
 function toggleMobile() {
   if (sidebarRef.value) {

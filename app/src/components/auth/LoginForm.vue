@@ -7,8 +7,16 @@ import AppIcon from '@/components/common/AppIcon.vue';
 import { useAuth } from '@/composables/useAuth';
 import { useToast } from '@/composables/useToast';
 import { SUPER_ADMIN_EMAIL } from '@/config/superAdmin';
+import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
+import {
+  clearLoginThrottle,
+  getLoginLockoutRemainingMs,
+  recordFailedLoginAttempt
+} from '@/lib/loginThrottle';
+import { auditGuest } from '@/lib/audit';
 
 const isDev = import.meta.env.DEV;
+const settingsStore = useAdminSettingsStore();
 
 const router = useRouter();
 const { login, isLoading, error, clearError, isSuperAdmin } = useAuth();
@@ -16,7 +24,8 @@ const toast = useToast();
 
 const form = reactive({
   email: '',
-  password: ''
+  password: '',
+  remember: true
 });
 
 const errors = reactive({
@@ -39,11 +48,12 @@ function validate(): boolean {
     ok = false;
   }
 
+  const minLen = settingsStore.settings.security.passwordPolicy.minLength;
   if (!form.password) {
     errors.password = 'كلمة المرور مطلوبة';
     ok = false;
-  } else if (form.password.length < 6) {
-    errors.password = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+  } else if (form.password.length < minLen) {
+    errors.password = `كلمة المرور يجب أن تكون ${minLen} أحرف على الأقل`;
     ok = false;
   }
 
@@ -54,14 +64,36 @@ async function handleSubmit() {
   clearError();
   if (!validate()) return;
 
-  const success = await login({ email: form.email, password: form.password });
+  const lockMs = getLoginLockoutRemainingMs();
+  if (lockMs > 0) {
+    toast.error(`محاولات كثيرة. حاول مرة أخرى بعد ${Math.ceil(lockMs / 1000)} ثانية.`);
+    return;
+  }
+
+  const success = await login({
+    email: form.email,
+    password: form.password,
+    remember: form.remember
+  });
   if (success) {
+    clearLoginThrottle();
     toast.success(
       isSuperAdmin.value ? 'مرحباً بك كمدير للنظام' : 'تم تسجيل الدخول بنجاح 👋'
     );
     router.push(isSuperAdmin.value ? '/admin' : '/dashboard');
   } else if (error.value) {
-    toast.error(error.value);
+    recordFailedLoginAttempt();
+    auditGuest(
+      'auth.login.failed',
+      { id: 'guest', name: 'زائر', role: 'student' },
+      { email: form.email }
+    );
+    const lockAfter = getLoginLockoutRemainingMs();
+    if (lockAfter > 0) {
+      toast.error(`تم قفل المحاولات دقيقة واحدة بعد عدة إخفاقات. انتظر ${Math.ceil(lockAfter / 1000)} ثانية.`);
+    } else {
+      toast.error(error.value);
+    }
   }
 }
 </script>
@@ -104,7 +136,7 @@ async function handleSubmit() {
 
       <div class="form-options">
         <label class="remember-me">
-          <input type="checkbox" />
+          <input v-model="form.remember" type="checkbox" />
           <span class="font-ar">تذكرني</span>
         </label>
         <RouterLink to="/forgot-password" class="forgot-link font-ar">

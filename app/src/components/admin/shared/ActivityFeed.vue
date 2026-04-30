@@ -28,6 +28,8 @@ function actionLabel(action: string): string {
     'lesson.create': 'أنشأ درساً',
     'quiz.create': 'أنشأ اختباراً',
     'settings.update': 'عدّل الإعدادات',
+    'auth.login.failed': 'فشل تسجيل الدخول',
+    'security.2fa.enabled': 'فعّل التحقق بخطوتين',
   };
   return labels[action] || action;
 }

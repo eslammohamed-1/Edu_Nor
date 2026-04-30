@@ -42,6 +42,8 @@ export interface Course {
   description: string;
   stage: Stage;
   grade: string;
+  /** ثانوي: المسار إن وُجد */
+  secondaryTrack?: 'scientific_ar' | 'scientific_languages' | 'literary';
   /** من استيراد ToC (Excel) */
   academicYear?: string;
   term?: number;

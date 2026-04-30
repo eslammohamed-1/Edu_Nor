@@ -8,11 +8,13 @@ const route = useRoute();
 interface Crumb { label: string; to?: string; }
 
 const crumbs = computed<Crumb[]>(() => {
-  const list: Crumb[] = [{ label: 'لوحة التحكم', to: '/admin' }];
+  const list: Crumb[] = [{ label: 'لوحة التحكم', to: route.path === '/admin' ? undefined : '/admin' }];
   const matched = route.matched.slice(1); // skip the AdminLayout parent
   for (const r of matched) {
     if (r.meta?.title) {
       const title = (r.meta.title as string).split(' — ')[0];
+      const prev = list[list.length - 1];
+      if (prev && prev.label === title) continue;
       list.push({ label: title, to: r.path === route.path ? undefined : r.path });
     }
   }

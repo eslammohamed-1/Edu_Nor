@@ -37,6 +37,10 @@ async function handleSave() {
   isSaving.value = false;
   toast.success('تم حفظ التغييرات');
 }
+
+async function handleLogout() {
+  await logout();
+}
 </script>
 
 <template>
@@ -89,7 +93,7 @@ async function handleSave() {
               <h4 class="font-ar">تسجيل الخروج</h4>
               <p class="font-ar text-secondary">أغلق جلستك الحالية على هذا الجهاز.</p>
             </div>
-            <AppButton variant="danger" @click="logout">
+            <AppButton variant="danger" @click="handleLogout">
               <AppIcon name="LogOut" :size="16" />
               <span style="margin-inline-start: 6px">تسجيل الخروج</span>
             </AppButton>

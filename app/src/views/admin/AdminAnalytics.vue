@@ -6,6 +6,7 @@ import { useAdminContentStore } from '@/stores/admin/adminContent';
 import { useAdminQuizzesStore } from '@/stores/admin/adminQuizzes';
 import AppIcon from '@/components/common/AppIcon.vue';
 import { downloadCSV, toCSV } from '@/lib/csv';
+import { seededSeries } from '@/lib/chartSeed';
 
 const usersStore = useAdminUsersStore();
 const contentStore = useAdminContentStore();
@@ -16,10 +17,8 @@ const range = ref<'7d' | '30d' | '90d'>('30d');
 // Mock chart data
 const signupData = computed(() => {
   const days = range.value === '7d' ? 7 : range.value === '30d' ? 30 : 90;
-  return Array.from({ length: days }, (_, i) => ({
-    day: i + 1,
-    value: Math.floor(Math.random() * 8) + 1
-  }));
+  const seed = usersStore.totalUsers + 404;
+  return seededSeries(days, seed, 12, 1).map((value, i) => ({ day: i + 1, value }));
 });
 
 const maxSignups = computed(() => Math.max(...signupData.value.map(d => d.value), 1));
@@ -44,6 +43,10 @@ function exportReport() {
     toCSV(rows as Record<string, unknown>[], ['name', 'email', 'role', 'grade', 'createdAt']));
 }
 
+function exportReportPdf() {
+  window.print();
+}
+
 // SVG bar chart helpers
 const BAR_H = 80;
 function barHeight(val: number) { return (val / maxSignups.value) * BAR_H; }
@@ -59,8 +62,11 @@ function barHeight(val: number) { return (val / maxSignups.value) * BAR_H; }
             {{ r === '7d' ? '7 أيام' : r === '30d' ? '30 يوم' : '90 يوم' }}
           </button>
         </div>
-        <button class="btn btn-outline font-ar" @click="exportReport">
+        <button class="btn btn-outline font-ar" type="button" @click="exportReport">
           <AppIcon name="Download" :size="14" /> تصدير CSV
+        </button>
+        <button class="btn btn-outline font-ar print-hide" type="button" @click="exportReportPdf">
+          <AppIcon name="Printer" :size="14" /> طباعة / PDF
         </button>
       </div>
     </div>
@@ -171,4 +177,9 @@ function barHeight(val: number) { return (val / maxSignups.value) * BAR_H; }
 .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.25rem; border-radius: var(--radius-md); border: none; cursor: pointer; font-size: 0.875rem; font-weight: 600; transition: all var(--duration-fast); }
 .btn-outline { background: none; border: 1.5px solid var(--border-color); color: var(--text-secondary); }
 .btn-outline:hover { border-color: var(--color-navy); color: var(--color-navy); }
+
+@media print {
+  .print-hide { display: none !important; }
+  .admin-analytics { padding: 0; }
+}
 </style>

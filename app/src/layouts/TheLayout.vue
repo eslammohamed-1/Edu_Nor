@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { computed } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 import TheNavbar from '@/components/layout/TheNavbar.vue';
 import TheFooter from '@/components/layout/TheFooter.vue';
-import AppToast from '@/components/common/AppToast.vue';
+
+const route = useRoute();
+/** لوحة الإدارة لها شريطها الجانبي والعلوي؛ لا نكرر شريط الموقع العام */
+const isAdminShell = computed(() => route.path.startsWith('/admin'));
 </script>
 
 <template>
   <div class="the-layout">
-    <TheNavbar />
-    <main class="layout-main">
+    <TheNavbar v-if="!isAdminShell" />
+    <main class="layout-main" :class="{ 'layout-main--admin': isAdminShell }">
       <RouterView v-slot="{ Component }">
         <Transition name="fade" mode="out-in">
           <component :is="Component" />
         </Transition>
       </RouterView>
     </main>
-    <TheFooter />
-    <AppToast />
+    <TheFooter v-if="!isAdminShell" />
   </div>
 </template>
 
@@ -31,6 +34,10 @@ import AppToast from '@/components/common/AppToast.vue';
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+.layout-main--admin {
+  /* يملأ الشاشة بدون فراغ من غياب النافبار */
+  min-height: 100vh;
 }
 
 .fade-enter-active,

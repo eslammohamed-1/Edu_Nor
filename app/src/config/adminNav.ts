@@ -46,6 +46,7 @@ export const adminNavSections: NavSection[] = [
     title: 'النظام',
     links: [
       { to: '/admin/settings', label: 'الإعدادات', icon: 'Settings' },
+      { to: '/admin/security', label: 'الأمان والجلسات', icon: 'Lock' },
       { to: '/admin/audit', label: 'سجل التدقيق', icon: 'Shield' }
     ]
   }

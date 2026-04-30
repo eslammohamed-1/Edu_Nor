@@ -1,0 +1,14 @@
+{
+  "name": "edu-nor",
+  "private": true,
+  "description": "Monorepo root — استخدم npm من هنا لتشغيل الواجهة دون cd app",
+  "scripts": {
+    "dev": "npm run dev --prefix app",
+    "dev:app": "npm run dev --prefix app",
+    "dev:server": "npm run dev --prefix server",
+    "build": "npm run build --prefix app",
+    "build:server": "npm run build --prefix server",
+    "build:catalog": "python3 scripts/build_catalog_from_csv.py",
+    "preview": "npm run preview --prefix app"
+  }
+}

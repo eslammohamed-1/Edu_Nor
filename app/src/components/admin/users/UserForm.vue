@@ -3,6 +3,8 @@ import { ref, watch } from 'vue';
 import type { User, UserRole } from '@/types/auth';
 import { PERMISSIONS } from '@/lib/permissions';
 import AppIcon from '@/components/common/AppIcon.vue';
+import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
+import { validatePasswordAgainstPolicy } from '@/lib/passwordPolicy';
 
 const props = defineProps<{
   open: boolean;
@@ -13,6 +15,8 @@ const emit = defineEmits<{
   close: [];
   save: [data: Partial<User> & { password?: string }];
 }>();
+
+const settingsStore = useAdminSettingsStore();
 
 const form = ref({ name: '', email: '', password: '', grade: '', role: 'student' as UserRole, permissions: [] as string[] });
 const errors = ref<Record<string, string>>({});
@@ -46,7 +50,16 @@ function validate(): boolean {
   errors.value = {};
   if (!form.value.name.trim()) errors.value.name = 'الاسم مطلوب';
   if (!form.value.email.trim() || !/\S+@\S+\.\S+/.test(form.value.email)) errors.value.email = 'بريد إلكتروني صحيح مطلوب';
-  if (!props.editUser && form.value.password.length < 6) errors.value.password = 'كلمة المرور 6 أحرف على الأقل';
+
+  const needPassword = !props.editUser;
+  const updatingPassword = !!props.editUser && form.value.password.length > 0;
+  if (needPassword || updatingPassword) {
+    const policyErr = validatePasswordAgainstPolicy(
+      form.value.password,
+      settingsStore.settings.security.passwordPolicy
+    );
+    if (policyErr) errors.value.password = policyErr;
+  }
   return Object.keys(errors.value).length === 0;
 }
 

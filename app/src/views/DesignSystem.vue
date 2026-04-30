@@ -7,7 +7,6 @@ import AppIcon from '@/components/common/AppIcon.vue';
 import AppProgressBar from '@/components/common/AppProgressBar.vue';
 import AppSkeleton from '@/components/common/AppSkeleton.vue';
 import AppModal from '@/components/common/AppModal.vue';
-import AppToast from '@/components/common/AppToast.vue';
 import { useToast } from '@/composables/useToast';
 import { ref } from 'vue';
 
@@ -20,8 +19,6 @@ const inputValue = ref('');
   <div class="design-system-preview container p-lg">
     <h1 class="text-navy mb-lg">EduNor Design System Preview</h1>
     
-    <AppToast />
-
     <!-- Buttons -->
     <section class="mb-2xl">
       <h2 class="mb-md">Buttons</h2>

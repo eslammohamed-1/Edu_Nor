@@ -10,6 +10,8 @@ import { stageLabel, trackLabel } from '@/config/educationTracks';
 import type { Stage } from '@/types/course';
 import type { SecondaryTrack } from '@/types/auth';
 import { digitsOnlyNormalized } from '@/lib/phoneDigits';
+import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
+import { validatePasswordAgainstPolicy } from '@/lib/passwordPolicy';
 
 const props = defineProps<{
   stage: Stage;
@@ -20,6 +22,7 @@ const props = defineProps<{
 const router = useRouter();
 const { register, isLoading, error, clearError } = useAuth();
 const toast = useToast();
+const settingsStore = useAdminSettingsStore();
 
 const stageLine = computed(() => {
   const base = `${stageLabel(props.stage)} — ${props.grade}`;
@@ -86,9 +89,15 @@ function validate(): boolean {
   if (!form.password) {
     errors.password = 'كلمة المرور مطلوبة';
     ok = false;
-  } else if (form.password.length < 6) {
-    errors.password = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-    ok = false;
+  } else {
+    const policyErr = validatePasswordAgainstPolicy(
+      form.password,
+      settingsStore.settings.security.passwordPolicy
+    );
+    if (policyErr) {
+      errors.password = policyErr;
+      ok = false;
+    }
   }
 
   if (form.password !== form.confirmPassword) {

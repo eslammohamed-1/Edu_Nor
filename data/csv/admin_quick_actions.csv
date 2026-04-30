@@ -1,0 +1,5 @@
+label,icon,to,color
+مستخدم جديد,UserPlus,/admin/users,#1E3A5F
+مادة جديدة,Plus,/admin/subjects,#F4A825
+اختبار جديد,ClipboardList,/admin/quizzes,#2EC4B6
+تصدير تقرير,Download,/admin/analytics,#27AE60

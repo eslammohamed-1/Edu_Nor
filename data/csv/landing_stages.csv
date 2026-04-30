@@ -1,0 +1,4 @@
+name,icon,color,count
+الابتدائي,Sun,var(--color-gold),6 سنوات دراسية
+الإعدادي,Cloud,var(--color-info),3 سنوات دراسية
+الثانوي,Star,var(--color-navy),3 سنوات دراسية

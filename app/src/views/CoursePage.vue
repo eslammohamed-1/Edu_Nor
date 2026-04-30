@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { findSubjectBySlug } from '@/data/subjects';
-import { findCourseById } from '@/data/courses';
+import { findSubjectBySlug } from '@/fixtures/demo-catalog/subjects';
+import { findCourseById } from '@/fixtures/demo-catalog/courses';
 import { useCoursesStore } from '@/stores/courses';
 import CourseCard from '@/components/courses/CourseCard.vue';
 import LessonCard from '@/components/courses/LessonCard.vue';
@@ -25,6 +25,9 @@ const courseId = computed(() => route.params.courseId as string | undefined);
 const subject = computed(() => (subjectSlug.value ? findSubjectBySlug(subjectSlug.value) : undefined));
 const course = computed(() => (courseId.value ? findCourseById(courseId.value) : undefined));
 const subjectCourses = computed(() => (subject.value ? store.filteredCoursesBySubject(subject.value.id) : []));
+const firstLesson = computed(() =>
+  course.value?.chapters.flatMap((chapter) => chapter.lessons)[0]
+);
 
 const listContextLabel = computed(() => {
   if (subjectsScope.value === 'my' && user.value?.grade) {
@@ -102,7 +105,7 @@ function openLesson(lessonId: string) {
           </div>
 
           <div class="course-actions">
-            <AppButton size="lg" @click="course.chapters[0] && openLesson(course.chapters[0].lessons[0].id)">
+            <AppButton size="lg" :disabled="!firstLesson" @click="firstLesson && openLesson(firstLesson.id)">
               ابدأ التعلم الآن
             </AppButton>
           </div>

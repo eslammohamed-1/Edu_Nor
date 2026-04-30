@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { Subject, Course, Lesson } from '@/types/course';
-import { subjects as seedSubjects } from '@/data/subjects';
-import { courses as seedCourses } from '@/data/courses';
+import { subjects as seedSubjects } from '@/fixtures/demo-catalog/subjects';
+import { courses as seedCourses } from '@/fixtures/demo-catalog/courses';
 import { audit } from '@/lib/audit';
 
 const STORAGE_KEY = 'edunor.admin.content';

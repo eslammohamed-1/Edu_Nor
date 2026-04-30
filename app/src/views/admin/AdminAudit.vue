@@ -35,11 +35,17 @@ const columns: Column<AuditEntry>[] = [
   { key: 'actor', label: 'المنفّذ' },
   { key: 'action', label: 'الفعل', sortable: true },
   { key: 'target', label: 'الهدف' },
-  { key: 'ip', label: 'IP' }
+  { key: 'ip', label: 'IP' },
+  { key: 'userAgent', label: 'الجهاز' }
 ];
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString('ar-EG');
+}
+
+function summarizeUa(ua?: string): string {
+  if (!ua) return '—';
+  return ua.length > 48 ? ua.slice(0, 48) + '…' : ua;
 }
 
 function actionLabel(action: string): string {
@@ -57,6 +63,10 @@ function actionLabel(action: string): string {
     'quiz.create': 'إنشاء اختبار',
     'settings.update': 'تحديث الإعدادات',
     'settings.reset': 'إعادة تعيين الإعدادات',
+    'auth.login.failed': 'فشل تسجيل الدخول',
+    'security.2fa.enabled': 'تفعيل التحقق بخطوتين',
+    'security.2fa.disabled': 'إيقاف التحقق بخطوتين',
+    'security.session.revoked': 'إنهاء جلسة',
     'impersonate.start': 'بدء التشخيص',
     'impersonate.stop': 'إيقاف التشخيص',
   };
@@ -70,10 +80,11 @@ function exportAudit() {
     role: l.actor.role,
     action: l.action,
     target: l.target?.label || '',
-    ip: l.ip || ''
+    ip: l.ip || '',
+    userAgent: l.userAgent || ''
   }));
   downloadCSV(`audit-${new Date().toISOString().slice(0, 10)}.csv`,
-    toCSV(rows as Record<string, unknown>[], ['time', 'actor', 'role', 'action', 'target', 'ip']));
+    toCSV(rows as Record<string, unknown>[], ['time', 'actor', 'role', 'action', 'target', 'ip', 'userAgent']));
 }
 
 function doClear() {
@@ -135,6 +146,11 @@ function doClear() {
         <template #cell-ip="{ row }">
           <span class="font-en ip-cell">{{ (row as unknown as AuditEntry).ip || '—' }}</span>
         </template>
+        <template #cell-userAgent="{ row }">
+          <span class="font-en ua-cell" :title="(row as unknown as AuditEntry).userAgent || ''">
+            {{ summarizeUa((row as unknown as AuditEntry).userAgent) }}
+          </span>
+        </template>
         <template #actions>
           <!-- no row actions for audit log -->
           <span></span>
@@ -177,4 +193,5 @@ function doClear() {
 .action-tag { font-size: 0.8125rem; background: var(--bg-section); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); color: var(--text-secondary); }
 .target-cell { font-size: 0.8125rem; color: var(--text-primary); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
 .ip-cell { font-size: 0.75rem; color: var(--text-muted); }
+.ua-cell { font-size: 0.65rem; color: var(--text-muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: middle; }
 </style>
