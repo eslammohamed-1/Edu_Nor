@@ -3,6 +3,8 @@ import { ref, computed } from 'vue';
 import type { Quiz } from '@/types/quiz';
 import { quizzes as seedQuizzes } from '@/fixtures/demo-catalog/quizzes';
 import { audit } from '@/lib/audit';
+import { fetchAdminSnapshot, saveAdminSnapshot } from '@/services/adminSystemService';
+import { getApiBase } from '@/services/http/client';
 
 const STORAGE_KEY = 'edunor.admin.quizzes';
 
@@ -39,7 +41,25 @@ export const useAdminQuizzesStore = defineStore('adminQuizzes', () => {
   const publishedQuizzes = computed(() => quizzes.value.filter(q => q.status === 'published'));
   const totalQuizzes = computed(() => quizzes.value.length);
 
-  function save() { writeStorage(quizzes.value); }
+  async function fetchQuizzes() {
+    if (!getApiBase()) {
+      quizzes.value = readStorage();
+      return;
+    }
+    loading.value = true;
+    try {
+      const remote = await fetchAdminSnapshot<AdminQuiz[]>('quizzes');
+      if (remote) quizzes.value = remote;
+      else await saveAdminSnapshot('quizzes', quizzes.value);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  function save() {
+    if (!getApiBase()) writeStorage(quizzes.value);
+    else void saveAdminSnapshot('quizzes', quizzes.value);
+  }
 
   function createQuiz(payload: Partial<AdminQuiz>): AdminQuiz {
     const q: AdminQuiz = {
@@ -108,7 +128,7 @@ export const useAdminQuizzesStore = defineStore('adminQuizzes', () => {
   }
 
   return {
-    quizzes, loading, publishedQuizzes, totalQuizzes,
+    quizzes, loading, publishedQuizzes, totalQuizzes, fetchQuizzes,
     createQuiz, updateQuiz, deleteQuiz, duplicateQuiz, archiveQuiz, publishQuiz, getById
   };
 });

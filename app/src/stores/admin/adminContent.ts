@@ -4,6 +4,8 @@ import type { Subject, Course, Lesson } from '@/types/course';
 import { subjects as seedSubjects } from '@/fixtures/demo-catalog/subjects';
 import { courses as seedCourses } from '@/fixtures/demo-catalog/courses';
 import { audit } from '@/lib/audit';
+import { fetchAdminSnapshot, saveAdminSnapshot } from '@/services/adminSystemService';
+import { getApiBase } from '@/services/http/client';
 
 const STORAGE_KEY = 'edunor.admin.content';
 
@@ -56,13 +58,32 @@ function writeStorage(data: ContentStore) {
 
 export const useAdminContentStore = defineStore('adminContent', () => {
   const data = ref<ContentStore>(readStorage());
+  const loading = ref(false);
 
   const subjects = computed(() => data.value.subjects);
   const courses = computed(() => data.value.courses);
   const lessons = computed(() => data.value.lessons);
   const publishedCourses = computed(() => data.value.courses.filter(c => c.published !== false));
 
-  function save() { writeStorage(data.value); }
+  async function fetchContent() {
+    if (!getApiBase()) {
+      data.value = readStorage();
+      return;
+    }
+    loading.value = true;
+    try {
+      const remote = await fetchAdminSnapshot<ContentStore>('content');
+      if (remote) data.value = remote;
+      else await saveAdminSnapshot('content', data.value);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  function save() {
+    if (!getApiBase()) writeStorage(data.value);
+    else void saveAdminSnapshot('content', data.value);
+  }
 
   // ---- Subjects ----
   function createSubject(payload: Omit<AdminSubject, 'id' | 'lessonsCount' | 'coursesCount'>): AdminSubject {
@@ -176,7 +197,7 @@ export const useAdminContentStore = defineStore('adminContent', () => {
   }
 
   return {
-    subjects, courses, lessons, publishedCourses,
+    subjects, courses, lessons, publishedCourses, loading, fetchContent,
     createSubject, updateSubject, deleteSubject, reorderSubjects,
     createCourse, updateCourse, deleteCourse, publishCourse,
     createLesson, updateLesson, deleteLesson, publishLesson,

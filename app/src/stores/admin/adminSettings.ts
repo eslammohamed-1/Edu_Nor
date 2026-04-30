@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { audit } from '@/lib/audit';
 import type { PasswordPolicy } from '@/lib/passwordPolicy';
+import { fetchAdminSnapshot, saveAdminSnapshot } from '@/services/adminSystemService';
+import { getApiBase } from '@/services/http/client';
 
 const STORAGE_KEY = 'edunor.admin.settings';
 
@@ -126,7 +128,20 @@ export const useAdminSettingsStore = defineStore('adminSettings', () => {
   const settings = ref<PlatformSettings>(readStorage());
 
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value));
+    if (!getApiBase()) localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value));
+    else void saveAdminSnapshot('settings', settings.value);
+  }
+
+  async function fetchSettings() {
+    if (!getApiBase()) {
+      settings.value = readStorage();
+      applyBranding();
+      return;
+    }
+    const remote = await fetchAdminSnapshot<Partial<PlatformSettings>>('settings');
+    if (remote) settings.value = mergeSettings(remote);
+    else await saveAdminSnapshot('settings', settings.value);
+    applyBranding();
   }
 
   function update<K extends keyof PlatformSettings>(
@@ -167,7 +182,8 @@ export const useAdminSettingsStore = defineStore('adminSettings', () => {
 
   function init() {
     applyBranding();
+    void fetchSettings();
   }
 
-  return { settings, update, reset, init };
+  return { settings, update, reset, init, fetchSettings };
 });

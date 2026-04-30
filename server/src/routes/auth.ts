@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { hashPassword, verifyPassword } from '../lib/password.js';
@@ -34,7 +34,11 @@ const registerSchema = z.object({
 });
 
 export const authRoutes: FastifyPluginAsync<{ env: Env }> = async (app, { env }) => {
-  async function issueTokens(userId: string, role: import('@prisma/client').Role) {
+  async function issueTokens(
+    userId: string,
+    role: import('@prisma/client').Role,
+    req?: FastifyRequest
+  ) {
     const accessToken = signAccessToken(
       { sub: userId, role },
       env.JWT_SECRET,
@@ -45,7 +49,13 @@ export const authRoutes: FastifyPluginAsync<{ env: Env }> = async (app, { env })
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + env.JWT_REFRESH_EXPIRES_DAYS);
     await prisma.refreshToken.create({
-      data: { tokenHash, userId, expiresAt }
+      data: {
+        tokenHash,
+        userId,
+        expiresAt,
+        ip: req?.ip ?? null,
+        userAgent: req?.headers['user-agent'] ?? null
+      }
     });
     return { accessToken, refreshToken: plainRefresh };
   }
@@ -74,7 +84,7 @@ export const authRoutes: FastifyPluginAsync<{ env: Env }> = async (app, { env })
       if (!ok) {
         return reply.status(401).send({ error: 'البريد أو كلمة المرور غير صحيحة' });
       }
-      const tokens = await issueTokens(user.id, user.role);
+      const tokens = await issueTokens(user.id, user.role, req);
       setRefreshCookie(reply, tokens.refreshToken, env.JWT_REFRESH_EXPIRES_DAYS, env.COOKIE_SECURE);
       return reply.send({
         user: toPublicUser(user),
@@ -114,7 +124,7 @@ export const authRoutes: FastifyPluginAsync<{ env: Env }> = async (app, { env })
       }
     });
     appendLearnerExportCsv(env.CSV_DATA_DIR, user);
-    const tokens = await issueTokens(user.id, user.role);
+    const tokens = await issueTokens(user.id, user.role, req);
     setRefreshCookie(reply, tokens.refreshToken, env.JWT_REFRESH_EXPIRES_DAYS, env.COOKIE_SECURE);
     return reply.status(201).send({
       user: toPublicUser(user),
@@ -143,7 +153,7 @@ export const authRoutes: FastifyPluginAsync<{ env: Env }> = async (app, { env })
       return reply.status(403).send({ error: 'حساب محظور' });
     }
     await prisma.refreshToken.delete({ where: { id: row.id } });
-    const tokens = await issueTokens(row.user.id, row.user.role);
+    const tokens = await issueTokens(row.user.id, row.user.role, req);
     setRefreshCookie(reply, tokens.refreshToken, env.JWT_REFRESH_EXPIRES_DAYS, env.COOKIE_SECURE);
     return reply.send({
       user: toPublicUser(row.user),

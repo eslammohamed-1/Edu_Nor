@@ -114,9 +114,9 @@ async function doResetPassword(row: User) {
   }
 }
 
-function doImpersonate(row: User) {
+async function doImpersonate(row: User) {
   if (confirm(`هل تريد الدخول كـ "${row.name}"؟`)) {
-    impersonateStart(row.id, row.name);
+    await impersonateStart(row.id, row.name);
   }
 }
 

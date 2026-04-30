@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import AppIcon from '@/components/common/AppIcon.vue';
 import { useAuth } from '@/composables/useAuth';
 import { useTheme } from '@/composables/useTheme';
+import { useImpersonate } from '@/composables/useImpersonate';
 import { adminNavSections } from '@/config/adminNav';
 
 defineProps<{ sidebarWidth?: number }>();
@@ -12,6 +13,7 @@ const emit = defineEmits<{ 'toggle-mobile': [] }>();
 const router = useRouter();
 const { user, logout } = useAuth();
 const { isDark, toggle: toggleTheme } = useTheme();
+const impersonate = useImpersonate();
 
 const showUserMenu = ref(false);
 const searchQ = ref('');
@@ -53,17 +55,10 @@ async function handleLogout() {
   await router.push('/login');
 }
 
-const impersonating = ref(!!localStorage.getItem('edunor.impersonate.origin'));
+const impersonating = ref(impersonate.isImpersonating);
 
 function stopImpersonate() {
-  try {
-    const origin = localStorage.getItem('edunor.impersonate.origin');
-    if (origin) {
-      localStorage.setItem('edunor_auth', origin);
-      localStorage.removeItem('edunor.impersonate.origin');
-      window.location.reload();
-    }
-  } catch {}
+  impersonate.stop();
 }
 </script>
 

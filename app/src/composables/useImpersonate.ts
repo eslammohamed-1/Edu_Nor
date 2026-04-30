@@ -1,40 +1,57 @@
 import { audit } from '@/lib/audit';
+import {
+  currentAuthStorageMode,
+  readStoredAuth,
+  writeStoredAuth,
+  type StoredAuthPayload
+} from '@/lib/authStorage';
+import { getApiBase } from '@/services/http/client';
+import { impersonateRemote } from '@/services/adminSystemService';
+
+const ORIGIN_KEY = 'edunor.impersonate.origin';
+const MODE_KEY = 'edunor.impersonate.mode';
 
 export function useImpersonate() {
-  function start(targetUserId: string, targetUserName: string) {
-    // Save current super admin session
-    const current = localStorage.getItem('edunor_auth');
+  async function start(targetUserId: string, targetUserName: string) {
+    const current = readStoredAuth();
     if (!current) return;
 
-    localStorage.setItem('edunor.impersonate.origin', current);
+    sessionStorage.setItem(ORIGIN_KEY, JSON.stringify(current));
+    sessionStorage.setItem(MODE_KEY, currentAuthStorageMode());
 
-    // Create a mock session for the target user
-    const targetSession = {
-      user: {
-        id: targetUserId,
-        name: targetUserName,
-        email: `${targetUserId}@mock.local`,
-        role: 'student',
-        createdAt: new Date().toISOString()
-      },
-      token: 'impersonate_' + Math.random().toString(36).slice(2)
-    };
-    localStorage.setItem('edunor_auth', JSON.stringify(targetSession));
+    let targetSession: StoredAuthPayload | null = null;
+    if (getApiBase()) {
+      targetSession = await impersonateRemote(targetUserId);
+    } else {
+      targetSession = {
+        user: {
+          id: targetUserId,
+          name: targetUserName,
+          email: `${targetUserId}@mock.local`,
+          role: 'student',
+          createdAt: new Date().toISOString()
+        },
+        token: 'impersonate_' + Math.random().toString(36).slice(2)
+      };
+    }
+    if (!targetSession) return;
+    writeStoredAuth(targetSession, false);
     audit('impersonate.start', { type: 'user', id: targetUserId, label: targetUserName });
     window.location.href = '/dashboard';
   }
 
   function stop() {
-    const origin = localStorage.getItem('edunor.impersonate.origin');
+    const origin = sessionStorage.getItem(ORIGIN_KEY);
     if (!origin) return;
-    const session = JSON.parse(origin);
+    const session = JSON.parse(origin) as StoredAuthPayload;
     audit('impersonate.stop', { type: 'user', id: session?.user?.id || '' });
-    localStorage.setItem('edunor_auth', origin);
-    localStorage.removeItem('edunor.impersonate.origin');
+    writeStoredAuth(session, sessionStorage.getItem(MODE_KEY) !== 'session');
+    sessionStorage.removeItem(ORIGIN_KEY);
+    sessionStorage.removeItem(MODE_KEY);
     window.location.href = '/admin';
   }
 
-  const isImpersonating = !!localStorage.getItem('edunor.impersonate.origin');
+  const isImpersonating = !!sessionStorage.getItem(ORIGIN_KEY);
 
   return { start, stop, isImpersonating };
 }

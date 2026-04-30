@@ -37,7 +37,33 @@ model RefreshToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
+  ip        String?
+  userAgent String?
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model AdminSnapshot {
+  key       String   @id
+  dataJson  String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorName  String
+  actorRole  String
+  action     String
+  targetJson String?
+  metaJson   String?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId])
+  @@index([action])
 }

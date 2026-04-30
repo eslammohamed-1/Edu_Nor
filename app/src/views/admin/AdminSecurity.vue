@@ -70,8 +70,8 @@ function formatSeen(iso: string) {
   return new Date(iso).toLocaleString('ar-EG');
 }
 
-function revokeSession(id: string) {
-  const ok = sessionsStore.revoke(id);
+async function revokeSession(id: string) {
+  const ok = await sessionsStore.revoke(id);
   if (!ok) toast.error('لا يمكن إنهاء الجلسة الحالية من هنا');
   else {
     audit('security.session.revoked', { type: 'session', id });

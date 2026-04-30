@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { UserRole } from '@/types/auth';
+import {
+  clearRemoteAuditLogs,
+  fetchAuditLogs,
+  postAuditLog
+} from '@/services/adminSystemService';
+import { getApiBase } from '@/services/http/client';
 
 export interface AuditEntry {
   id: string;
@@ -34,7 +40,20 @@ function writeStorage(entries: AuditEntry[]) {
 export const useAdminAuditStore = defineStore('adminAudit', () => {
   const logs = ref<AuditEntry[]>(readStorage());
 
+  async function fetchLogs() {
+    if (!getApiBase()) {
+      logs.value = readStorage();
+      return;
+    }
+    const remote = await fetchAuditLogs();
+    if (remote) logs.value = remote;
+  }
+
   function log(entry: Omit<AuditEntry, 'id' | 'createdAt'>) {
+    if (getApiBase()) {
+      void postAuditLog(entry.action, entry.target, entry.meta);
+      return;
+    }
     const newEntry: AuditEntry = {
       ...entry,
       id: 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -49,12 +68,13 @@ export const useAdminAuditStore = defineStore('adminAudit', () => {
 
   function clear() {
     logs.value = [];
-    writeStorage([]);
+    if (!getApiBase()) writeStorage([]);
+    else void clearRemoteAuditLogs();
   }
 
   function exportLogs(): AuditEntry[] {
     return [...logs.value];
   }
 
-  return { logs, log, clear, exportLogs };
+  return { logs, fetchLogs, log, clear, exportLogs };
 });

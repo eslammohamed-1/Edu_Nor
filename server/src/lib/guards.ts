@@ -7,5 +7,6 @@ export async function preRequireSuperAdmin(req: FastifyRequest, reply: FastifyRe
   }
   if (req.authUser.role !== 'super_admin') {
     await reply.status(403).send({ error: 'ممنوع — سوبر أدمن فقط', code: 'FORBIDDEN' });
+    return;
   }
 }

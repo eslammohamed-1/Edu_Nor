@@ -6,11 +6,22 @@ import AdminTopbar from './AdminTopbar.vue';
 import AdminBreadcrumbs from './AdminBreadcrumbs.vue';
 import { getApiBase } from '@/services/http/client';
 import { useAdminUsersStore } from '@/stores/admin/adminUsers';
+import { useAdminContentStore } from '@/stores/admin/adminContent';
+import { useAdminQuizzesStore } from '@/stores/admin/adminQuizzes';
+import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
+import { useAdminAuditStore } from '@/stores/admin/adminAudit';
+import { useAdminSessionsStore } from '@/stores/admin/adminSessions';
 
 const sidebarRef = ref<InstanceType<typeof AdminSidebar>>();
 
 onMounted(() => {
-  if (getApiBase()) void useAdminUsersStore().fetchUsers();
+  if (!getApiBase()) return;
+  void useAdminUsersStore().fetchUsers();
+  void useAdminContentStore().fetchContent();
+  void useAdminQuizzesStore().fetchQuizzes();
+  void useAdminSettingsStore().fetchSettings();
+  void useAdminAuditStore().fetchLogs();
+  void useAdminSessionsStore().fetchSessions();
 });
 
 function toggleMobile() {

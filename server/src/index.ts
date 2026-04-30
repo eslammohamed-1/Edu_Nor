@@ -6,6 +6,7 @@ import { prisma } from './db.js';
 import { authPlugin } from './plugins/auth.js';
 import { authRoutes } from './routes/auth.js';
 import { adminUsersRoutes } from './routes/admin/users.js';
+import { adminSystemRoutes } from './routes/admin/system.js';
 
 const env = loadEnv();
 
@@ -33,6 +34,7 @@ app.get('/health', async () => ({
 
 await app.register(authRoutes, { prefix: '/api/v1/auth', env });
 await app.register(adminUsersRoutes, { prefix: '/api/v1/admin/users' });
+await app.register(adminSystemRoutes, { prefix: '/api/v1/admin', env });
 
 const close = async () => {
   await app.close();
