@@ -11,7 +11,9 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().default('http://localhost:5173'),
   COOKIE_SECURE: z.coerce.boolean().default(false),
   /** مجلد ملفات CSV في المستودع؛ افتراضيًا ../data/csv من مجلد تشغيل السيرفر */
-  CSV_DATA_DIR: z.string().optional()
+  CSV_DATA_DIR: z.string().optional(),
+  /** SQLite لبنك الأسئلة (ملف مستقل عن dev.db)، صف واحد لكل سوال */
+  QUESTIONS_DATABASE_URL: z.string().default('file:./data/question_database.sqlite')
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -22,5 +24,7 @@ export function loadEnv(): Env {
     console.error(parsed.error.flatten().fieldErrors);
     throw new Error('Invalid server environment');
   }
-  return parsed.data;
+  const data = parsed.data;
+  process.env.QUESTIONS_DATABASE_URL = data.QUESTIONS_DATABASE_URL;
+  return data;
 }

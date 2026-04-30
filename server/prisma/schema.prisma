@@ -67,3 +67,76 @@ model AuditLog {
   @@index([actorId])
   @@index([action])
 }
+
+model Subject {
+  id          String   @id
+  name        String
+  slug        String   @unique
+  icon        String   @default("BookOpen")
+  color       String   @default("#1E3A5F")
+  stagesJson  String
+  description String   @default("")
+  visible     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  courses     Course[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id             String    @id
+  subjectId      String
+  subject        Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  offeringId     String?
+  title          String
+  description    String    @default("")
+  stage          String
+  grade          String
+  secondaryTrack String?
+  academicYear   String?
+  term           Int?
+  season         Int?
+  instructor     String    @default("")
+  thumbnail      String?
+  duration       Int       @default(0)
+  studentsCount  Int       @default(0)
+  rating         Float     @default(0)
+  published      Boolean   @default(true)
+  chapters       Chapter[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([subjectId])
+}
+
+model Chapter {
+  id          String   @id
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String   @default("")
+  order       Int      @default(0)
+  lessons     Lesson[]
+
+  @@index([courseId])
+}
+
+model Lesson {
+  id              String   @id
+  chapterId       String
+  chapter         Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  // المعرّف الأصلي من المحتوى (toc) لتطابق quiz.lessonId عند اختلاف المعرف الداخلي
+  sourceLessonKey String?
+  title           String
+  description     String   @default("")
+  duration        Int      @default(0)
+  type            String
+  videoUrl        String?
+  content         String   @default("")
+  keyPointsJson   String?
+  order           Int      @default(0)
+  published       Boolean  @default(true)
+
+  @@index([chapterId])
+  @@index([sourceLessonKey])
+}

@@ -3,7 +3,6 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useQuizStore } from '@/stores/quiz';
-import { quizzes } from '@/fixtures/demo-catalog/quizzes';
 import QuizQuestion from '@/components/quiz/QuizQuestion.vue';
 import QuizProgress from '@/components/quiz/QuizProgress.vue';
 import QuizResults from '@/components/quiz/QuizResults.vue';
@@ -31,7 +30,7 @@ const isLast = computed(() => {
   return currentIndex.value === currentQuiz.value.questions.length - 1;
 });
 
-const quizList = computed(() => quizzes);
+const quizList = computed(() => store.quizzesInCatalog);
 
 function start(id: string) {
   const ok = store.startQuiz(id);

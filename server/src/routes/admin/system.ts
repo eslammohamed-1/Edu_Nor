@@ -7,6 +7,8 @@ import { hashRefreshToken, signAccessToken } from '../../lib/tokens.js';
 import { readRefreshCookie } from '../../lib/refreshCookie.js';
 import { toPublicUser } from '../../lib/user-mapper.js';
 import { writeAuditLog } from '../../lib/audit.js';
+import { applyContentSnapshotToDatabase } from '../../lib/catalog-content.js';
+import { assertValidAdminQuizzesPayload } from '../../lib/quiz-content.js';
 
 const snapshotKeys = new Set(['content', 'quizzes', 'settings']);
 
@@ -48,6 +50,26 @@ export const adminSystemRoutes: FastifyPluginAsync<{ env: Env }> = async (app, {
     if (!snapshotKeys.has(key)) return reply.status(404).send({ error: 'snapshot غير معروف' });
     const parsed = z.object({ data: z.unknown() }).safeParse(req.body);
     if (!parsed.success) return reply.status(400).send({ error: 'بيانات غير صالحة' });
+
+    if (key === 'content') {
+      try {
+        await applyContentSnapshotToDatabase(parsed.data.data);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'خطأ في مزامنة الكتالوج';
+        await reply.status(400).send({ error: msg });
+        return;
+      }
+    }
+
+    if (key === 'quizzes') {
+      try {
+        assertValidAdminQuizzesPayload(parsed.data.data);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'خطأ في التحقق من الاختبارات';
+        await reply.status(400).send({ error: msg });
+        return;
+      }
+    }
 
     const row = await prisma.adminSnapshot.upsert({
       where: { key },

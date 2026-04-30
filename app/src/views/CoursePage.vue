@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { findSubjectBySlug } from '@/fixtures/demo-catalog/subjects';
-import { findCourseById } from '@/fixtures/demo-catalog/courses';
 import { useCoursesStore } from '@/stores/courses';
 import CourseCard from '@/components/courses/CourseCard.vue';
 import LessonCard from '@/components/courses/LessonCard.vue';
@@ -22,8 +20,10 @@ const { subjectsScope, stageFilter } = storeToRefs(store);
 const subjectSlug = computed(() => route.params.subjectSlug as string | undefined);
 const courseId = computed(() => route.params.courseId as string | undefined);
 
-const subject = computed(() => (subjectSlug.value ? findSubjectBySlug(subjectSlug.value) : undefined));
-const course = computed(() => (courseId.value ? findCourseById(courseId.value) : undefined));
+const subject = computed(() =>
+  subjectSlug.value ? store.findSubjectBySlug(subjectSlug.value) : undefined
+);
+const course = computed(() => (courseId.value ? store.findCourseById(courseId.value) : undefined));
 const subjectCourses = computed(() => (subject.value ? store.filteredCoursesBySubject(subject.value.id) : []));
 const firstLesson = computed(() =>
   course.value?.chapters.flatMap((chapter) => chapter.lessons)[0]

@@ -1,4 +1,4 @@
-import type { AnyQuestion } from '@/types/quiz';
+import type { AnyQuestion } from '../../../types/quiz';
 
 import q_h6BUdTq8mlZF from './mcq_h6BUdTq8mlZF.json';
 import q_ez4qZIee1JRJ from './mrq_ez4qZIee1JRJ.json';

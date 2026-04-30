@@ -8,7 +8,8 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "import:toc": "cd .. && .venv/bin/python scripts/import_toc_from_xlsx.py",
-    "build:catalog": "cd .. && python3 scripts/build_catalog_from_csv.py"
+    "build:catalog": "cd .. && python3 scripts/build_catalog_from_csv.py",
+    "export:quizzes-snapshot": "cd .. && ./server/node_modules/.bin/tsx scripts/export-quizzes-snapshot.ts"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0",

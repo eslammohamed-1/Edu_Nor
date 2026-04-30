@@ -31,10 +31,12 @@ export function getDisplayedSubjects(options: {
   subjectsScope: 'all' | 'my';
   stageFilter: Stage | 'all';
   searchQuery: string;
+  /** إن وُجدت تُستخدم بدل المواد الثابتة من الـfixtures (مصدر الخادم / الكتالوج المزامن). */
+  subjectsCatalog?: Subject[];
 }): Subject[] {
-  const { user, subjectsScope, stageFilter, searchQuery } = options;
+  const { user, subjectsScope, stageFilter, searchQuery, subjectsCatalog } = options;
 
-  let list = allSubjects;
+  let list = subjectsCatalog ?? allSubjects;
   if (stageFilter !== 'all') {
     list = list.filter((s) => s.stages.includes(stageFilter as Stage));
   }

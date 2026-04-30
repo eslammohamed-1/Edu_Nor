@@ -1,31 +1,34 @@
-# مصدر CSV المؤقت للكتالوج
+# دليل مسار CSV → الكتالوج
 
-هذا المجلد يعمل كمصدر حقيقة مؤقت قبل ترحيل المحتوى إلى قاعدة بيانات.
+مجلد `data/csv/` هو المصدر الذي يعتمد عليه السكربت لبناء الملفات المُنشأة في الواجهة.
 
-- **`subjects.csv`** — المواد الدراسية (حقل `stages` مفصول بفاصلة منقوطة `;`).
-- **`courses.csv`** — صفوف الكورسات (بدون فصول/دروس؛ المعرفات مرجعية).
-- **`chapters.csv`** — فصول كل كورس (`sort_order` للترتيب).
-- **`lessons.csv`** — دروس؛ `key_points` مفصولة بـ `|`؛ `content` يُقتبس وفق CSV؛ اترك `video_url` فارغاً إن لم يوجد.
-- **`landing_*.csv`** — مقاطع الصفحة الرئيسية التجريبية.
-- **`admin_dashboard.csv`** — إجراءات سريعة وبطاقة إيراد تجريبية وعناوين رسوم (صف واحد للحقول النصية حيث ينطبق).
-- **`learners_export.csv`** — يُنشأ الهيدر عند التوليد؛ السيرفر يُلحق صفوفاً عند تسجيل طالب جديد (بدون كلمة مرور).
+## خط الأنابيب
 
-## التوليد من الواجهة
+1. **تحرّر** ملفات الـCSV هنا (`subjects.csv`, `courses.csv`, `chapters.csv`, `lessons.csv`, إلخ).
+2. من جذر المشروع تشغّل:
 
-```bash
-cd app && npm run build:catalog
-```
+   ```bash
+   python3 scripts/build_catalog_from_csv.py
+   ```
 
-(يطلب `python3` في المسار.)
+3. يُكتَب الخرج أساسًا إلى [`app/src/fixtures/demo-catalog/generated/`](../app/src/fixtures/demo-catalog/generated/) (مثل `catalog.json`, `courses.json`, `subjects.json` حسب تعريف السكربت).
+4. الواجهة تضم هذه الملفات عند البناء؛ الافتراضي محلي بدون خادم يبقى عبر هذا المسار.
+5. عند تشغيل **خادم API** مع SQLite:
+   - `GET /api/v1/catalog` يقرأ المواد والكورسات من الجداول (`Subject`, `Course`, إلخ).
+   - بعد أول تشغيل بقائمة فارغة، أو عبر `npx prisma db seed` من مجلّد `server/`, يُستورد الكتالوج من نفس مسار **`generated/`** ثم يُحدَّث بمرور الوقت عن طريق لوحة الإدارة (مزامنة `AdminSnapshot.content` أو مسارات الإدارة `/api/v1/admin/catalog/*`).
 
-## التوليد من جذر المستودع
+**باختصار:** بعد أي تعديل على CSV وتوليد الملفات، أعد تشغيل التطبيق وبناء الواجهة؛ عند وجود الخادم، أعد أيضًا الـseed أو ادفع المحتوى عبر سوبر الأدمن لتحديث قاعدة البيانات.
 
-```bash
-python3 scripts/build_catalog_from_csv.py
-```
+## الاختبارات (مزامنة الخادم)
 
-يُخرِج [`app/src/fixtures/demo-catalog/generated/catalog.json`](../app/src/fixtures/demo-catalog/generated/catalog.json) ويدمج كورسات ToC من `toc/generated/coursesFromToc.json`.
+محتوى الاختبارات في المنصّة يحدّده مصدر واحد مركزيًا: **`AdminSnapshot`** بمفتاح **`quizzes`** على الخادم (سوبر أدمن يحرّره من لوحة الإدارة أو يُستورد مع الـseed).
 
-## المتغيرات (السيرفر)
+1. لتوليد ملف ثابت يُستهلك عند بداية التشغيل للـseed أو عندما لا توجد لقطة في SQLite، من مجلّد **`app`** نفّذ:
 
-انظر `CSV_DATA_DIR` في `server/.env.example` لمسار مجلد CSV عند إلحاق المسجلين.
+   ```bash
+   npm run export:quizzes-snapshot
+   ```
+
+   هذا يكتب **`app/src/fixtures/demo-catalog/generated/quizzes.snapshot.json`** اعتمادًا على [`app/src/fixtures/demo-catalog/quizzes.ts`](../../app/src/fixtures/demo-catalog/quizzes.ts).
+
+2. المتصفّح يحمّل الاختبارات المنشورة من **`GET /api/v1/quizzes`** (مسودّات ومؤرشفة تُصفّى قبل الإرسال). إن كان **`lessonId`** يشير لمفتاح المصدر (**toc**) بدل المعرف المحفوظ في القاعدة بعد تجنّب التعارض، يُعاد ضبطه في الاستجابة إلى معرف الدرس الحالي حتى يتطابق مع مسارات الصفحة. بدون خادم، المصدر لا يزال المحلي الثابت.

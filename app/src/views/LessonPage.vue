@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { findLessonById, getAdjacentLessons } from '@/fixtures/demo-catalog/lessons';
-import { findCourseById } from '@/fixtures/demo-catalog/courses';
-import { findQuizByLessonId } from '@/fixtures/demo-catalog/quizzes';
 import { useCoursesStore } from '@/stores/courses';
+import { useQuizStore } from '@/stores/quiz';
 import { useToast } from '@/composables/useToast';
 import LessonPlayer from '@/components/courses/LessonPlayer.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
@@ -15,20 +13,23 @@ import { sanitizeHtml } from '@/lib/sanitizeHtml';
 const route = useRoute();
 const router = useRouter();
 const store = useCoursesStore();
+const quizStore = useQuizStore();
 const toast = useToast();
 
 const lessonId = computed(() => route.params.lessonId as string);
 
-const lessonData = computed(() => findLessonById(lessonId.value));
+const lessonData = computed(() => store.findLessonById(lessonId.value));
 const lesson = computed(() => lessonData.value?.lesson);
 const safeLessonContent = computed(() => sanitizeHtml(lesson.value?.content ?? ''));
 const course = computed(() =>
-  lessonData.value ? findCourseById(lessonData.value.courseId) : undefined
+  lessonData.value ? store.findCourseById(lessonData.value.courseId) : undefined
 );
 const currentChapterId = computed(() => lessonData.value?.chapterId);
 
-const adjacent = computed(() => getAdjacentLessons(lessonId.value));
-const relatedQuiz = computed(() => findQuizByLessonId(lessonId.value));
+const adjacent = computed(() => store.getAdjacentLessons(lessonId.value));
+const relatedQuiz = computed(() =>
+  lessonId.value ? quizStore.findQuizByLessonId(lessonId.value) : undefined
+);
 
 const expandedChapters = ref<Set<string>>(new Set());
 

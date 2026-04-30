@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { hashPassword } from '../src/lib/password.js';
+import { bootstrapCatalogFromFixturesIfEmpty } from '../src/lib/catalog-content.js';
+import { bootstrapQuizzesSnapshotIfEmpty } from '../src/lib/quiz-content.js';
 
 const prisma = new PrismaClient();
 
@@ -47,6 +49,11 @@ async function main() {
     });
     console.log('Created demo admin:', demoAdmin, '/ AdminDemo2026!');
   }
+
+  const bootedCatalog = await bootstrapCatalogFromFixturesIfEmpty();
+  if (bootedCatalog) console.log('Seeded relational catalog + admin content snapshot from fixtures.');
+  const bootedQuizzes = await bootstrapQuizzesSnapshotIfEmpty();
+  if (bootedQuizzes) console.log('Seeded quizzes snapshot from generated/quizzes.snapshot.json.');
 }
 
 main()

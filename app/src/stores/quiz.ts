@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Quiz, QuizAnswer, QuizAttempt } from '@/types/quiz';
-import { findQuizById } from '@/fixtures/demo-catalog/quizzes';
+import { quizzes as seedQuizzes } from '@/fixtures/demo-catalog/quizzes';
+import { mergeQuizzesWithQuestionBank } from '@/lib/mergeQuizQuestionBank';
+import { fetchPublicQuestionsBank } from '@/services/questionsBankService';
+import { getApiBase } from '@/services/http/client';
+import { fetchPublicQuizzes } from '@/services/quizzesService';
 
 const ATTEMPTS_KEY = 'edunor_quiz_attempts';
 
@@ -19,6 +23,32 @@ function persistAttempts(attempts: QuizAttempt[]) {
 }
 
 export const useQuizStore = defineStore('quiz', () => {
+  /** المصدر الموحّد: fixtures ثم استبدالها باستجابة `/api/v1/quizzes`، مع تحديث كل سؤال من `/api/v1/questions-bank` عند وجود مطابقة لـ id. */
+  const quizCatalog = ref<Quiz[]>(seedQuizzes.map((q) => ({ ...q })));
+
+  async function hydrateQuizzesFromApi(): Promise<void> {
+    if (!getApiBase()) return;
+    const [remote, bank] = await Promise.all([
+      fetchPublicQuizzes(),
+      fetchPublicQuestionsBank()
+    ]);
+    if (!remote?.length) return;
+    quizCatalog.value = mergeQuizzesWithQuestionBank(remote, bank ?? new Map());
+  }
+
+  /** قائمة كل الاختبارات المعروضة في الواجهة (مسودّات ومؤرشفة مُفعّدة من الخادم). */
+  const quizzesInCatalog = computed(() => quizCatalog.value);
+
+  function findQuizById(quizId: string | undefined): Quiz | undefined {
+    if (!quizId) return undefined;
+    return quizCatalog.value.find((q) => q.id === quizId);
+  }
+
+  function findQuizByLessonId(lessonId: string | undefined): Quiz | undefined {
+    if (!lessonId) return undefined;
+    return quizCatalog.value.find((q) => q.lessonId === lessonId);
+  }
+
   const currentQuiz = ref<Quiz | null>(null);
   const currentIndex = ref(0);
   const answers = ref<Record<string, string | null>>({});
@@ -81,13 +111,10 @@ export const useQuizStore = defineStore('quiz', () => {
       const selected = answers.value[q.id] ?? null;
       let isCorrect = false;
 
-      // Handle types that use 'choices' array (MCQ, MRQ, Gap, Opinion)
       if ('choices' in q && Array.isArray(q.choices)) {
-        const choice = q.choices.find(c => c.id === selected);
+        const choice = q.choices.find((c) => c.id === selected);
         isCorrect = choice?.isCorrect === true;
       }
-      // Note: Full support for evaluating matching, puzzle, string, etc., requires their respective state handlers.
-      // For this demo, we assume they fall back to false if not a choices-based question.
 
       return {
         questionId: q.id,
@@ -127,6 +154,11 @@ export const useQuizStore = defineStore('quiz', () => {
   }
 
   return {
+    quizCatalog,
+    hydrateQuizzesFromApi,
+    quizzesInCatalog,
+    findQuizById,
+    findQuizByLessonId,
     currentQuiz,
     currentIndex,
     answers,

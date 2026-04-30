@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import type { Lesson } from '@/types/course';
 import { useAuth } from '@/composables/useAuth';
 import { useCoursesStore } from '@/stores/courses';
-import { courses as allCourses } from '@/fixtures/demo-catalog/courses';
-import { subjects as allSubjects } from '@/fixtures/demo-catalog/subjects';
 import DashboardStats from '@/components/dashboard/DashboardStats.vue';
 import RecentLessons from '@/components/dashboard/RecentLessons.vue';
 import ProgressChart from '@/components/dashboard/ProgressChart.vue';
@@ -15,6 +14,7 @@ const coursesStore = useCoursesStore();
 
 // فلترة الكورسات لتعكس فقط ما يخص الطالب حالياً
 const myCourses = computed(() => {
+  const allCourses = coursesStore.catalogCourses;
   if (!user.value || user.value.role !== 'student') return allCourses;
   return allCourses.filter(c => {
     if (c.stage !== user.value!.stage || c.grade !== user.value!.grade) return false;
@@ -64,7 +64,7 @@ const stats = computed(() => [
 ]);
 
 const recentLessons = computed(() => {
-  const items: Array<{ lesson: typeof allCourses[number]['chapters'][number]['lessons'][number]; courseTitle: string; courseId: string }> = [];
+  const items: Array<{ lesson: Lesson; courseTitle: string; courseId: string }> = [];
   for (const course of myCourses.value) {
     for (const chapter of course.chapters) {
       for (const lesson of chapter.lessons) {
@@ -78,7 +78,7 @@ const recentLessons = computed(() => {
 });
 
 const subjectProgress = computed(() => {
-  return allSubjects
+  return coursesStore.catalogSubjects
     .map((subject) => {
       const subjectCourses = myCourses.value.filter((c) => c.subjectId === subject.id);
       const allLessons = subjectCourses.flatMap((c) => c.chapters.flatMap((ch) => ch.lessons));

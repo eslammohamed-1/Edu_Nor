@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { Stage } from '@/types/course';
+import type { Course, Lesson, Stage, Subject } from '@/types/course';
 import type { User } from '@/types/auth';
-import { courses as coursesData } from '@/fixtures/demo-catalog/courses';
+import { subjects as seedSubjects } from '@/fixtures/demo-catalog/subjects';
+import { courses as seedCourses } from '@/fixtures/demo-catalog/courses';
 import { getDisplayedSubjects } from '@/lib/curriculumFilter';
+import { fetchPublicCatalog } from '@/services/catalogService';
 
 const COMPLETED_KEY = 'edunor_completed_lessons';
 
@@ -29,17 +31,29 @@ export const useCoursesStore = defineStore('courses', () => {
   const completedLessons = ref<Set<string>>(loadCompleted());
   const subjectsFilterUser = ref<User | null>(null);
 
+  /** مصدر المواد والكورسات: الواجهة الافتراضية من fixtures، وتُحدَّث من `/api/v1/catalog` إن توفّر الخادم. */
+  const catalogSubjects = ref<Subject[]>([...seedSubjects]);
+  const catalogCourses = ref<Course[]>([...seedCourses]);
+
+  async function hydrateCatalogFromApi(): Promise<void> {
+    const remote = await fetchPublicCatalog();
+    if (!remote?.courses?.length || !remote?.subjects?.length) return;
+    catalogSubjects.value = remote.subjects;
+    catalogCourses.value = remote.courses;
+  }
+
   const subjects = computed(() => {
     const list = getDisplayedSubjects({
       user: subjectsFilterUser.value,
       subjectsScope: subjectsScope.value,
       stageFilter: stageFilter.value,
-      searchQuery: searchQuery.value
+      searchQuery: searchQuery.value,
+      subjectsCatalog: catalogSubjects.value
     });
 
     // 1. تصفية القائمة الأساسية للمواد
     const filteredList = list.map(s => {
-      let filteredCourses = coursesData.filter(c => c.subjectId === s.id);
+      let filteredCourses = catalogCourses.value.filter(c => c.subjectId === s.id);
 
       if (subjectsScope.value === 'my' && subjectsFilterUser.value) {
         const user = subjectsFilterUser.value;
@@ -73,10 +87,10 @@ export const useCoursesStore = defineStore('courses', () => {
     return filteredList.filter(s => s.coursesCount > 0);
   });
 
-  const courses = computed(() => coursesData);
+  const courses = computed(() => catalogCourses.value);
 
   function coursesBySubject(subjectId: string) {
-    return coursesData.filter((c) => c.subjectId === subjectId);
+    return catalogCourses.value.filter((c) => c.subjectId === subjectId);
   }
 
   function filteredCoursesBySubject(subjectId: string) {
@@ -154,8 +168,48 @@ export const useCoursesStore = defineStore('courses', () => {
     return completedLessons.value.has(lessonId);
   }
 
+  function findCourseById(id: string | undefined): Course | undefined {
+    if (!id) return undefined;
+    return catalogCourses.value.find((c) => c.id === id);
+  }
+
+  function findSubjectBySlug(slug: string | undefined): Subject | undefined {
+    if (!slug) return undefined;
+    return catalogSubjects.value.find((s) => s.slug === slug);
+  }
+
+  function findLessonById(
+    lessonId: string | undefined
+  ): { lesson: Lesson; courseId: string; chapterId: string } | null {
+    if (!lessonId) return null;
+    for (const course of catalogCourses.value) {
+      for (const chapter of course.chapters) {
+        const lesson = chapter.lessons.find((l) => l.id === lessonId);
+        if (lesson) return { lesson, courseId: course.id, chapterId: chapter.id };
+      }
+    }
+    return null;
+  }
+
+  function getAdjacentLessons(
+    lessonId: string | undefined
+  ): { prev: Lesson | null; next: Lesson | null } {
+    if (!lessonId) return { prev: null, next: null };
+    for (const course of catalogCourses.value) {
+      const flatLessons = course.chapters.flatMap((ch) => ch.lessons);
+      const idx = flatLessons.findIndex((l) => l.id === lessonId);
+      if (idx !== -1) {
+        return {
+          prev: idx > 0 ? (flatLessons[idx - 1] ?? null) : null,
+          next: idx < flatLessons.length - 1 ? (flatLessons[idx + 1] ?? null) : null
+        };
+      }
+    }
+    return { prev: null, next: null };
+  }
+
   function courseProgress(courseId: string): number {
-    const course = coursesData.find((c) => c.id === courseId);
+    const course = catalogCourses.value.find((c) => c.id === courseId);
     if (!course) return 0;
     const allLessons = course.chapters.flatMap((ch) => ch.lessons);
     if (allLessons.length === 0) return 0;
@@ -170,6 +224,9 @@ export const useCoursesStore = defineStore('courses', () => {
     subjects,
     courses,
     completedLessons,
+    catalogSubjects,
+    catalogCourses,
+    hydrateCatalogFromApi,
     coursesBySubject,
     filteredCoursesBySubject,
     setStageFilter,
@@ -181,6 +238,10 @@ export const useCoursesStore = defineStore('courses', () => {
     markLessonComplete,
     unmarkLessonComplete,
     isLessonComplete,
+    findCourseById,
+    findSubjectBySlug,
+    findLessonById,
+    getAdjacentLessons,
     courseProgress
   };
 });
