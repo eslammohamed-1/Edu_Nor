@@ -1,8 +1,8 @@
 ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
-U7-001,U7,Vitest setup app,Configure vitest.config.ts with jsdom env + coverage v8 + setup file,setup,critical,todo,2,,app/vitest.config.ts
-U7-002,U7,Vitest setup server,Configure vitest for backend with prisma-mock + setup files,setup,critical,todo,2,,server/vitest.config.ts
-U7-003,U7,Auth store unit tests,Cover login/register/logout/hydrate paths,test,critical,todo,3,U7-001,app/src/stores/__tests__/auth.test.ts
-U7-004,U7,Quiz store unit tests,Cover startQuiz/selectAnswer/submitQuiz with all types via fixtures,test,critical,todo,3,U7-001,app/src/stores/__tests__/quiz.test.ts
+U7-001,U7,Vitest setup app,Configure vitest.config.ts with jsdom env + coverage v8 + setup file,setup,critical,done,2,,app/vitest.config.ts
+U7-002,U7,Vitest setup server,Configure vitest for backend with prisma-mock + setup files,setup,critical,done,2,,server/vitest.config.ts
+U7-003,U7,Auth store unit tests,Cover login/register/logout/hydrate paths,test,critical,done,3,U7-001,app/src/stores/__tests__/auth.test.ts
+U7-004,U7,Quiz store unit tests,Cover startQuiz/selectAnswer/submitQuiz with all types via fixtures,test,critical,done,3,U7-001,app/src/stores/__tests__/quiz.test.ts
 U7-005,U7,Curriculum store tests,Cover hydrate/select/filter logic,test,high,todo,2,U7-001,app/src/stores/__tests__/curriculum.test.ts
 U7-006,U7,Auth route integration tests,login/register/refresh/logout/me using supertest,test,critical,todo,4,U7-002,server/src/__tests__/auth.routes.test.ts
 U7-007,U7,Admin users routes tests,List/create/update/delete with role guards,test,critical,todo,3,U7-002,server/src/__tests__/admin-users.routes.test.ts

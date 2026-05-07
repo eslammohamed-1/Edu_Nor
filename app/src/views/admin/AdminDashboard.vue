@@ -29,7 +29,7 @@ const sessionsStore = useAdminSessionsStore();
 
 const dashLoading = ref(true);
 
-let dashLoadTimer: ReturnType<typeof setTimeout> | undefined;
+let dashLoadTimer: number | undefined;
 onMounted(() => {
   dashLoadTimer = window.setTimeout(() => {
     dashLoading.value = false;
