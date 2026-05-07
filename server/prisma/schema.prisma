@@ -27,6 +27,11 @@ model User {
   secondaryTrack  String?
   permissionsJson String?
 
+  /// اكتمال الإرشاد الأولي (U5)
+  onboardingCompletedAt DateTime?
+  /// معرّفات المواد المفضلة بعد الإرشاد — JSON مصفوفة
+  favoriteSubjectsJson String? @default("[]")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -36,6 +41,76 @@ model User {
   certificates          Certificate[]
   passwordResetTokens   PasswordResetToken[]
   twoFactor             UserTwoFactor?
+  userStats             UserStats?
+  notifications         Notification[]
+  bookmarks             UserBookmark[]
+  notes                 UserNote[]
+}
+
+/// إحصائيات وتلعيب للطالب (U5)
+model UserStats {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  totalPoints  Int @default(0)
+  weeklyPoints Int @default(0)
+  /// مفتاح الأسبوع الحالي المُحتسب له `weeklyPoints`، مثل `2026-W19`
+  weekKey String?
+
+  currentStreak Int @default(0)
+  bestStreak    Int @default(0)
+  /// آخر يوم (UTC `YYYY-MM-DD`) سُجّل فيه نشاط يمدّ السلسلة
+  lastStreakUtcDate String?
+
+  badgesJson String @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Notification {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title  String
+  body   String    @default("")
+  kind   String    @default("info")
+  /// رابط نسبي في الواجهة، مثل `/lessons/x`
+  href   String?
+  readAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model UserBookmark {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+}
+
+model UserNote {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  body     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+  @@index([userId])
 }
 
 model PasswordResetToken {
@@ -219,6 +294,8 @@ model Lesson {
   updatedAt       DateTime @updatedAt
 
   progressRows LessonProgress[]
+  bookmarks    UserBookmark[]
+  notes        UserNote[]
 
   @@index([chapterId])
 }

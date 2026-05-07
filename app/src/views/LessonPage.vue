@@ -19,7 +19,7 @@ const toast = useToast();
 
 const lessonId = computed(() => route.params.lessonId as string);
 
-const { markCompletedOnServer, markInProgressOnServer } = useLessonProgress(lessonId);
+const { watchedSeconds, markCompletedOnServer, markInProgressOnServer } = useLessonProgress(lessonId);
 
 const lessonData = computed(() => store.findLessonById(lessonId.value));
 const lesson = computed(() => lessonData.value?.lesson);
@@ -72,7 +72,11 @@ async function markComplete() {
           <span class="current">{{ lesson.title }}</span>
         </nav>
 
-        <LessonPlayer :video-url="lesson.videoUrl ?? undefined" :title="lesson.title" />
+        <LessonPlayer
+          :video-url="lesson.videoUrl ?? undefined"
+          :title="lesson.title"
+          :initial-seconds="watchedSeconds"
+        />
 
         <article class="lesson-article">
           <div class="lesson-head">

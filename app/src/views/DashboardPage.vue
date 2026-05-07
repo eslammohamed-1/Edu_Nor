@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { LessonInfo } from '@/types/course';
 import { useAuth } from '@/composables/useAuth';
 import { useCurriculumStore } from '@/stores/curriculum';
@@ -8,6 +9,8 @@ import RecentLessons from '@/components/dashboard/RecentLessons.vue';
 import ProgressChart from '@/components/dashboard/ProgressChart.vue';
 import ProfileCard from '@/components/dashboard/ProfileCard.vue';
 import NextLessonWidget from '@/components/student/NextLessonWidget.vue';
+import StreakWidget from '@/components/student/StreakWidget.vue';
+import BadgesGrid from '@/components/student/BadgesGrid.vue';
 
 const { user } = useAuth();
 const curriculum = useCurriculumStore();
@@ -87,6 +90,17 @@ const subjectProgress = computed(() => {
 
         <NextLessonWidget v-if="user.role === 'student'" />
 
+        <div v-if="user.role === 'student'" class="gamify-row">
+          <StreakWidget />
+          <BadgesGrid />
+        </div>
+
+        <div v-if="user.role === 'student'" class="quick-links font-ar">
+          <RouterLink to="/leaderboard" class="ql">لوحة المتصدرين</RouterLink>
+          <RouterLink to="/my-notes" class="ql">ملاحظاتي</RouterLink>
+          <RouterLink to="/study-plan" class="ql">خطتي الدراسية</RouterLink>
+        </div>
+
         <div class="widgets-row">
           <RecentLessons :lessons="recentLessons" />
           <ProgressChart :subjects="subjectProgress" />
@@ -128,6 +142,29 @@ const subjectProgress = computed(() => {
   gap: var(--space-md);
 }
 
+.gamify-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.ql {
+  color: var(--color-teal);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.ql:hover {
+  text-decoration: underline;
+}
+
 .dashboard-aside {
   display: flex;
   flex-direction: column;
@@ -144,6 +181,9 @@ const subjectProgress = computed(() => {
     grid-template-columns: 1fr;
   }
   .widgets-row {
+    grid-template-columns: 1fr;
+  }
+  .gamify-row {
     grid-template-columns: 1fr;
   }
 }

@@ -11,19 +11,19 @@ U5-009,U5,Certificate model + signing,Prisma Certificate model + hashSignature u
 U5-010,U5,Auto-issue certificate logic,Trigger on lesson complete chain + final quiz pass,feature,high,done,3,"U5-001,U5-009,U3-014",server/src/lib/certificates.ts
 U5-011,U5,Certificate page UI,Premium-looking page with print button + share link,page,high,done,3,U5-010,app/src/views/CertificatePage.vue
 U5-012,U5,Public verify endpoint + page,GET /cert/verify/:hash returning certificate validity + page,feature,medium,done,2,U5-009,app/src/views/CertificateVerifyPage.vue
-U5-013,U5,UserStats model + scoring rules,Prisma UserStats + lib computing points/streak/badges,schema,high,todo,3,U1-002,server/prisma/schema.prisma
-U5-014,U5,Gamification awards on actions,Hooks awarding points after lesson complete/quiz pass/course finish,feature,high,todo,3,"U5-002,U3-014,U5-013",server/src/lib/gamification.ts
-U5-015,U5,Streak counter calc,Cron-like check daily that decrements broken streaks correctly across timezones,feature,medium,todo,3,U5-013,server/src/lib/gamification.ts
-U5-016,U5,Streak widget,Component showing current streak + best streak + flame icon,component,medium,todo,1,U5-014,app/src/components/student/StreakWidget.vue
-U5-017,U5,Badges grid component,Grid showing earned/unlocked badges with tooltips,component,medium,todo,2,U5-014,app/src/components/student/BadgesGrid.vue
-U5-018,U5,Leaderboard page (per grade),Weekly leaderboard scoped to student grade,page,medium,todo,3,U5-014,app/src/views/LeaderboardPage.vue
-U5-019,U5,Onboarding flow page,3-step page after register: stage/grade + 3 subjects + tour,page,critical,todo,4,,app/src/views/OnboardingPage.vue
-U5-020,U5,Onboarding redirect after register,Router guard redirects new users to /onboarding once,feature,high,todo,1,U5-019,app/src/router/index.ts
-U5-021,U5,Notification model + endpoints,Prisma model + GET /me/notifications + PATCH read,schema,high,todo,3,U1-002,server/src/routes/me/notifications.ts
-U5-022,U5,NotificationBell component,Header dropdown with unread count + list,component,high,todo,3,U5-021,app/src/components/common/NotificationBell.vue
-U5-023,U5,SSE notifications stream,Push real-time notifications via SSE endpoint,feature,medium,todo,3,U5-021,server/src/routes/me/notifications.ts
-U5-024,U5,UserBookmark + UserNote models,Prisma models for bookmarks and personal notes,schema,medium,todo,2,U1-002,server/prisma/schema.prisma
-U5-025,U5,Bookmark/Note endpoints,Endpoints to add/remove/list,feature,medium,todo,2,U5-024,server/src/routes/me/notes.ts
-U5-026,U5,MyNotes page,List + search + edit notes per lesson,page,medium,todo,3,U5-025,app/src/views/MyNotesPage.vue
-U5-027,U5,VideoPlayerV2 with HLS,New component using hls.js with speed control + resume + subtitles,component,high,todo,5,U5-003,app/src/components/courses/VideoPlayerV2.vue
-U5-028,U5,Replace video placeholder,Use VideoPlayerV2 in LessonPage and LessonPlayer,refactor,high,todo,1,U5-027,app/src/views/LessonPage.vue
+U5-013,U5,UserStats model + scoring rules,Prisma UserStats + lib computing points/streak/badges,schema,high,done,3,U1-002,server/prisma/schema.prisma
+U5-014,U5,Gamification awards on actions,Hooks awarding points after lesson complete/quiz pass/course finish,feature,high,done,3,"U5-002,U3-014,U5-013",server/src/lib/gamification.ts
+U5-015,U5,Streak counter calc,Cron-like check daily that decrements broken streaks correctly across timezones,feature,medium,done,3,U5-013,server/src/lib/gamification.ts
+U5-016,U5,Streak widget,Component showing current streak + best streak + flame icon,component,medium,done,1,U5-014,app/src/components/student/StreakWidget.vue
+U5-017,U5,Badges grid component,Grid showing earned/unlocked badges with tooltips,component,medium,done,2,U5-014,app/src/components/student/BadgesGrid.vue
+U5-018,U5,Leaderboard page (per grade),Weekly leaderboard scoped to student grade,page,medium,done,3,U5-014,app/src/views/LeaderboardPage.vue
+U5-019,U5,Onboarding flow page,3-step page after register: stage/grade + 3 subjects + tour,page,critical,done,4,,app/src/views/OnboardingPage.vue
+U5-020,U5,Onboarding redirect after register,Router guard redirects new users to /onboarding once,feature,high,done,1,U5-019,app/src/router/index.ts
+U5-021,U5,Notification model + endpoints,Prisma model + GET /me/notifications + PATCH read,schema,high,done,3,U1-002,server/src/routes/me/notifications.ts
+U5-022,U5,NotificationBell component,Header dropdown with unread count + list,component,high,done,3,U5-021,app/src/components/common/NotificationBell.vue
+U5-023,U5,SSE notifications stream,Push real-time notifications via SSE endpoint,feature,medium,done,3,U5-021,server/src/routes/me/notifications.ts
+U5-024,U5,UserBookmark + UserNote models,Prisma models for bookmarks and personal notes,schema,medium,done,2,U1-002,server/prisma/schema.prisma
+U5-025,U5,Bookmark/Note endpoints,Endpoints to add/remove/list,feature,medium,done,2,U5-024,server/src/routes/me/notes.ts
+U5-026,U5,MyNotes page,List + search + edit notes per lesson,page,medium,done,3,U5-025,app/src/views/MyNotesPage.vue
+U5-027,U5,VideoPlayerV2 with HLS,New component using hls.js with speed control + resume + subtitles,component,high,done,5,U5-003,app/src/components/courses/VideoPlayerV2.vue
+U5-028,U5,Replace video placeholder,Use VideoPlayerV2 in LessonPage and LessonPlayer,refactor,high,done,1,U5-027,app/src/views/LessonPage.vue

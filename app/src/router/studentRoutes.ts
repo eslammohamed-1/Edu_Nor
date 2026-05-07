@@ -25,5 +25,23 @@ export const studentRoutes: RouteRecordRaw[] = [
     name: 'certificate',
     component: () => import('@/views/CertificatePage.vue'),
     meta: { title: 'شهادتي — إديو نور', requiresAuth: true }
+  },
+  {
+    path: '/onboarding',
+    name: 'onboarding',
+    component: () => import('@/views/OnboardingPage.vue'),
+    meta: { title: 'إرشاد — إديو نور', requiresAuth: true }
+  },
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: () => import('@/views/LeaderboardPage.vue'),
+    meta: { title: 'المتصدرون — إديو نور', requiresAuth: true }
+  },
+  {
+    path: '/my-notes',
+    name: 'my-notes',
+    component: () => import('@/views/MyNotesPage.vue'),
+    meta: { title: 'ملاحظاتي — إديو نور', requiresAuth: true }
   }
 ];

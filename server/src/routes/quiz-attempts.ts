@@ -3,6 +3,7 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { loadEnv } from '../env.js';
+import { awardQuizPass } from '../lib/gamification.js';
 import { tryIssueQuizPassCertificate } from '../lib/certificates.js';
 import { findLearnerQuizById } from '../lib/quiz-content.js';
 import {
@@ -311,6 +312,13 @@ export const quizAttemptsRoutes: FastifyPluginAsync = async (app) => {
       if (passed) {
         void tryIssueQuizPassCertificate(certEnv, user.id, attempt.quizId).catch((err) => {
           req.log.warn({ err }, 'issue quiz certificate failed');
+        });
+        const hints = {
+          clientDateHeader:
+            typeof req.headers['x-client-date'] === 'string' ? req.headers['x-client-date'] : undefined
+        };
+        void awardQuizPass(user.id, hints).catch((err) => {
+          req.log.warn({ err }, 'gamification quiz award failed');
         });
       }
 

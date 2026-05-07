@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import AppButton from '@/components/common/AppButton.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
+import NotificationBell from '@/components/common/NotificationBell.vue';
 import { useTheme } from '@/composables/useTheme';
 import { useAuth } from '@/composables/useAuth';
 
@@ -37,6 +38,12 @@ async function handleLogout() {
         <RouterLink to="/subjects" class="nav-link font-ar">المواد الدراسية</RouterLink>
         <RouterLink to="/quiz" class="nav-link font-ar">الاختبارات</RouterLink>
         <RouterLink v-if="isAuthenticated" to="/dashboard" class="nav-link font-ar">لوحتي</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/my-notes" class="nav-link font-ar hidden-mobile">
+          ملاحظاتي
+        </RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/leaderboard" class="nav-link font-ar hidden-mobile">
+          المتصدرون
+        </RouterLink>
         <RouterLink
           v-if="isSuperAdmin"
           to="/admin"
@@ -47,6 +54,7 @@ async function handleLogout() {
       </div>
 
       <div class="navbar-actions">
+        <NotificationBell v-if="isAuthenticated" />
         <button
           class="theme-toggle"
           @click="toggle"
@@ -126,6 +134,8 @@ async function handleLogout() {
             <RouterLink to="/subjects" class="nav-link font-ar" @click="closeMobile">المواد الدراسية</RouterLink>
             <RouterLink to="/quiz" class="nav-link font-ar" @click="closeMobile">الاختبارات</RouterLink>
             <RouterLink v-if="isAuthenticated" to="/dashboard" class="nav-link font-ar" @click="closeMobile">لوحتي</RouterLink>
+            <RouterLink v-if="isAuthenticated" to="/my-notes" class="nav-link font-ar" @click="closeMobile">ملاحظاتي</RouterLink>
+            <RouterLink v-if="isAuthenticated" to="/leaderboard" class="nav-link font-ar" @click="closeMobile">المتصدرون</RouterLink>
             <RouterLink
               v-if="isSuperAdmin"
               to="/admin"

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../../db.js';
 import { loadEnv } from '../../env.js';
 import { tryIssueSubjectCompletionCertificate } from '../../lib/certificates.js';
+import { awardLessonComplete, awardSubjectCompletion } from '../../lib/gamification.js';
 
 const env = loadEnv();
 
@@ -166,10 +167,25 @@ export const meProgressRoutes: FastifyPluginAsync = async (app) => {
         }
       });
 
-      if (row.status === 'completed') {
-        void tryIssueSubjectCompletionCertificate(env, user.id, lessonId).catch((err) => {
-          req.log.warn({ err }, 'issue subject certificate failed');
+      const becameCompleted =
+        row.status === 'completed' && (!existing || existing.status !== 'completed');
+      if (becameCompleted) {
+        const hints = {
+          clientDateHeader:
+            typeof req.headers['x-client-date'] === 'string' ? req.headers['x-client-date'] : undefined
+        };
+        void awardLessonComplete(user.id, hints).catch((err) => {
+          req.log.warn({ err }, 'gamification lesson award failed');
         });
+        void tryIssueSubjectCompletionCertificate(env, user.id, lessonId)
+          .then((issued) => {
+            if (issued) {
+              return awardSubjectCompletion(user.id, hints);
+            }
+          })
+          .catch((err) => {
+            req.log.warn({ err }, 'issue subject certificate failed');
+          });
       }
 
       return reply.send({

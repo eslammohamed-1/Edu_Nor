@@ -86,17 +86,17 @@ export async function tryIssueSubjectCompletionCertificate(
   env: Env,
   userId: string,
   lessonId: string
-): Promise<void> {
+): Promise<boolean> {
   const subjectId = await resolveSubjectIdForLesson(lessonId);
-  if (!subjectId) return;
+  if (!subjectId) return false;
 
   const lessonIds = await subjectLessonIds(subjectId);
-  if (lessonIds.length === 0) return;
+  if (lessonIds.length === 0) return false;
 
   const completed = await prisma.lessonProgress.count({
     where: { userId, lessonId: { in: lessonIds }, status: 'completed' }
   });
-  if (completed < lessonIds.length) return;
+  if (completed < lessonIds.length) return false;
 
   const existing = await prisma.certificate.findFirst({
     where: {
@@ -106,13 +106,13 @@ export async function tryIssueSubjectCompletionCertificate(
       quizId: null
     }
   });
-  if (existing) return;
+  if (existing) return false;
 
   const subject = await prisma.subject.findUnique({
     where: { id: subjectId },
     select: { name: true }
   });
-  if (!subject) return;
+  if (!subject) return false;
 
   const title = `إتمام جميع دروس مادة ${subject.name}`;
   const nonce = randomBytes(16).toString('hex');
@@ -139,6 +139,7 @@ export async function tryIssueSubjectCompletionCertificate(
       metaJson: { v: 1, nonce }
     }
   });
+  return true;
 }
 
 export async function tryIssueQuizPassCertificate(env: Env, userId: string, quizId: string): Promise<void> {

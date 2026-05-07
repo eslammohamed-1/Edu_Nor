@@ -20,7 +20,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const { register, isLoading, error, clearError } = useAuth();
+const { register, user, isLoading, error, clearError } = useAuth();
 const toast = useToast();
 const settingsStore = useAdminSettingsStore();
 
@@ -142,7 +142,11 @@ async function handleSubmit() {
 
   if (success) {
     toast.success('تم إنشاء حسابك بنجاح 🎉');
-    router.push('/dashboard');
+    if (user.value?.role === 'student' && user.value?.onboardingCompleted === false) {
+      router.push('/onboarding');
+    } else {
+      router.push('/dashboard');
+    }
   } else if (error.value) {
     toast.error(error.value);
   }

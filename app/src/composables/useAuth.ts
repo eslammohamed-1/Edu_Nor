@@ -17,6 +17,7 @@ export function useAuth() {
     register: store.register,
     logout: store.logout,
     clearError: store.clearError,
-    hydrate: store.hydrate
+    hydrate: store.hydrate,
+    patchSessionUser: store.patchSessionUser
   };
 }

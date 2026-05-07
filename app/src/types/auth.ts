@@ -27,6 +27,10 @@ export interface User {
   role: UserRole;
   /** للـ admin والمعلم؛ إن غابت نستخدم افتراضيات الدور (انظر seed RolePermission) */
   permissions?: string[];
+  /** من الخادم بعد U5 — `false` يعني يحتاج صفحة الإرشاد */
+  onboardingCompleted?: boolean;
+  /** مواد مفضّلة بعد الإرشاد */
+  favoriteSubjectIds?: string[];
 }
 
 export interface LoginPayload {

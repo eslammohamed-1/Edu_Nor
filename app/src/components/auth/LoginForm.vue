@@ -19,7 +19,7 @@ const isDev = import.meta.env.DEV;
 const settingsStore = useAdminSettingsStore();
 
 const router = useRouter();
-const { login, isLoading, error, clearError, isSuperAdmin } = useAuth();
+const { login, user, isLoading, error, clearError, isSuperAdmin } = useAuth();
 const toast = useToast();
 
 const form = reactive({
@@ -84,7 +84,13 @@ async function handleSubmit() {
     toast.success(
       isSuperAdmin.value ? 'مرحباً بك كمدير للنظام' : 'تم تسجيل الدخول بنجاح 👋'
     );
-    router.push(isSuperAdmin.value ? '/admin' : '/dashboard');
+    if (isSuperAdmin.value) {
+      router.push('/admin');
+    } else if (user.value?.role === 'student' && user.value?.onboardingCompleted === false) {
+      router.push('/onboarding');
+    } else {
+      router.push('/dashboard');
+    }
   } else if (error.value) {
     recordFailedLoginAttempt();
     auditGuest(

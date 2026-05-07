@@ -7,6 +7,7 @@ import {
   normalizeStoredUser,
   readStoredAuth,
   writeStoredAuth,
+  currentAuthStorageMode,
   type StoredAuthPayload
 } from '@/lib/authStorage';
 import { apiLogoutRefresh, getApiBase } from '@/services/http/client';
@@ -37,6 +38,20 @@ export const useAuthStore = defineStore('auth', () => {
         refreshToken: payload.refreshToken
       },
       persistent
+    );
+  }
+
+  /** تحديث بيانات المستخدم من استجابة API (مثل إنهاء الإرشاد) */
+  function patchSessionUser(nextUser: User) {
+    if (!token.value) return;
+    user.value = normalizeStoredUser(nextUser);
+    writeStoredAuth(
+      {
+        user: user.value,
+        token: token.value,
+        refreshToken: refreshToken.value ?? undefined
+      },
+      currentAuthStorageMode() === 'local'
     );
   }
 
@@ -98,7 +113,8 @@ export const useAuthStore = defineStore('auth', () => {
             name: 'مدير النظام',
             email: emailNorm,
             createdAt: new Date().toISOString(),
-            role: 'super_admin'
+            role: 'super_admin',
+            onboardingCompleted: true
           }
         : {
             id: 'u_' + Date.now(),
@@ -107,7 +123,8 @@ export const useAuthStore = defineStore('auth', () => {
             stage: 'secondary' as Stage,
             grade: 'الصف الثالث الثانوي',
             createdAt: new Date().toISOString(),
-            role: 'student'
+            role: 'student',
+            onboardingCompleted: true
           };
 
       const mockTok = 'mock_token_' + Math.random().toString(36).slice(2);
@@ -178,7 +195,8 @@ export const useAuthStore = defineStore('auth', () => {
         secondaryTrack:
           payload.stage === 'secondary' ? payload.secondaryTrack : undefined,
         createdAt: new Date().toISOString(),
-        role: 'student'
+        role: 'student',
+        onboardingCompleted: false
       };
       const mockTok = 'mock_token_' + Math.random().toString(36).slice(2);
       applySession({ user: mockUser, token: mockTok });
@@ -213,6 +231,7 @@ export const useAuthStore = defineStore('auth', () => {
     completeTwoFactor,
     register,
     logout,
-    clearError
+    clearError,
+    patchSessionUser
   };
 });

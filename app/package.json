@@ -19,6 +19,7 @@
     "gen:api": "npm run gen:api --prefix ../server"
   },
   "dependencies": {
+    "hls.js": "^1.6.16",
     "lucide-vue-next": "^1.0.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",

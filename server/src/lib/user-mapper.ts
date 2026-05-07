@@ -12,6 +12,10 @@ export interface PublicUser {
   secondaryTrack?: string;
   permissions?: string[];
   createdAt: string;
+  /** هل أنهى الإرشاد الأولي (U5) */
+  onboardingCompleted?: boolean;
+  /** معرّفات المواد المفضّلة بعد الإرشاد */
+  favoriteSubjectIds?: string[];
 }
 
 export function toPublicUser(u: DbUser): PublicUser {
@@ -22,6 +26,17 @@ export function toPublicUser(u: DbUser): PublicUser {
       if (Array.isArray(parsed)) permissions = parsed.filter(x => typeof x === 'string');
     } catch {
       permissions = undefined;
+    }
+  }
+  let favoriteSubjectIds: string[] | undefined;
+  if (u.favoriteSubjectsJson) {
+    try {
+      const parsed = JSON.parse(u.favoriteSubjectsJson) as unknown;
+      if (Array.isArray(parsed)) {
+        favoriteSubjectIds = parsed.filter((x): x is string => typeof x === 'string');
+      }
+    } catch {
+      favoriteSubjectIds = undefined;
     }
   }
   return {
@@ -35,6 +50,8 @@ export function toPublicUser(u: DbUser): PublicUser {
     stage: u.stage ?? undefined,
     secondaryTrack: u.secondaryTrack ?? undefined,
     permissions,
-    createdAt: u.createdAt.toISOString()
+    createdAt: u.createdAt.toISOString(),
+    onboardingCompleted: !!u.onboardingCompletedAt,
+    favoriteSubjectIds
   };
 }

@@ -1,20 +1,39 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import AppIcon from '@/components/common/AppIcon.vue';
+import VideoPlayerV2 from '@/components/courses/VideoPlayerV2.vue';
 
 interface Props {
   videoUrl?: string;
   title: string;
   poster?: string;
+  initialSeconds?: number;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+/** روابط مباشرة أو HLS — مشغّل متقدّم؛ يوتيوب وغيره يبقى iframe */
+const useAdvancedPlayer = computed(() => {
+  const u = props.videoUrl?.trim() ?? '';
+  if (!u) return false;
+  if (u.includes('youtube.com') || u.includes('youtu.be')) return false;
+  return /\.(m3u8|mp4|webm|ogg)(\?|$)/i.test(u) || u.startsWith('blob:');
+});
 </script>
 
 <template>
   <div class="lesson-player">
     <div class="player-ratio">
+      <VideoPlayerV2
+        v-if="useAdvancedPlayer && videoUrl"
+        class="player-fill"
+        :src="videoUrl"
+        :title="title"
+        :poster="poster"
+        :initial-seconds="initialSeconds ?? 0"
+      />
       <iframe
-        v-if="videoUrl"
+        v-else-if="videoUrl"
         :src="videoUrl"
         :title="title"
         frameborder="0"
@@ -49,6 +68,7 @@ defineProps<Props>();
   padding-top: 56.25%;
 }
 
+.player-fill,
 .player-iframe,
 .player-placeholder {
   position: absolute;
@@ -56,6 +76,10 @@ defineProps<Props>();
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.player-fill {
+  border: none;
 }
 
 .placeholder-gradient {

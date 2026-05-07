@@ -11,6 +11,16 @@ export function getApiBase(): string | null {
   return u || null;
 }
 
+/** تاريخ اليوم بتقويم المستخدم المحلي — يُرسل للخادم لاحتساب السلسلة (U5). */
+export function clientLocalYmd(): string {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0')
+  ].join('-');
+}
+
 export function useRemoteApi(): boolean {
   return !!getApiBase();
 }
@@ -81,6 +91,9 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
     }
     if (needsCsrf(path, method) && csrfCache) {
       headers.set('X-CSRF-Token', csrfCache);
+    }
+    if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method) && !headers.has('X-Client-Date')) {
+      headers.set('X-Client-Date', clientLocalYmd());
     }
     return fetch(`${base}${path}`, { ...init, headers, credentials: 'include' });
   };

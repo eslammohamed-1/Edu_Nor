@@ -48,6 +48,18 @@ router.beforeEach((to) => {
     return { name: auth.isSuperAdmin ? 'admin' : 'dashboard' };
   }
 
+  const u = auth.user;
+  const studentNeedsOnboarding =
+    auth.isAuthenticated && u?.role === 'student' && u.onboardingCompleted === false;
+
+  if (studentNeedsOnboarding && to.name !== 'onboarding') {
+    return { name: 'onboarding', query: { redirect: to.fullPath } };
+  }
+
+  if (to.name === 'onboarding' && auth.isAuthenticated && u?.onboardingCompleted !== false) {
+    return { name: 'dashboard' };
+  }
+
   return true;
 });
 

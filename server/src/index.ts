@@ -19,7 +19,12 @@ import { quizAttemptsRoutes } from './routes/quiz-attempts.js';
 import { meProgressRoutes } from './routes/me/progress.js';
 import { meStudyPlanRoutes } from './routes/me/study-plan.js';
 import { meCertificatesRoutes } from './routes/me/certificates.js';
+import { meStatsRoutes } from './routes/me/stats.js';
+import { meOnboardingRoutes } from './routes/me/onboarding.js';
+import { meNotificationsRoutes } from './routes/me/notifications.js';
+import { meNotesRoutes } from './routes/me/notes.js';
 import { certVerifyRoutes } from './routes/cert-verify.js';
+import { reconcileAllUserStreaks } from './lib/gamification.js';
 import { recordHttpMutationAudit } from './lib/audit.js';
 
 const env = loadEnv();
@@ -134,10 +139,24 @@ await app.register(quizAttemptsRoutes, { prefix: '/api/v1' });
 await app.register(meProgressRoutes, { prefix: '/api/v1' });
 await app.register(meStudyPlanRoutes, { prefix: '/api/v1' });
 await app.register(meCertificatesRoutes, { prefix: '/api/v1' });
+await app.register(meStatsRoutes, { prefix: '/api/v1' });
+await app.register(meOnboardingRoutes, { prefix: '/api/v1' });
+await app.register(meNotificationsRoutes, { prefix: '/api/v1', env });
+await app.register(meNotesRoutes, { prefix: '/api/v1' });
 await app.register(certVerifyRoutes, { prefix: '/api/v1' });
 await app.register(adminUsersRoutes, { prefix: '/api/v1/admin/users' });
 await app.register(adminCatalogContentRoutes, { prefix: '/api/v1/admin/catalog' });
 await app.register(adminSystemRoutes, { prefix: '/api/v1/admin', env });
+
+void reconcileAllUserStreaks().catch((err) => {
+  app.log.warn({ err }, 'initial reconcile streaks failed');
+});
+
+setInterval(() => {
+  void reconcileAllUserStreaks().catch((err) => {
+    app.log.warn({ err }, 'reconcile streaks job failed');
+  });
+}, 24 * 60 * 60 * 1000);
 
 if (env.ENABLE_API_DOCS) {
   await app.register(swaggerUi, {
