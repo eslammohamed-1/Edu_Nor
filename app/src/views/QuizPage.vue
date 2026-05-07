@@ -143,6 +143,7 @@ onUnmounted(() => {
         :total="currentQuiz.questions.length"
         :answers="answers"
         :question-ids="questionIds"
+        :questions="currentQuiz.questions"
         :time-left="submitted ? undefined : timeLeft ?? undefined"
         @jump="store.goToIndex"
       />

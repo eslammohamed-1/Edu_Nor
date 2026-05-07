@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import AppIcon from '@/components/common/AppIcon.vue';
+import { isAnswerComplete } from '@/lib/quizGrade';
+import type { AnyQuestion } from '@/types/quiz';
 
 interface Props {
   current: number;
   total: number;
   answers: Record<string, string | null>;
   questionIds: string[];
+  /** عند توفرها تُستخدم لتقييم JSON المركّب/التوصيل بدقة */
+  questions?: AnyQuestion[];
   timeLeft?: number;
 }
 
@@ -25,6 +29,11 @@ const minutes = computed(() => {
 
 function isAnswered(qid: string) {
   const val = props.answers[qid];
+  const idx = props.questionIds.indexOf(qid);
+  const q = props.questions && idx >= 0 ? props.questions[idx] : undefined;
+  if (q) {
+    return isAnswerComplete(q, val);
+  }
   if (val === null || val === undefined) return false;
   const t = String(val).trim();
   if (t === '' || t === '[]') return false;

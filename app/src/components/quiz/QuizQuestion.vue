@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { AnyQuestion, McqQuestion, QuestionType } from '@/types/quiz';
-import AppIcon from '@/components/common/AppIcon.vue';
 import ChoicesRenderer from '@/components/quiz/renderers/ChoicesRenderer.vue';
 import GapRenderer from '@/components/quiz/renderers/GapRenderer.vue';
+import GroupedMrqRenderer from '@/components/quiz/renderers/GroupedMrqRenderer.vue';
+import InputRenderer from '@/components/quiz/renderers/InputRenderer.vue';
+import MatchingRenderer from '@/components/quiz/renderers/MatchingRenderer.vue';
+import MultipartRenderer from '@/components/quiz/renderers/MultipartRenderer.vue';
 import OrderingRenderer from '@/components/quiz/renderers/OrderingRenderer.vue';
 import PlaceholderRenderer from '@/components/quiz/renderers/PlaceholderRenderer.vue';
+import PuzzleRenderer from '@/components/quiz/renderers/PuzzleRenderer.vue';
+import TextRenderer from '@/components/quiz/renderers/TextRenderer.vue';
 
 interface Props {
   question: AnyQuestion;
@@ -22,9 +28,7 @@ defineEmits<{
 
 const CHOICE_TYPES: QuestionType[] = ['mcq', 'mrq', 'opinion'];
 
-function isChoiceRenderer(
-  q: AnyQuestion
-): q is McqQuestion {
+function isChoiceRenderer(q: AnyQuestion): q is McqQuestion {
   return (
     CHOICE_TYPES.includes(q.type) &&
     'choices' in q &&
@@ -32,6 +36,14 @@ function isChoiceRenderer(
     q.choices.length > 0
   );
 }
+
+/** نص السطر الأول: لا نكرر وصف gap داخل العنوان، والمركّب يعرض `statement`. */
+const headline = computed(() => {
+  const q = props.question;
+  if (q.type === 'gap') return '';
+  if (q.type === 'multipart') return (q.statement?.trim() || q.stem) ?? '';
+  return q.stem;
+});
 </script>
 
 <template>
@@ -40,7 +52,7 @@ function isChoiceRenderer(
       <span class="question-counter font-en">
         {{ questionNumber }} / {{ total }}
       </span>
-      <h2 v-if="question.type !== 'gap'" class="question-text font-ar">{{ question.stem }}</h2>
+      <h2 v-if="headline" class="question-text font-ar">{{ headline }}</h2>
     </div>
 
     <GapRenderer
@@ -67,25 +79,55 @@ function isChoiceRenderer(
       @select="$emit('select', $event)"
     />
 
-    <PlaceholderRenderer v-else :question-type="question.type" />
+    <MatchingRenderer
+      v-else-if="question.type === 'matching'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
 
-    <!-- شرح بدون اختيارات (أنواع placeholder) بعد التسليم — gap له شرح داخل GapRenderer -->
-    <div
-      v-if="
-        showResult &&
-        question.explanation &&
-        !isChoiceRenderer(question) &&
-        question.type !== 'gap' &&
-        question.type !== 'ordering'
-      "
-      class="explanation explanation--neutral animate-fade-in"
-    >
-      <div class="explanation-head">
-        <AppIcon name="Info" :size="20" />
-        <strong class="font-ar">تنويه</strong>
-      </div>
-      <p class="font-ar">{{ question.explanation }}</p>
-    </div>
+    <TextRenderer
+      v-else-if="question.type === 'string' || question.type === 'frq'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <InputRenderer
+      v-else-if="question.type === 'input' || question.type === 'counting'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <PuzzleRenderer
+      v-else-if="question.type === 'puzzle'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <GroupedMrqRenderer
+      v-else-if="question.type === 'gmrq'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <MultipartRenderer
+      v-else-if="question.type === 'multipart'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <PlaceholderRenderer v-else :question-type="question.type" />
   </div>
 </template>
 
@@ -118,29 +160,5 @@ function isChoiceRenderer(
   color: var(--color-navy);
   line-height: var(--leading-snug);
   font-weight: var(--weight-bold);
-}
-
-.explanation {
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border-inline-start: 4px solid var(--color-info);
-}
-
-.explanation--neutral {
-  background-color: rgba(52, 152, 219, 0.08);
-  border-color: var(--color-info);
-}
-
-.explanation-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-xs);
-}
-
-.explanation p {
-  color: var(--text-primary);
-  line-height: var(--leading-relaxed);
-  margin: 0;
 }
 </style>

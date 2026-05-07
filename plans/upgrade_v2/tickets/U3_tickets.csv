@@ -3,12 +3,12 @@ U3-001,U3,QuizQuestion dispatcher refactor,Make QuizQuestion.vue a switcher sele
 U3-002,U3,ChoicesRenderer (mcq/mrq/opinion),Extract existing logic into renderer component with mrq multi-select support,component,critical,done,2,U3-001,app/src/components/quiz/renderers/ChoicesRenderer.vue
 U3-003,U3,GapRenderer,Render gap-fill question with choice chips and slot positions,component,critical,done,3,U3-001,app/src/components/quiz/renderers/GapRenderer.vue
 U3-004,U3,OrderingRenderer,Reorder list via HTML5 drag-drop plus Chevron buttons and arrow keys; shuffle on load,component,critical,done,4,U3-001,app/src/components/quiz/renderers/OrderingRenderer.vue
-U3-005,U3,MatchingRenderer,Two-column matching with line drawing canvas + click-to-pair,component,critical,todo,5,U3-001,app/src/components/quiz/renderers/MatchingRenderer.vue
-U3-006,U3,TextRenderer (string/frq),Textarea with character counter and basic formatting helpers,component,high,todo,2,U3-001,app/src/components/quiz/renderers/TextRenderer.vue
-U3-007,U3,InputRenderer (input/counting),Numeric/text input with optional unit suffix and validation,component,high,todo,2,U3-001,app/src/components/quiz/renderers/InputRenderer.vue
-U3-008,U3,PuzzleRenderer,Image puzzle drag rearrangement with completeImage preview on result,component,high,todo,5,U3-001,app/src/components/quiz/renderers/PuzzleRenderer.vue
-U3-009,U3,GroupedMrqRenderer (gmrq),Render groups each with own choices and per-group correct answer,component,high,todo,3,U3-001,app/src/components/quiz/renderers/GroupedMrqRenderer.vue
-U3-010,U3,MultipartRenderer,Recursive renderer that mounts dispatchers per part with isolated state,component,high,todo,4,U3-001,app/src/components/quiz/renderers/MultipartRenderer.vue
+U3-005,U3,MatchingRenderer,Two-column matching with line drawing canvas + click-to-pair,component,critical,done,5,U3-001,app/src/components/quiz/renderers/MatchingRenderer.vue
+U3-006,U3,TextRenderer (string/frq),Textarea with character counter and basic formatting helpers,component,high,done,2,U3-001,app/src/components/quiz/renderers/TextRenderer.vue
+U3-007,U3,InputRenderer (input/counting),Numeric/text input with optional unit suffix and validation,component,high,done,2,U3-001,app/src/components/quiz/renderers/InputRenderer.vue
+U3-008,U3,PuzzleRenderer,Image puzzle drag rearrangement with completeImage preview on result,component,high,done,5,U3-001,app/src/components/quiz/renderers/PuzzleRenderer.vue
+U3-009,U3,GroupedMrqRenderer (gmrq),Render groups each with own choices and per-group correct answer,component,high,done,3,U3-001,app/src/components/quiz/renderers/GroupedMrqRenderer.vue
+U3-010,U3,MultipartRenderer,Recursive renderer that mounts dispatchers per part with isolated state,component,high,done,4,U3-001,app/src/components/quiz/renderers/MultipartRenderer.vue
 U3-011,U3,Unified answer payload schema,Define { kind value } TypeScript type and Zod schema,feature,critical,todo,2,,app/src/types/quiz.ts
 U3-012,U3,QuizAttempt API: start,POST /api/v1/quiz-attempts creating attempt with snapshot of quiz,feature,critical,todo,2,"U1-005,U1-011",server/src/routes/quiz-attempts.ts
 U3-013,U3,QuizAttempt API: save answer,PATCH /api/v1/quiz-attempts/:id/answer storing intermediate answers,feature,critical,todo,2,U3-012,server/src/routes/quiz-attempts.ts
