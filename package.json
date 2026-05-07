@@ -21,8 +21,8 @@
     "migrate:quizzes": "npm run migrate:quizzes --prefix server",
     "migrate:sqlite": "npm run migrate:sqlite --prefix server",
     "gen:api": "npm run gen:api --prefix server",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:ui": "playwright test -c e2e/playwright.config.ts --ui",
     "test:e2e:install": "playwright install chromium"
   },
   "devDependencies": {
