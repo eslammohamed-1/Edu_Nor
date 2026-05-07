@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCurriculumStore } from '@/stores/curriculum';
 import { useQuizStore } from '@/stores/quiz';
+import { useLessonProgress } from '@/composables/useLessonProgress';
 import { useToast } from '@/composables/useToast';
 import LessonPlayer from '@/components/courses/LessonPlayer.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
@@ -17,6 +18,8 @@ const quizStore = useQuizStore();
 const toast = useToast();
 
 const lessonId = computed(() => route.params.lessonId as string);
+
+const { markCompletedOnServer, markInProgressOnServer } = useLessonProgress(lessonId);
 
 const lessonData = computed(() => store.findLessonById(lessonId.value));
 const lesson = computed(() => lessonData.value?.lesson);
@@ -35,13 +38,23 @@ function goToLesson(id: string) {
   router.push(`/lessons/${id}`);
 }
 
-function markComplete() {
+async function markComplete() {
   if (!lesson.value) return;
   if (store.isLessonComplete(lesson.value.id)) {
     store.unmarkLessonComplete(lesson.value.id);
+    try {
+      await markInProgressOnServer();
+    } catch {
+      /* تجاهل */
+    }
     toast.info('تم إلغاء علامة الإتمام');
   } else {
     store.markLessonComplete(lesson.value.id);
+    try {
+      await markCompletedOnServer();
+    } catch {
+      /* تجاهل */
+    }
     toast.success('تم إتمام الدرس بنجاح 🎉');
   }
 }

@@ -187,6 +187,18 @@ export const useCurriculumStore = defineStore('curriculum', () => {
     return Math.round((done / subj.lessons.length) * 100);
   }
 
+  /** يدمج أسماء دروس مُكمَلة من الخادم مع المجموعة المحلية (U5). */
+  function mergeCompletedFromServer(lessonIds: string[]) {
+    let changed = false;
+    for (const id of lessonIds) {
+      if (!completedLessons.value.has(id)) {
+        completedLessons.value.add(id);
+        changed = true;
+      }
+    }
+    if (changed) persistCompleted(completedLessons.value);
+  }
+
   // ── Filters ──
   function setStageFilter(stage: Stage | 'all') {
     stageFilter.value = stage;
@@ -267,6 +279,7 @@ export const useCurriculumStore = defineStore('curriculum', () => {
     unmarkLessonComplete,
     isLessonComplete,
     subjectProgress,
+    mergeCompletedFromServer,
 
     // Filters
     setStageFilter,

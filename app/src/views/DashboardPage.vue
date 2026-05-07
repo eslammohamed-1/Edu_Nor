@@ -7,6 +7,7 @@ import DashboardStats from '@/components/dashboard/DashboardStats.vue';
 import RecentLessons from '@/components/dashboard/RecentLessons.vue';
 import ProgressChart from '@/components/dashboard/ProgressChart.vue';
 import ProfileCard from '@/components/dashboard/ProfileCard.vue';
+import NextLessonWidget from '@/components/student/NextLessonWidget.vue';
 
 const { user } = useAuth();
 const curriculum = useCurriculumStore();
@@ -83,6 +84,8 @@ const subjectProgress = computed(() => {
     <div v-if="user" class="dashboard-grid">
       <div class="dashboard-main">
         <DashboardStats :user-name="user.name" :stats="stats" />
+
+        <NextLessonWidget v-if="user.role === 'student'" />
 
         <div class="widgets-row">
           <RecentLessons :lessons="recentLessons" />

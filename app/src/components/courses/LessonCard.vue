@@ -4,7 +4,10 @@ import type { LessonInfo } from '@/types/course';
 
 interface Props {
   lesson: LessonInfo;
+  /** مُكمَلو محليًا أو من الخادم */
   completed?: boolean;
+  /** 0–100؛ عند غيابها لا يُعرض شريط التقدّم */
+  progressPercent?: number;
   active?: boolean;
   index?: number;
 }
@@ -23,41 +26,58 @@ function formatDuration(minutes: number): string {
 </script>
 
 <template>
-  <div class="lesson-card transition-all" :class="{ 'lesson-card--active': active, 'lesson-card--done': completed }">
-    <div class="lesson-index">
-      <AppIcon v-if="completed" name="CheckCircle2" :size="22" color="var(--color-success)" />
-      <span v-else class="index-num font-en">{{ index ?? lesson.order }}</span>
+  <div
+    class="lesson-card transition-all"
+    :class="{ 'lesson-card--active': active, 'lesson-card--done': completed }"
+  >
+    <div class="lesson-card-inner">
+      <div class="lesson-index">
+        <AppIcon v-if="completed" name="CheckCircle2" :size="22" color="var(--color-success)" />
+        <span v-else class="index-num font-en">{{ index ?? lesson.order }}</span>
+      </div>
+
+      <div class="lesson-type">
+        <AppIcon :name="iconForType(lesson.type)" :size="20" :color="active ? 'var(--color-gold)' : 'var(--color-navy)'" />
+      </div>
+
+      <div class="lesson-body">
+        <h4 class="lesson-title font-ar">{{ lesson.title }}</h4>
+        <p v-if="lesson.description" class="lesson-desc text-secondary font-ar">
+          {{ lesson.description }}
+        </p>
+      </div>
+
+      <div class="lesson-meta">
+        <AppIcon name="Clock" :size="14" />
+        <span class="font-ar">{{ formatDuration(lesson.duration) }}</span>
+      </div>
     </div>
 
-    <div class="lesson-type">
-      <AppIcon :name="iconForType(lesson.type)" :size="20" :color="active ? 'var(--color-gold)' : 'var(--color-navy)'" />
-    </div>
-
-    <div class="lesson-body">
-      <h4 class="lesson-title font-ar">{{ lesson.title }}</h4>
-      <p v-if="lesson.description" class="lesson-desc text-secondary font-ar">
-        {{ lesson.description }}
-      </p>
-    </div>
-
-    <div class="lesson-meta">
-      <AppIcon name="Clock" :size="14" />
-      <span class="font-ar">{{ formatDuration(lesson.duration) }}</span>
+    <div v-if="progressPercent != null" class="lesson-progress" aria-hidden="true">
+      <div class="lesson-progress__fill" :style="{ width: `${Math.min(100, Math.max(0, progressPercent))}%` }" />
     </div>
   </div>
 </template>
 
 <style scoped>
 .lesson-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.lesson-card-inner {
   display: grid;
   grid-template-columns: auto auto 1fr auto;
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md);
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
 }
 
 .lesson-card:hover {
@@ -125,5 +145,19 @@ function formatDuration(minutes: number): string {
   font-size: var(--text-caption);
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+.lesson-progress {
+  height: 4px;
+  width: 100%;
+  background: var(--color-gray-200);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  overflow: hidden;
+}
+
+.lesson-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold), rgba(244, 168, 37, 0.65));
+  transition: width 0.35s var(--ease-smooth);
 }
 </style>

@@ -9,6 +9,12 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: { title: 'لوحة التحكم — إديو نور', requiresAuth: true }
   },
   {
+    path: '/study-plan',
+    name: 'study-plan',
+    component: () => import('@/views/MyStudyPlanPage.vue'),
+    meta: { title: 'خطتي الدراسية — إديو نور', requiresAuth: true }
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/ProfilePage.vue'),

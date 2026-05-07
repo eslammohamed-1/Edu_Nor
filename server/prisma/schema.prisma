@@ -32,6 +32,7 @@ model User {
 
   refreshTokens         RefreshToken[]
   quizAttempts          QuizAttempt[]
+  lessonProgress        LessonProgress[]
   passwordResetTokens   PasswordResetToken[]
   twoFactor             UserTwoFactor?
 }
@@ -215,7 +216,28 @@ model Lesson {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  progressRows LessonProgress[]
+
   @@index([chapterId])
+}
+
+/// تقدّم الطالب في درس (U5)
+model LessonProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId       String
+  lesson         Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  /// `in_progress` | `completed`
+  status         String    @default("in_progress")
+  watchedSeconds Int       @default(0)
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
 }
 
 // ──────────────────────────────────────────────

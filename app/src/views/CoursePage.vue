@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCurriculumStore } from '@/stores/curriculum';
+import { getApiBase } from '@/services/http/client';
+import { readStoredAuth } from '@/lib/authStorage';
+import { fetchMyLessonProgress } from '@/services/lessonProgressService';
+import type { LessonProgressItem } from '@/services/lessonProgressService';
+import type { LessonInfo } from '@/types/course';
 import LessonCard from '@/components/courses/LessonCard.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppButton from '@/components/common/AppButton.vue';
@@ -52,6 +57,39 @@ function toggleGroup(title: string) {
 
 function openLesson(lessonId: string) {
   router.push(`/lessons/${lessonId}`);
+}
+
+const apiProgressByLesson = ref<Map<string, LessonProgressItem>>(new Map());
+
+onMounted(async () => {
+  if (!getApiBase() || !readStoredAuth()?.token) return;
+  try {
+    const items = await fetchMyLessonProgress();
+    const m = new Map<string, LessonProgressItem>();
+    const completedIds: string[] = [];
+    for (const it of items) {
+      m.set(it.lessonId, it);
+      if (it.status === 'completed') completedIds.push(it.lessonId);
+    }
+    apiProgressByLesson.value = m;
+    store.mergeCompletedFromServer(completedIds);
+  } catch {
+    /* غير مسجّل أو لا خادم */
+  }
+});
+
+function lessonDone(id: string): boolean {
+  const row = apiProgressByLesson.value.get(id);
+  return store.isLessonComplete(id) || row?.status === 'completed';
+}
+
+function lessonProgressPercent(lesson: LessonInfo): number | undefined {
+  if (lessonDone(lesson.id)) return 100;
+  const row = apiProgressByLesson.value.get(lesson.id);
+  if (!row || lesson.duration <= 0) return undefined;
+  const totalSec = lesson.duration * 60;
+  if (totalSec <= 0) return undefined;
+  return Math.min(99, Math.round((row.watchedSeconds / totalSec) * 100));
 }
 
 const progress = computed(() =>
@@ -126,7 +164,8 @@ const progress = computed(() =>
                 :key="lesson.id"
                 :lesson="lesson"
                 :index="lidx + 1"
-                :completed="store.isLessonComplete(lesson.id)"
+                :completed="lessonDone(lesson.id)"
+                :progress-percent="lessonProgressPercent(lesson)"
                 @click="openLesson(lesson.id)"
               />
             </div>

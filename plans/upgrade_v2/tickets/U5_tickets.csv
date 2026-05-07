@@ -1,12 +1,12 @@
 ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
-U5-001,U5,LessonProgress model,Prisma model userId+lessonId with status/watchedSeconds/completedAt,schema,critical,todo,1,U1-002,server/prisma/schema.prisma
-U5-002,U5,Progress API endpoints,POST /api/v1/me/progress/lesson + GET /me/progress aggregated,feature,critical,todo,2,U5-001,server/src/routes/me/progress.ts
-U5-003,U5,useLessonProgress composable,Periodic sync 30s + idempotent updates,feature,critical,todo,2,U5-002,app/src/composables/useLessonProgress.ts
-U5-004,U5,Progress UI on lesson cards,Progress bar + checkmark for completed lessons,feature,high,todo,2,U5-003,app/src/components/courses/LessonCard.vue
-U5-005,U5,Study plan recommendation logic,Server lib computing next recommended lesson per user,feature,high,todo,3,U5-001,server/src/lib/study-plan.ts
-U5-006,U5,Study plan endpoint,GET /api/v1/me/study-plan returning ordered list,feature,high,todo,1,U5-005,server/src/routes/me/study-plan.ts
-U5-007,U5,MyStudyPlan page,Full page UI with "start here" highlighted card,page,high,todo,3,U5-006,app/src/views/MyStudyPlanPage.vue
-U5-008,U5,Dashboard widget for next lesson,Add widget to DashboardPage showing recommendation,feature,high,todo,1,U5-006,app/src/views/DashboardPage.vue
+U5-001,U5,LessonProgress model,Prisma model userId+lessonId with status/watchedSeconds/completedAt,schema,critical,done,1,U1-002,server/prisma/schema.prisma
+U5-002,U5,Progress API endpoints,POST /api/v1/me/progress/lesson + GET /me/progress aggregated,feature,critical,done,2,U5-001,server/src/routes/me/progress.ts
+U5-003,U5,useLessonProgress composable,Periodic sync 30s + idempotent updates,feature,critical,done,2,U5-002,app/src/composables/useLessonProgress.ts
+U5-004,U5,Progress UI on lesson cards,Progress bar + checkmark for completed lessons,feature,high,done,2,U5-003,app/src/components/courses/LessonCard.vue
+U5-005,U5,Study plan recommendation logic,Server lib computing next recommended lesson per user,feature,high,done,3,U5-001,server/src/lib/study-plan.ts
+U5-006,U5,Study plan endpoint,GET /api/v1/me/study-plan returning ordered list,feature,high,done,1,U5-005,server/src/routes/me/study-plan.ts
+U5-007,U5,MyStudyPlan page,Full page UI with "start here" highlighted card,page,high,done,3,U5-006,app/src/views/MyStudyPlanPage.vue
+U5-008,U5,Dashboard widget for next lesson,Add widget to DashboardPage showing recommendation,feature,high,done,1,U5-006,app/src/views/DashboardPage.vue
 U5-009,U5,Certificate model + signing,Prisma Certificate model + hashSignature using HMAC + secret,schema,high,todo,2,U1-002,server/prisma/schema.prisma
 U5-010,U5,Auto-issue certificate logic,Trigger on lesson complete chain + final quiz pass,feature,high,todo,3,"U5-001,U5-009,U3-014",server/src/lib/certificates.ts
 U5-011,U5,Certificate page UI,Premium-looking page with print button + share link,page,high,todo,3,U5-010,app/src/views/CertificatePage.vue
