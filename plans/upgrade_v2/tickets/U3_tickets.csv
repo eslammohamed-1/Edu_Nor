@@ -1,8 +1,8 @@
 ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
 U3-001,U3,QuizQuestion dispatcher refactor,Make QuizQuestion.vue a switcher selecting renderer based on question.type,refactor,critical,done,2,,app/src/components/quiz/QuizQuestion.vue
 U3-002,U3,ChoicesRenderer (mcq/mrq/opinion),Extract existing logic into renderer component with mrq multi-select support,component,critical,done,2,U3-001,app/src/components/quiz/renderers/ChoicesRenderer.vue
-U3-003,U3,GapRenderer,Render gap-fill question with choice chips and slot positions,component,critical,todo,3,U3-001,app/src/components/quiz/renderers/GapRenderer.vue
-U3-004,U3,OrderingRenderer,Drag-and-drop ordering using vuedraggable with keyboard fallback,component,critical,todo,4,U3-001,app/src/components/quiz/renderers/OrderingRenderer.vue
+U3-003,U3,GapRenderer,Render gap-fill question with choice chips and slot positions,component,critical,done,3,U3-001,app/src/components/quiz/renderers/GapRenderer.vue
+U3-004,U3,OrderingRenderer,Reorder list via HTML5 drag-drop plus Chevron buttons and arrow keys; shuffle on load,component,critical,done,4,U3-001,app/src/components/quiz/renderers/OrderingRenderer.vue
 U3-005,U3,MatchingRenderer,Two-column matching with line drawing canvas + click-to-pair,component,critical,todo,5,U3-001,app/src/components/quiz/renderers/MatchingRenderer.vue
 U3-006,U3,TextRenderer (string/frq),Textarea with character counter and basic formatting helpers,component,high,todo,2,U3-001,app/src/components/quiz/renderers/TextRenderer.vue
 U3-007,U3,InputRenderer (input/counting),Numeric/text input with optional unit suffix and validation,component,high,todo,2,U3-001,app/src/components/quiz/renderers/InputRenderer.vue

@@ -27,7 +27,20 @@ function isAnswered(qid: string) {
   const val = props.answers[qid];
   if (val === null || val === undefined) return false;
   const t = String(val).trim();
-  if (t === '[]') return false;
+  if (t === '' || t === '[]') return false;
+  if (t.startsWith('[')) {
+    try {
+      const a = JSON.parse(t) as unknown[];
+      if (Array.isArray(a)) {
+        return (
+          a.length > 0 &&
+          a.every((x) => x !== null && x !== undefined && String(x).trim().length > 0)
+        );
+      }
+    } catch {
+      return false;
+    }
+  }
   return true;
 }
 </script>

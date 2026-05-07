@@ -113,11 +113,54 @@ export const useQuizStore = defineStore('quiz', () => {
 
       switch (q.type) {
         case 'mcq':
-        case 'opinion':
-        case 'gap': {
+        case 'opinion': {
           if ('choices' in q && Array.isArray(q.choices)) {
             const choice = q.choices.find((c) => c.id === selected);
             isCorrect = choice?.isCorrect === true;
+          }
+          break;
+        }
+
+        case 'gap': {
+          if (!('choices' in q) || !Array.isArray(q.choices)) {
+            isCorrect = false;
+            break;
+          }
+          const correctIds = q.choices.filter((c) => c.isCorrect === true).map((c) => c.id);
+          const blanks = (q.stem.match(/@BLANK/g) || []).length;
+
+          if (!selected) {
+            isCorrect = false;
+            break;
+          }
+
+          if (blanks <= 1) {
+            try {
+              const a = JSON.parse(selected) as unknown;
+              if (Array.isArray(a) && a.length === 1) {
+                const id = String(a[0]);
+                const choice = q.choices.find((c) => c.id === id);
+                isCorrect = choice?.isCorrect === true;
+              } else {
+                const choice = q.choices.find((c) => c.id === selected);
+                isCorrect = choice?.isCorrect === true;
+              }
+            } catch {
+              const choice = q.choices.find((c) => c.id === selected);
+              isCorrect = choice?.isCorrect === true;
+            }
+            break;
+          }
+
+          try {
+            const arr = JSON.parse(selected) as unknown;
+            isCorrect =
+              Array.isArray(arr) &&
+              (arr as string[]).length === blanks &&
+              correctIds.length === blanks &&
+              correctIds.every((id, i) => id === (arr as string[])[i]);
+          } catch {
+            isCorrect = false;
           }
           break;
         }

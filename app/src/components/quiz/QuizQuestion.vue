@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { AnyQuestion, GapQuestion, McqQuestion, QuestionType } from '@/types/quiz';
+import type { AnyQuestion, McqQuestion, QuestionType } from '@/types/quiz';
 import AppIcon from '@/components/common/AppIcon.vue';
 import ChoicesRenderer from '@/components/quiz/renderers/ChoicesRenderer.vue';
+import GapRenderer from '@/components/quiz/renderers/GapRenderer.vue';
+import OrderingRenderer from '@/components/quiz/renderers/OrderingRenderer.vue';
 import PlaceholderRenderer from '@/components/quiz/renderers/PlaceholderRenderer.vue';
 
 interface Props {
@@ -18,11 +20,11 @@ defineEmits<{
   select: [value: string];
 }>();
 
-const CHOICE_TYPES: QuestionType[] = ['mcq', 'mrq', 'opinion', 'gap'];
+const CHOICE_TYPES: QuestionType[] = ['mcq', 'mrq', 'opinion'];
 
 function isChoiceRenderer(
   q: AnyQuestion
-): q is McqQuestion | GapQuestion {
+): q is McqQuestion {
   return (
     CHOICE_TYPES.includes(q.type) &&
     'choices' in q &&
@@ -38,11 +40,27 @@ function isChoiceRenderer(
       <span class="question-counter font-en">
         {{ questionNumber }} / {{ total }}
       </span>
-      <h2 class="question-text font-ar">{{ question.stem }}</h2>
+      <h2 v-if="question.type !== 'gap'" class="question-text font-ar">{{ question.stem }}</h2>
     </div>
 
+    <GapRenderer
+      v-if="question.type === 'gap'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
+    <OrderingRenderer
+      v-else-if="question.type === 'ordering'"
+      :question="question"
+      :selected-option-id="selectedOptionId"
+      :show-result="showResult"
+      @select="$emit('select', $event)"
+    />
+
     <ChoicesRenderer
-      v-if="isChoiceRenderer(question)"
+      v-else-if="isChoiceRenderer(question)"
       :question="question"
       :selected-option-id="selectedOptionId"
       :show-result="showResult"
@@ -51,9 +69,15 @@ function isChoiceRenderer(
 
     <PlaceholderRenderer v-else :question-type="question.type" />
 
-    <!-- شرح بدون اختيارات (أنواع placeholder) بعد التسليم -->
+    <!-- شرح بدون اختيارات (أنواع placeholder) بعد التسليم — gap له شرح داخل GapRenderer -->
     <div
-      v-if="showResult && question.explanation && !isChoiceRenderer(question)"
+      v-if="
+        showResult &&
+        question.explanation &&
+        !isChoiceRenderer(question) &&
+        question.type !== 'gap' &&
+        question.type !== 'ordering'
+      "
       class="explanation explanation--neutral animate-fade-in"
     >
       <div class="explanation-head">

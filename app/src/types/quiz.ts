@@ -41,6 +41,7 @@ export interface MatchingQuestion extends BaseQuestion {
 }
 
 export interface GapQuestion extends BaseQuestion {
+  /** استخدم `@BLANK` في النص لكل فراغ. الإجابات الصحيحة تُعرّف بـ isCorrect في choices بنفس ترتيب ظهور الفراغات من اليسار لليمين (لعدة فراغات). */
   type: 'gap';
   choices: Choice[]; // الفراغات الصحيحة والخاطئة
 }
