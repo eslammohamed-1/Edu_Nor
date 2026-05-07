@@ -9,11 +9,11 @@ U3-007,U3,InputRenderer (input/counting),Numeric/text input with optional unit s
 U3-008,U3,PuzzleRenderer,Image puzzle drag rearrangement with completeImage preview on result,component,high,done,5,U3-001,app/src/components/quiz/renderers/PuzzleRenderer.vue
 U3-009,U3,GroupedMrqRenderer (gmrq),Render groups each with own choices and per-group correct answer,component,high,done,3,U3-001,app/src/components/quiz/renderers/GroupedMrqRenderer.vue
 U3-010,U3,MultipartRenderer,Recursive renderer that mounts dispatchers per part with isolated state,component,high,done,4,U3-001,app/src/components/quiz/renderers/MultipartRenderer.vue
-U3-011,U3,Unified answer payload schema,Define { kind value } TypeScript type and Zod schema,feature,critical,todo,2,,app/src/types/quiz.ts
-U3-012,U3,QuizAttempt API: start,POST /api/v1/quiz-attempts creating attempt with snapshot of quiz,feature,critical,todo,2,"U1-005,U1-011",server/src/routes/quiz-attempts.ts
-U3-013,U3,QuizAttempt API: save answer,PATCH /api/v1/quiz-attempts/:id/answer storing intermediate answers,feature,critical,todo,2,U3-012,server/src/routes/quiz-attempts.ts
-U3-014,U3,QuizAttempt API: submit,POST /:id/submit triggering scoring + finalizing record,feature,critical,todo,3,U3-012,server/src/routes/quiz-attempts.ts
-U3-015,U3,Server-side scoring lib,quiz-scoring.ts implementing scoring for all 13 question types + partial credit,feature,critical,todo,5,U3-014,server/src/lib/quiz-scoring.ts
+U3-011,U3,Unified answer payload schema,Define { kind value } TypeScript type and Zod schema,feature,critical,done,2,,app/src/schemas/quizAnswerPayload.ts
+U3-012,U3,QuizAttempt API: start,POST /api/v1/quiz-attempts creating attempt with snapshot of quiz,feature,critical,done,2,"U1-005,U1-011",server/src/routes/quiz-attempts.ts
+U3-013,U3,QuizAttempt API: save answer,PATCH /api/v1/quiz-attempts/:id/answer storing intermediate answers,feature,critical,done,2,U3-012,server/src/routes/quiz-attempts.ts
+U3-014,U3,QuizAttempt API: submit,POST /:id/submit triggering scoring + finalizing record,feature,critical,done,3,U3-012,server/src/routes/quiz-attempts.ts
+U3-015,U3,Server-side scoring lib,quiz-scoring.ts implementing scoring for all 13 question types + partial credit,feature,critical,done,5,U3-014,server/src/lib/quiz-scoring.ts
 U3-016,U3,Replace local submit in store,quiz.ts uses API instead of local computation; remove localStorage attempts,refactor,critical,todo,3,U3-014,app/src/stores/quiz.ts
 U3-017,U3,My attempts page,View listing student attempts with filters + replay link,page,high,todo,3,U3-014,app/src/views/MyAttemptsPage.vue
 U3-018,U3,Admin quiz attempts view,Per-quiz table of attempts with score distribution chart,page,high,todo,3,U3-014,app/src/views/admin/AdminQuizAttempts.vue

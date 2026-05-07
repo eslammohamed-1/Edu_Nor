@@ -118,3 +118,13 @@ export async function getLearnerQuizzesPayload(): Promise<{ quizzes: unknown[] }
     return { quizzes: [] };
   }
 }
+
+/** اختبار واحد كما يُعرَض للمتعلّم (بعد تصفية المسودّات/أرشفة الدرس). */
+export async function findLearnerQuizById(
+  quizId: string
+): Promise<Record<string, unknown> | null> {
+  const { quizzes } = await getLearnerQuizzesPayload();
+  const list = quizzes as Record<string, unknown>[];
+  const q = list.find((x) => String(x.id ?? '') === quizId);
+  return q ?? null;
+}

@@ -15,6 +15,7 @@ import { catalogRoutes } from './routes/catalog.js';
 import { quizzesPublicRoutes } from './routes/quizzes-public.js';
 import { adminCatalogContentRoutes } from './routes/admin/content-catalog.js';
 import { questionsBankPublicRoutes } from './routes/questions-bank-public.js';
+import { quizAttemptsRoutes } from './routes/quiz-attempts.js';
 import { recordHttpMutationAudit } from './lib/audit.js';
 
 const env = loadEnv();
@@ -125,6 +126,7 @@ await app.register(authRoutes, { prefix: '/api/v1/auth', env });
 await app.register(catalogRoutes, { prefix: '/api/v1' });
 await app.register(quizzesPublicRoutes, { prefix: '/api/v1' });
 await app.register(questionsBankPublicRoutes, { prefix: '/api/v1', env });
+await app.register(quizAttemptsRoutes, { prefix: '/api/v1' });
 await app.register(adminUsersRoutes, { prefix: '/api/v1/admin/users' });
 await app.register(adminCatalogContentRoutes, { prefix: '/api/v1/admin/catalog' });
 await app.register(adminSystemRoutes, { prefix: '/api/v1/admin', env });

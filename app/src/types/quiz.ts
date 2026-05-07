@@ -112,6 +112,9 @@ export interface QuizAnswer {
   isCorrect: boolean;
 }
 
+/** غلاف الإجابة للـ API والتخزين الموحّد — انظر `schemas/quizAnswerPayload.ts`. */
+export type { QuizAnswerEnvelopeV1 } from '@/schemas/quizAnswerPayload';
+
 export interface QuizAttempt {
   quizId: string;
   answers: QuizAnswer[];
