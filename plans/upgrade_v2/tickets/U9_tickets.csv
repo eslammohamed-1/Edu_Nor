@@ -1,0 +1,28 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U9-001,U9,vue-i18n install + setup,Install vue-i18n + create i18n/index.ts wired to main.ts,setup,critical,todo,2,,app/src/i18n/index.ts
+U9-002,U9,Strings extraction Arabic baseline,Move all hardcoded Arabic strings from templates to ar.json with hierarchical keys,refactor,critical,todo,8,U9-001,app/src/i18n/ar.json
+U9-003,U9,English translations baseline,Translate all keys from ar.json to en.json,docs,high,todo,6,U9-002,app/src/i18n/en.json
+U9-004,U9,useT composable,Lightweight wrapper around useI18n with typed keys,feature,high,todo,2,U9-001,app/src/composables/useT.ts
+U9-005,U9,Lang toggle in topbar,Component switching locale and updating html lang/dir,component,high,todo,2,U9-001,app/src/components/common/LangToggle.vue
+U9-006,U9,Direction composable,useDirection() reading current dir + reactive,feature,high,todo,1,U9-001,app/src/composables/useDirection.ts
+U9-007,U9,RTL/LTR audit,Replace remaining left/right physical CSS with logical properties,refactor,high,todo,4,,app/src/assets/css/
+U9-008,U9,Direction E2E test,Playwright switching dir=ltr and verifying no overlap,test,medium,todo,2,U9-005,e2e/direction.spec.ts
+U9-009,U9,Dark mode audit per view,Walk all views fixing hardcoded colors to use tokens,refactor,high,todo,8,,app/src/views/
+U9-010,U9,Dark mode prefers-color-scheme default,Use system preference if user has no saved theme,feature,medium,todo,1,,app/src/composables/useTheme.ts
+U9-011,U9,Theme persistence backend sync,Save theme preference on backend for logged users,feature,medium,todo,2,U9-010,server/src/routes/me/preferences.ts
+U9-012,U9,Skip-to-content link,Visible-on-focus link on every layout jumping to main,a11y,high,todo,1,,app/src/components/common/SkipLink.vue
+U9-013,U9,Native dialog modal upgrade,Switch AppModal to <dialog> with focus trap,refactor,high,todo,3,,app/src/components/common/AppModal.vue
+U9-014,U9,Aria labels audit,Add aria-label/aria-describedby on icon-only buttons + inputs,a11y,high,todo,5,,app/src/components/
+U9-015,U9,Visible focus rings,Ensure all interactive elements have brand focus ring + outlines,a11y,high,todo,2,,app/src/assets/css/utilities.css
+U9-016,U9,Color contrast pass,Adjust text/background combos failing 4.5:1,a11y,high,todo,4,,app/src/assets/css/variables.css
+U9-017,U9,Keyboard nav DataTable,Arrow keys + Enter/Space + headers sortable via keyboard,a11y,high,todo,4,,app/src/components/admin/shared/DataTable.vue
+U9-018,U9,Keyboard nav forms,Tab order + Enter to submit + Esc to cancel modals,a11y,high,todo,2,,app/src/components/admin/shared/
+U9-019,U9,Live regions for toasts,aria-live=polite on AppToast container,a11y,medium,todo,1,,app/src/components/common/AppToast.vue
+U9-020,U9,Progressbar role,Add role + aria-valuenow on AppProgressBar,a11y,low,todo,0.5,,app/src/components/common/AppProgressBar.vue
+U9-021,U9,Reduced motion support,Disable shimmer + carousels animations when prefers-reduced-motion,a11y,medium,todo,2,,app/src/assets/css/animations.css
+U9-022,U9,Axe-core in Playwright,Integrate @axe-core/playwright + a11y test for 5 routes,test,critical,todo,3,U7-009,e2e/a11y.spec.ts
+U9-023,U9,A11y CI gate,Block merge on critical axe violations,ci,high,todo,1,U9-022,.github/workflows/a11y.yml
+U9-024,U9,AdminBranding settings page,UI for color/logo/favicon with preview live,page,medium,todo,4,"U4-001,U1-006",app/src/views/admin/AdminBranding.vue
+U9-025,U9,Runtime CSS variable application,Branding settings rewrite CSS vars on page load,feature,medium,todo,2,U9-024,app/src/lib/branding.ts
+U9-026,U9,Print stylesheet,@media print rules hiding nav and showing certificates clean,a11y,low,todo,2,,app/src/assets/css/print.css
+U9-027,U9,Documentation a11y standards,docs/a11y.md describing rules + tooling + checklist,docs,medium,todo,1,,docs/a11y.md

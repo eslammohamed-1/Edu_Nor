@@ -1,0 +1,28 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U10-001,U10,vite-plugin-pwa setup,Install + configure with workbox runtime caching strategies,setup,critical,todo,3,,app/vite.config.ts
+U10-002,U10,Web manifest,manifest.webmanifest with name short_name colors icons shortcuts dir rtl,setup,critical,todo,2,U10-001,app/public/manifest.webmanifest
+U10-003,U10,PWA icons set,Generate 192/512/maskable icons from brand logo,setup,critical,todo,2,U10-002,app/public/icons/
+U10-004,U10,Install prompt component,Custom install banner using beforeinstallprompt event,component,high,todo,2,U10-001,app/src/components/common/InstallPrompt.vue
+U10-005,U10,App shell precache,Workbox precache strategy for shell + critical CSS/JS,setup,critical,todo,2,U10-001,app/vite.config.ts
+U10-006,U10,Runtime cache for API GETs,Stale-while-revalidate for /api/v1/catalog quizzes etc,setup,high,todo,2,U10-001,app/vite.config.ts
+U10-007,U10,IndexedDB lessons cache,useOfflineLesson composable storing lesson content via idb-keyval,feature,high,todo,4,,app/src/composables/useOfflineLesson.ts
+U10-008,U10,Download lesson UI,Button on LessonPage to download for offline + progress,feature,high,todo,3,U10-007,app/src/views/LessonPage.vue
+U10-009,U10,Offline indicator,Banner when navigator.onLine is false plus connectivity ping,feature,high,todo,2,,app/src/composables/useOnlineStatus.ts
+U10-010,U10,Offline lessons list,Page filtering only cached lessons when offline,page,medium,todo,2,U10-007,app/src/views/MyOfflineContentPage.vue
+U10-011,U10,Web Push subscription endpoint,POST /me/push/subscribe storing PushSubscription,feature,high,todo,3,U1-002,server/src/routes/me/push.ts
+U10-012,U10,Web Push send lib,server/lib/webpush.ts using web-push package + VAPID,feature,high,todo,3,U10-011,server/src/lib/webpush.ts
+U10-013,U10,Push permission UX,Prompt only after 3 visits + clear opt-in + opt-out controls,feature,medium,todo,2,U10-011,app/src/composables/usePushNotifications.ts
+U10-014,U10,Service worker push handler,Display notification + click to open app at relevant deep link,feature,medium,todo,2,U10-001,app/src/sw-extras.ts
+U10-015,U10,Mobile audit admin tables,Convert tables to card layout below 768px,refactor,critical,todo,5,,app/src/components/admin/shared/DataTable.vue
+U10-016,U10,Mobile audit forms,Step accordion for long forms below 768px,refactor,high,todo,4,,app/src/components/admin/users/UserForm.vue
+U10-017,U10,Mobile quiz UX,Bottom sheet drawer for question list + swipe between questions,refactor,high,todo,4,,app/src/views/QuizPage.vue
+U10-018,U10,Touch target sizing,Ensure interactive elements min 44px on touch devices,refactor,high,todo,2,,app/src/assets/css/utilities.css
+U10-019,U10,Picture srcset,Replace large img with picture/srcset across home and lessons,refactor,medium,todo,3,,app/src/views/Home.vue
+U10-020,U10,LQIP placeholder,Generate blur placeholder + use as bg before image loads,feature,medium,todo,3,,app/src/components/common/LqipImage.vue
+U10-021,U10,Network-aware UX,Use navigator.connection to swap to low-quality video by default on 2G,feature,medium,todo,2,,app/src/composables/useNetwork.ts
+U10-022,U10,Data saver settings,User toggle for autoplay/animations/video quality,feature,medium,todo,2,U10-021,app/src/views/SettingsPage.vue
+U10-023,U10,App update banner,Service worker detects new version then shows banner with reload action,feature,high,todo,2,U10-001,app/src/components/common/UpdateAvailableBanner.vue
+U10-024,U10,Mobile admin drawer,AdminLayout sidebar becomes drawer on mobile + hamburger,refactor,high,todo,3,,app/src/components/admin/layout/AdminLayout.vue
+U10-025,U10,PWA E2E install test,Playwright verifies install button shows + manifest valid,test,medium,todo,2,U10-002,e2e/pwa.spec.ts
+U10-026,U10,Lighthouse PWA target 95,Tune until Lighthouse PWA category 95+,setup,high,todo,3,"U10-001,U10-002,U10-005",lighthouserc.cjs
+U10-027,U10,Capacitor wrapper docs,docs/pwa-deployment.md covering optional Play Store path,docs,low,todo,1,,docs/pwa-deployment.md

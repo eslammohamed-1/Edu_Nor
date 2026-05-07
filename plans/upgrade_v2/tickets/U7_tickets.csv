@@ -1,0 +1,31 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U7-001,U7,Vitest setup app,Configure vitest.config.ts with jsdom env + coverage v8 + setup file,setup,critical,todo,2,,app/vitest.config.ts
+U7-002,U7,Vitest setup server,Configure vitest for backend with prisma-mock + setup files,setup,critical,todo,2,,server/vitest.config.ts
+U7-003,U7,Auth store unit tests,Cover login/register/logout/hydrate paths,test,critical,todo,3,U7-001,app/src/stores/__tests__/auth.test.ts
+U7-004,U7,Quiz store unit tests,Cover startQuiz/selectAnswer/submitQuiz with all types via fixtures,test,critical,todo,3,U7-001,app/src/stores/__tests__/quiz.test.ts
+U7-005,U7,Curriculum store tests,Cover hydrate/select/filter logic,test,high,todo,2,U7-001,app/src/stores/__tests__/curriculum.test.ts
+U7-006,U7,Auth route integration tests,login/register/refresh/logout/me using supertest,test,critical,todo,4,U7-002,server/src/__tests__/auth.routes.test.ts
+U7-007,U7,Admin users routes tests,List/create/update/delete with role guards,test,critical,todo,3,U7-002,server/src/__tests__/admin-users.routes.test.ts
+U7-008,U7,Quiz attempts route tests,Start/save/submit happy + sad paths,test,critical,todo,3,"U7-002,U3-014",server/src/__tests__/quiz-attempts.routes.test.ts
+U7-009,U7,Playwright base setup,Install + base config + sample login spec,setup,critical,todo,3,,e2e/playwright.config.ts
+U7-010,U7,E2E student happy path,Register-onboarding-first lesson-quiz-result,test,high,todo,4,U7-009,e2e/student.spec.ts
+U7-011,U7,E2E admin happy path,Login-edit lesson-publish-student-sees-it,test,high,todo,3,U7-009,e2e/admin.spec.ts
+U7-012,U7,Strict TypeScript flags,Enable noUncheckedIndexedAccess + exactOptionalPropertyTypes everywhere,refactor,high,todo,4,,tsconfig.app.json
+U7-013,U7,Eliminate implicit any,Sweep codebase to remove any types and add explicit types,refactor,high,todo,5,U7-012,
+U7-014,U7,ESLint flat config,Migrate to flat config with vue-typescript + import order rules,setup,high,todo,2,,eslint.config.js
+U7-015,U7,Prettier 3 standardization,Single prettier config at root + format script,setup,high,todo,1,,prettier.config.js
+U7-016,U7,Pre-commit hooks,Install lefthook + lint-staged style ts/vue checks,setup,high,todo,2,"U7-014,U7-015",lefthook.yml
+U7-017,U7,Bundle visualizer in CI,Add rollup-plugin-visualizer + upload artifact in build workflow,setup,medium,todo,1,,app/vite.config.ts
+U7-018,U7,Code split admin chunk,Lazy import all admin views + ensure no eager admin code in main bundle,refactor,high,todo,2,,app/src/router/adminRoutes.ts
+U7-019,U7,Lucide icons dynamic import,Replace blanket import with per-icon dynamic load,refactor,medium,todo,3,,app/src/components/common/AppIcon.vue
+U7-020,U7,Lazy charts library,Charts library imported only inside chart components,refactor,medium,todo,1,U6-005,app/src/components/admin/charts/EChartsBase.vue
+U7-021,U7,Image optimization to WebP,Convert PNGs in public/ to WebP + preserve fallback,refactor,medium,todo,2,,app/public/
+U7-022,U7,Font preload + subset,Preload Cairo + Poppins subsets used + font-display swap,setup,high,todo,1,,app/index.html
+U7-023,U7,Lighthouse CI script,npm run lighthouse using @lhci/cli with thresholds,setup,high,todo,2,,lighthouserc.cjs
+U7-024,U7,Lighthouse workflow,GitHub Action running Lighthouse on PRs hitting preview,test,high,todo,2,U7-023,.github/workflows/lighthouse.yml
+U7-025,U7,web-vitals reporting,Send LCP/INP/CLS to backend or Sentry,feature,medium,todo,2,,app/src/lib/webVitals.ts
+U7-026,U7,CONTRIBUTING.md,Setup instructions + testing + style guide + PR template,docs,high,todo,2,,CONTRIBUTING.md
+U7-027,U7,Editorconfig + VSCode settings,.editorconfig + .vscode/extensions.json + settings.json,setup,medium,todo,1,,.editorconfig
+U7-028,U7,Server caching headers,ETag + Cache-Control on appropriate endpoints,feature,medium,todo,2,,server/src/plugins/caching.ts
+U7-029,U7,Static asset Cache-Control,Set immutable on hashed assets in vite output,setup,medium,todo,1,,app/vite.config.ts
+U7-030,U7,N+1 detection in tests,Helper that asserts query count for hot endpoints,test,medium,todo,2,U7-002,server/src/__tests__/utils/queryCount.ts

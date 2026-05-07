@@ -1,0 +1,27 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U6-001,U6,Stats overview endpoint,GET /api/v1/admin/stats/overview returning real KPIs from DB,feature,critical,todo,3,"U1-002,U5-001",server/src/routes/admin/stats.ts
+U6-002,U6,Time-series stats endpoint,GET /admin/stats/timeseries with metric/from/to/granularity params,feature,critical,todo,4,U6-001,server/src/routes/admin/stats.ts
+U6-003,U6,Top entities endpoint,GET /admin/stats/top?metric=subjects|quizzes|students,feature,high,todo,2,U6-001,server/src/routes/admin/stats.ts
+U6-004,U6,Replace AdminDashboard mock data,Wire dashboard to real endpoints + skeleton states,refactor,critical,todo,3,"U6-001,U6-002",app/src/views/admin/AdminDashboard.vue
+U6-005,U6,Add ECharts integration,Install + create chart wrapper that respects theme variables,feature,critical,todo,3,,app/src/components/admin/charts/EChartsBase.vue
+U6-006,U6,LineChart component,Reusable line chart for time-series,component,high,todo,2,U6-005,app/src/components/admin/charts/LineChart.vue
+U6-007,U6,BarChart component,Reusable bar chart with horizontal/vertical modes,component,high,todo,2,U6-005,app/src/components/admin/charts/BarChart.vue
+U6-008,U6,PieChart component,Reusable pie/donut chart,component,medium,todo,1.5,U6-005,app/src/components/admin/charts/PieChart.vue
+U6-009,U6,HeatmapChart component,For cohort retention heatmap,component,medium,todo,2,U6-005,app/src/components/admin/charts/HeatmapChart.vue
+U6-010,U6,AdminAnalytics overhaul,Replace static analytics with real charts and filters,refactor,high,todo,4,"U6-002,U6-006,U6-007",app/src/views/admin/AdminAnalytics.vue
+U6-011,U6,Reports page,New page bundling pre-defined reports,page,high,todo,4,U6-002,app/src/views/admin/AdminReports.vue
+U6-012,U6,Server-side PDF export,Headless rendering using puppeteer with template,feature,high,todo,4,,server/src/lib/pdf-export.ts
+U6-013,U6,CSV export utility,Server-side CSV streaming for large reports,feature,high,todo,2,,server/src/lib/csv-export.ts
+U6-014,U6,Scheduled email reports,Weekly digest to super_admin via email service,feature,medium,todo,3,"U6-011,U2-004",server/src/lib/scheduled-reports.ts
+U6-015,U6,Cohort analysis endpoint,GET /admin/stats/cohorts?type=signup-week,feature,medium,todo,4,U6-001,server/src/routes/admin/stats.ts
+U6-016,U6,AdminCohorts page,Heatmap visualization with explanation,page,medium,todo,3,"U6-009,U6-015",app/src/views/admin/AdminCohorts.vue
+U6-017,U6,Global search backend,GET /admin/search across users/lessons/quizzes/subjects with grouping,feature,critical,todo,4,U4-024,server/src/routes/admin/search.ts
+U6-018,U6,Global search frontend (Cmd+K),Topbar search dropdown with grouped results + keyboard navigation,feature,critical,todo,4,U6-017,app/src/components/admin/layout/AdminTopbar.vue
+U6-019,U6,Recent searches storage,Persist last 10 searches in localStorage with quick-access list,feature,medium,todo,1,U6-018,app/src/composables/useRecentSearches.ts
+U6-020,U6,Audit log filters/search,Filters bar (actor action target date range) + free text search server-side,feature,critical,todo,4,,app/src/views/admin/AdminAudit.vue
+U6-021,U6,Audit endpoint pagination,Add limit/offset/cursor pagination + filter parsing on server,feature,critical,todo,3,U6-020,server/src/routes/admin/system.ts
+U6-022,U6,Audit CSV export,Export current audit query to CSV,feature,medium,todo,1,"U6-013,U6-020",app/src/views/admin/AdminAudit.vue
+U6-023,U6,Sessions revoke per-user,New endpoint DELETE /admin/sessions/user/:id revoking all sessions for that user,feature,high,todo,2,,server/src/routes/admin/system.ts
+U6-024,U6,AdminSecurity sessions polish,Better device parsing + last-seen + revoke buttons,feature,high,todo,2,U6-023,app/src/views/admin/AdminSecurity.vue
+U6-025,U6,Funnel endpoint,GET /admin/stats/funnel returning signup->lesson->quiz->cert conversions,feature,medium,todo,3,U6-001,server/src/routes/admin/stats.ts
+U6-026,U6,Funnel visualization,Bar chart with drop-off percentages on Reports page,feature,medium,todo,2,"U6-007,U6-025",app/src/views/admin/AdminReports.vue

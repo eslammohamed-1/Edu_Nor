@@ -1,0 +1,21 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U1-001,U1,Switch Prisma provider to PostgreSQL,Update schema datasource + add DATABASE_URL Postgres in .env.example + docker-compose with postgres service,setup,critical,todo,2,,server/prisma/schema.prisma
+U1-002,U1,Generate initial migration,Run prisma migrate dev --name init and commit migration files,setup,critical,todo,1,U1-001,server/prisma/migrations/
+U1-003,U1,Data import script SQLite to Postgres,Script that reads from existing dev.db and inserts into Postgres preserving IDs,script,critical,todo,4,U1-002,scripts/migrate-sqlite-to-postgres.ts
+U1-004,U1,Add Quiz/QuizQuestion/QuizQuestionOption models,Normalize quiz data out of AdminSnapshot into proper relational tables,schema,critical,todo,3,U1-002,server/prisma/schema.prisma
+U1-005,U1,Add QuizAttempt and QuizAttemptAnswer models,First-class persistence for student attempts with indexes on userId+quizId,schema,critical,todo,2,U1-002,server/prisma/schema.prisma
+U1-006,U1,Add Setting and Permission models,Replace settings JSON blob with typed key/value store and add Permission entity,schema,critical,todo,2,U1-002,server/prisma/schema.prisma
+U1-007,U1,Migration data: snapshot to normalized,One-off migration code reading AdminSnapshot.quizzes and creating rows in Quiz tables,script,critical,todo,4,"U1-004,U1-005",scripts/migrate-quizzes-snapshot.ts
+U1-008,U1,Storage module S3-compatible,Create lib/storage.ts with presignUpload/presignDownload/deleteObject using @aws-sdk/client-s3,feature,critical,todo,3,,server/src/lib/storage.ts
+U1-009,U1,Docker compose for local dev,Add docker-compose.yml at server root with postgres+minio with seeded buckets,setup,high,todo,2,U1-008,server/docker-compose.yml
+U1-010,U1,OpenAPI integration with Swagger,Register @fastify/swagger + swagger-ui at /docs in dev only,feature,critical,todo,2,,server/src/index.ts
+U1-011,U1,Add Zod schemas to all routes,Update each route handler to declare schema for request/response so OpenAPI is generated,feature,high,todo,6,U1-010,server/src/routes/
+U1-012,U1,OpenAPI export script,Add npm script docs:export to write openapi.json to server/dist,script,medium,todo,1,U1-010,server/package.json
+U1-013,U1,API client codegen for frontend,Add openapi-typescript devDep + npm run gen:api producing app/src/types/api.ts,feature,high,todo,2,U1-012,app/package.json
+U1-014,U1,Replace manual fetch types,Update services/* to use generated paths/types from api.ts,refactor,high,todo,4,U1-013,app/src/services/
+U1-015,U1,Pin Node engines and .nvmrc,Add engines node>=20.10 in all package.json + .nvmrc,setup,high,todo,0.5,,package.json
+U1-016,U1,Fix dependency versions,Correct invalid versions (typescript 6.x vue-tsc 3.x vite 8.x) to real ones,setup,critical,todo,1,,app/package.json
+U1-017,U1,ADR folder + initial decisions,Create plans/upgrade_v2/decisions/ with ADR-001..004 stubs,docs,medium,todo,1,,plans/upgrade_v2/decisions/
+U1-018,U1,Update server README with new stack,Document Postgres+MinIO local setup and migration commands,docs,high,todo,1,"U1-009,U1-010",server/README.md
+U1-019,U1,Verify rollback path AdminSnapshot,Keep AdminSnapshot rows read-only for 30 days as fallback and document rollback,feature,medium,todo,1,U1-007,server/src/lib/admin-snapshot-legacy.ts
+U1-020,U1,CI smoke test for migrations,GitHub Action that spins postgres service and runs migrate deploy,test,high,todo,2,U1-002,.github/workflows/db-smoke.yml

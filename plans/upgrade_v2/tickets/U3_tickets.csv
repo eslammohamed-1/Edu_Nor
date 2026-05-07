@@ -1,0 +1,29 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U3-001,U3,QuizQuestion dispatcher refactor,Make QuizQuestion.vue a switcher selecting renderer based on question.type,refactor,critical,todo,2,,app/src/components/quiz/QuizQuestion.vue
+U3-002,U3,ChoicesRenderer (mcq/mrq/opinion),Extract existing logic into renderer component with mrq multi-select support,component,critical,todo,2,U3-001,app/src/components/quiz/renderers/ChoicesRenderer.vue
+U3-003,U3,GapRenderer,Render gap-fill question with choice chips and slot positions,component,critical,todo,3,U3-001,app/src/components/quiz/renderers/GapRenderer.vue
+U3-004,U3,OrderingRenderer,Drag-and-drop ordering using vuedraggable with keyboard fallback,component,critical,todo,4,U3-001,app/src/components/quiz/renderers/OrderingRenderer.vue
+U3-005,U3,MatchingRenderer,Two-column matching with line drawing canvas + click-to-pair,component,critical,todo,5,U3-001,app/src/components/quiz/renderers/MatchingRenderer.vue
+U3-006,U3,TextRenderer (string/frq),Textarea with character counter and basic formatting helpers,component,high,todo,2,U3-001,app/src/components/quiz/renderers/TextRenderer.vue
+U3-007,U3,InputRenderer (input/counting),Numeric/text input with optional unit suffix and validation,component,high,todo,2,U3-001,app/src/components/quiz/renderers/InputRenderer.vue
+U3-008,U3,PuzzleRenderer,Image puzzle drag rearrangement with completeImage preview on result,component,high,todo,5,U3-001,app/src/components/quiz/renderers/PuzzleRenderer.vue
+U3-009,U3,GroupedMrqRenderer (gmrq),Render groups each with own choices and per-group correct answer,component,high,todo,3,U3-001,app/src/components/quiz/renderers/GroupedMrqRenderer.vue
+U3-010,U3,MultipartRenderer,Recursive renderer that mounts dispatchers per part with isolated state,component,high,todo,4,U3-001,app/src/components/quiz/renderers/MultipartRenderer.vue
+U3-011,U3,Unified answer payload schema,Define { kind value } TypeScript type and Zod schema,feature,critical,todo,2,,app/src/types/quiz.ts
+U3-012,U3,QuizAttempt API: start,POST /api/v1/quiz-attempts creating attempt with snapshot of quiz,feature,critical,todo,2,"U1-005,U1-011",server/src/routes/quiz-attempts.ts
+U3-013,U3,QuizAttempt API: save answer,PATCH /api/v1/quiz-attempts/:id/answer storing intermediate answers,feature,critical,todo,2,U3-012,server/src/routes/quiz-attempts.ts
+U3-014,U3,QuizAttempt API: submit,POST /:id/submit triggering scoring + finalizing record,feature,critical,todo,3,U3-012,server/src/routes/quiz-attempts.ts
+U3-015,U3,Server-side scoring lib,quiz-scoring.ts implementing scoring for all 13 question types + partial credit,feature,critical,todo,5,U3-014,server/src/lib/quiz-scoring.ts
+U3-016,U3,Replace local submit in store,quiz.ts uses API instead of local computation; remove localStorage attempts,refactor,critical,todo,3,U3-014,app/src/stores/quiz.ts
+U3-017,U3,My attempts page,View listing student attempts with filters + replay link,page,high,todo,3,U3-014,app/src/views/MyAttemptsPage.vue
+U3-018,U3,Admin quiz attempts view,Per-quiz table of attempts with score distribution chart,page,high,todo,3,U3-014,app/src/views/admin/AdminQuizAttempts.vue
+U3-019,U3,AdminQuizBuilder type-aware UI,Builder allows creating each of the 13 types via specific forms,feature,critical,todo,8,U3-001,app/src/views/admin/AdminQuizBuilder.vue
+U3-020,U3,Live preview in builder,Inline preview using same dispatcher to show student view,feature,high,todo,2,U3-019,app/src/views/admin/AdminQuizBuilder.vue
+U3-021,U3,Builder validation rules,Min choices required correct selected etc with friendly errors,feature,high,todo,2,U3-019,app/src/views/admin/AdminQuizBuilder.vue
+U3-022,U3,Anti-cheat: timer enforcement,Server invalidates submissions past expected duration + auto-submit on client,feature,high,todo,2,U3-014,server/src/routes/quiz-attempts.ts
+U3-023,U3,Anti-cheat: tab switch warning,Track Page Visibility API events and warn user + log to attempt meta,feature,medium,todo,2,U3-014,app/src/views/QuizPage.vue
+U3-024,U3,Anti-cheat: random order,Settings flag to randomize question order and choices per attempt,feature,medium,todo,2,U3-014,server/src/lib/quiz-scoring.ts
+U3-025,U3,Question bank API,Admin CRUD endpoints for question bank stored in DB Question table,feature,high,todo,4,U1-004,server/src/routes/admin/questions-bank.ts
+U3-026,U3,AdminQuestionsBank page,Full management UI replacing filesystem-only model,page,high,todo,4,U3-025,app/src/views/admin/AdminQuestionsBank.vue
+U3-027,U3,Quiz scoring unit tests,Vitest scenarios covering all 13 types + partial credit,test,critical,todo,5,U3-015,server/src/__tests__/quiz-scoring.test.ts
+U3-028,U3,Quiz E2E happy path,Playwright: take quiz with mixed types submit see review,test,high,todo,3,"U3-016,U3-017",e2e/quiz.spec.ts

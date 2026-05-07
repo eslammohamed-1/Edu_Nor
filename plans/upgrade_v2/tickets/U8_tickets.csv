@@ -1,0 +1,29 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U8-001,U8,Pino structured logging config,Configure JSON logs + redaction + level + pretty in dev only,setup,critical,todo,2,,server/src/plugins/logger.ts
+U8-002,U8,Correlation ID middleware,Generate or read x-request-id and pass through logs + responses,feature,critical,todo,2,U8-001,server/src/lib/correlationId.ts
+U8-003,U8,Frontend Sentry init,@sentry/vue with sample rate + scrub PII + release tag from env,setup,critical,todo,2,,app/src/plugins/sentry.ts
+U8-004,U8,Backend Sentry init,@sentry/node with Fastify integration + ignored health endpoints,setup,critical,todo,2,,server/src/plugins/sentry.ts
+U8-005,U8,Sentry source maps upload,Build step uploading sourcemaps + auth via SENTRY_AUTH_TOKEN,setup,high,todo,2,"U8-003,U8-004",.github/workflows/build.yml
+U8-006,U8,Sentry alert rules,Configure rules: 5xx>1% per 5min p95>1s,docs,high,todo,1,U8-004,docs/runbooks/sentry-alerts.md
+U8-007,U8,Prometheus metrics plugin,prom-client + /metrics endpoint protected by basic auth,feature,high,todo,3,,server/src/plugins/metrics.ts
+U8-008,U8,Custom business metrics,Counters for quiz_attempts auth_failed lessons_published,feature,high,todo,2,U8-007,server/src/plugins/metrics.ts
+U8-009,U8,Daily DB backup script,pg_dump compress + upload to S3 + retention 30 days,script,critical,todo,3,U1-009,scripts/backup-db.sh
+U8-010,U8,Restore script + docs,Companion script + runbook docs/runbooks/db-restore.md,docs,critical,todo,2,U8-009,scripts/restore-db.sh
+U8-011,U8,Lint workflow,GitHub Action running ESLint + Prettier check,ci,critical,todo,1,U7-014,.github/workflows/lint.yml
+U8-012,U8,Typecheck workflow,GitHub Action running vue-tsc + tsc -p server,ci,critical,todo,1,U7-012,.github/workflows/typecheck.yml
+U8-013,U8,Test workflow,Action running vitest unit + integration with postgres service container,ci,critical,todo,3,"U7-001,U7-002",.github/workflows/test.yml
+U8-014,U8,Build workflow,Action building app + server + uploading artifacts,ci,critical,todo,2,,.github/workflows/build.yml
+U8-015,U8,E2E workflow,Action running Playwright headless against built artifacts,ci,high,todo,3,"U7-009,U8-014",.github/workflows/e2e.yml
+U8-016,U8,Deploy staging workflow,On main merge: deploy to staging environment via SSH or platform CLI,ci,high,todo,3,U8-014,.github/workflows/deploy-staging.yml
+U8-017,U8,Deploy production workflow,Manual trigger workflow with environment protection rules,ci,high,todo,2,U8-016,.github/workflows/deploy-production.yml
+U8-018,U8,Backup workflow scheduled,Daily cron action calling backup script,ci,critical,todo,1,U8-009,.github/workflows/backup-db.yml
+U8-019,U8,Gitleaks workflow,Pre-merge secret scan blocking on findings,ci,high,todo,1,,.github/workflows/gitleaks.yml
+U8-020,U8,Dockerfile for app,Multi-stage build serving via nginx with SPA fallback,setup,critical,todo,3,,Dockerfile.app
+U8-021,U8,Dockerfile for server,Multi-stage build with prisma generate + production node,setup,critical,todo,3,,Dockerfile.server
+U8-022,U8,Compose for staging,docker-compose.staging.yml linking app+server+postgres+minio,setup,high,todo,2,"U8-020,U8-021",docker-compose.staging.yml
+U8-023,U8,Health and readiness probes,Add /ready endpoint that pings DB and storage,feature,high,todo,2,,server/src/index.ts
+U8-024,U8,Runbook deploy,docs/runbooks/deploy.md manual deploy steps if CI fails,docs,high,todo,1,,docs/runbooks/deploy.md
+U8-025,U8,Runbook rollback,docs/runbooks/rollback.md rolling back release with image tags,docs,high,todo,1,,docs/runbooks/rollback.md
+U8-026,U8,Runbook incident response,docs/runbooks/incident-response.md triage flow,docs,high,todo,1,,docs/runbooks/incident-response.md
+U8-027,U8,Secrets management docs,Document Doppler/AWS SSM/GitHub Secrets layout,docs,high,todo,1,,docs/secrets.md
+U8-028,U8,Status page (optional),docs/status.md describing UptimeRobot integration steps,docs,low,todo,1,,docs/status.md

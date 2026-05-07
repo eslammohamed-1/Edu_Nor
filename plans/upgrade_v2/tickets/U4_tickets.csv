@@ -1,0 +1,26 @@
+ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
+U4-001,U4,Media model + presign endpoint,Prisma Media model + POST /api/v1/admin/media/presign returning S3 presigned URL,feature,critical,todo,3,"U1-008,U1-002",server/src/routes/admin/media.ts
+U4-002,U4,Confirm upload endpoint,POST /admin/media/confirm storing metadata after client uploads,feature,critical,todo,2,U4-001,server/src/routes/admin/media.ts
+U4-003,U4,MediaUploader component,Drag-and-drop multi-file upload using presigned URLs with progress per file,component,critical,todo,5,"U4-001,U4-002",app/src/components/admin/shared/MediaUploader.vue
+U4-004,U4,Video thumbnail generation,Async worker generating thumbnails using ffmpeg or fallback to first-frame canvas,feature,medium,todo,4,U4-002,server/src/lib/media-worker.ts
+U4-005,U4,Tiptap editor integration,Add @tiptap/vue-3 + extensions and create RichTextEditor wrapper,feature,critical,todo,5,,app/src/components/admin/shared/RichTextEditor.vue
+U4-006,U4,Server-side HTML sanitizer,sanitize-html or DOMPurify-jsdom enforcing allowed tags/attrs,feature,critical,todo,2,U4-005,server/src/lib/sanitize.ts
+U4-007,U4,Replace lesson textarea,AdminLessons uses RichTextEditor for content + preview pane,refactor,high,todo,3,U4-005,app/src/views/admin/AdminLessons.vue
+U4-008,U4,useReorder composable,Reusable hook around vue-draggable-next for any ordered list,feature,critical,todo,2,,app/src/composables/useReorder.ts
+U4-009,U4,Reorder endpoints (batch),PATCH endpoints accepting [{id order}] for subjects/lessons/sections/questions,feature,critical,todo,3,U4-008,server/src/routes/admin/
+U4-010,U4,Apply reorder to AdminSubjects,Drag rows + persist to API,feature,high,todo,2,"U4-008,U4-009",app/src/views/admin/AdminSubjects.vue
+U4-011,U4,Apply reorder to AdminLessons,Drag lessons within subject + sections within lesson,feature,high,todo,2,"U4-008,U4-009",app/src/views/admin/AdminLessons.vue
+U4-012,U4,Apply reorder to AdminQuizBuilder,Drag questions and choices,feature,high,todo,2,"U4-008,U4-009",app/src/views/admin/AdminQuizBuilder.vue
+U4-013,U4,DataTable selection support,Add row checkbox column + selection model + bulk actions slot,feature,critical,todo,3,,app/src/components/admin/shared/DataTable.vue
+U4-014,U4,Bulk action bar component,Floating action bar showing count + buttons,component,high,todo,2,U4-013,app/src/components/admin/shared/BulkActionBar.vue
+U4-015,U4,Bulk operations API,Endpoints accepting array of IDs for publish/unpublish/archive/delete,feature,critical,todo,3,,server/src/routes/admin/
+U4-016,U4,ContentVersion model + write-on-save,Prisma model + helper that stores snapshots on every entity update with limit 20,feature,critical,todo,4,U1-002,server/src/lib/contentVersion.ts
+U4-017,U4,VersionHistoryModal,UI listing past versions with diff view + restore button,component,high,todo,4,U4-016,app/src/components/admin/shared/VersionHistoryModal.vue
+U4-018,U4,Status field on entities,Add status enum draft/published/archived to Lesson/Subject/Quiz,schema,critical,todo,2,U1-002,server/prisma/schema.prisma
+U4-019,U4,Public filter respects status,Public endpoints serve only published items,refactor,critical,todo,2,U4-018,server/src/routes/
+U4-020,U4,Status badge in admin,Visual badge on rows + filter by status,feature,high,todo,1,U4-018,app/src/components/admin/shared/StatusBadge.vue
+U4-021,U4,Pre-publish validation,Validator returning warnings (missing thumbnail empty content etc),feature,high,todo,3,,server/src/lib/contentValidation.ts
+U4-022,U4,Validation UI in admin,Sidebar showing warnings + block publish on critical errors,feature,high,todo,2,U4-021,app/src/views/admin/AdminLessons.vue
+U4-023,U4,Postgres full-text search migration,Add tsvector columns + indexes to Lesson/Subject/Quiz,schema,high,todo,2,U1-002,server/prisma/migrations/
+U4-024,U4,Admin search endpoint,GET /api/v1/admin/search?q=... returning combined results across entities,feature,high,todo,3,U4-023,server/src/routes/admin/search.ts
+U4-025,U4,AdminTopbar global search,Wire existing search box to /admin/search with dropdown results,feature,high,todo,3,U4-024,app/src/components/admin/layout/AdminTopbar.vue
