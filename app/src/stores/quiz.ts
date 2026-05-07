@@ -3,24 +3,19 @@ import { computed, ref } from 'vue';
 import type { Quiz, QuizAnswer, QuizAttempt } from '@/types/quiz';
 import { quizzes as seedQuizzes } from '@/fixtures/demo-catalog/quizzes';
 import { mergeQuizzesWithQuestionBank } from '@/lib/mergeQuizQuestionBank';
+import { readStoredAuth } from '@/lib/authStorage';
 import { fetchPublicQuestionsBank } from '@/services/questionsBankService';
 import { getApiBase } from '@/services/http/client';
 import { fetchPublicQuizzes } from '@/services/quizzesService';
+import {
+  saveQuizAttemptAnswer,
+  startQuizAttempt,
+  submitQuizAttempt
+} from '@/services/quizAttemptsService';
 import { gradeAnswer } from '@/lib/quizGrade';
 
-const ATTEMPTS_KEY = 'edunor_quiz_attempts';
-
-function loadAttempts(): QuizAttempt[] {
-  try {
-    const raw = localStorage.getItem(ATTEMPTS_KEY);
-    return raw ? (JSON.parse(raw) as QuizAttempt[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persistAttempts(attempts: QuizAttempt[]) {
-  localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts));
+function canSyncQuizAttempts(): boolean {
+  return Boolean(getApiBase() && readStoredAuth()?.token);
 }
 
 export const useQuizStore = defineStore('quiz', () => {
@@ -37,7 +32,6 @@ export const useQuizStore = defineStore('quiz', () => {
     quizCatalog.value = mergeQuizzesWithQuestionBank(remote, bank ?? new Map());
   }
 
-  /** قائمة كل الاختبارات المعروضة في الواجهة (مسودّات ومؤرشفة مُفعّدة من الخادم). */
   const quizzesInCatalog = computed(() => quizCatalog.value);
 
   function findQuizById(quizId: string | undefined): Quiz | undefined {
@@ -55,7 +49,11 @@ export const useQuizStore = defineStore('quiz', () => {
   const answers = ref<Record<string, string | null>>({});
   const startedAt = ref<string | null>(null);
   const submitted = ref(false);
-  const attempts = ref<QuizAttempt[]>(loadAttempts());
+  /** محاولة نشطة على الخادم (U3) — فارغة في الوضع المحلي فقط. */
+  const currentAttemptId = ref<string | null>(null);
+
+  const saveTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const SAVE_DEBOUNCE_MS = 450;
 
   const currentQuestion = computed(() => {
     if (!currentQuiz.value) return null;
@@ -71,20 +69,83 @@ export const useQuizStore = defineStore('quiz', () => {
     return Object.values(answers.value).filter((v) => v !== null && v !== undefined).length;
   });
 
-  function startQuiz(quizId: string): boolean {
+  async function startQuiz(quizId: string): Promise<boolean> {
     const quiz = findQuizById(quizId);
     if (!quiz) return false;
     currentQuiz.value = quiz;
     currentIndex.value = 0;
     answers.value = {};
     quiz.questions.forEach((q) => (answers.value[q.id] = null));
-    startedAt.value = new Date().toISOString();
     submitted.value = false;
+    currentAttemptId.value = null;
+    for (const t of saveTimers.values()) clearTimeout(t);
+    saveTimers.clear();
+
+    if (canSyncQuizAttempts()) {
+      try {
+        const remote = await startQuizAttempt(quizId);
+        currentAttemptId.value = remote.attemptId;
+        startedAt.value = remote.startedAt;
+        return true;
+      } catch {
+        currentAttemptId.value = null;
+        startedAt.value = new Date().toISOString();
+        return true;
+      }
+    }
+
+    startedAt.value = new Date().toISOString();
     return true;
+  }
+
+  function scheduleServerSave(questionId: string, rawValue: string) {
+    const aid = currentAttemptId.value;
+    if (!aid || !canSyncQuizAttempts()) return;
+
+    const prev = saveTimers.get(questionId);
+    if (prev) clearTimeout(prev);
+
+    saveTimers.set(
+      questionId,
+      setTimeout(() => {
+        saveTimers.delete(questionId);
+        void saveQuizAttemptAnswer(aid, questionId, rawValue).catch(() => {
+          /* يُكمّل العمل دون شبكة أو عند 401 */
+        });
+      }, SAVE_DEBOUNCE_MS)
+    );
   }
 
   function selectAnswer(questionId: string, optionId: string) {
     answers.value[questionId] = optionId;
+    scheduleServerSave(questionId, optionId);
+  }
+
+  async function flushPendingAnswerSaves(): Promise<void> {
+    const aid = currentAttemptId.value;
+    if (!aid || !canSyncQuizAttempts()) {
+      for (const t of saveTimers.values()) clearTimeout(t);
+      saveTimers.clear();
+      return;
+    }
+
+    const qids = new Set([...Object.keys(answers.value), ...saveTimers.keys()]);
+    for (const qid of saveTimers.keys()) {
+      const t = saveTimers.get(qid);
+      if (t) clearTimeout(t);
+    }
+    saveTimers.clear();
+
+    const tasks: Promise<void>[] = [];
+    for (const qid of qids) {
+      const v = answers.value[qid];
+      tasks.push(
+        saveQuizAttemptAnswer(aid, qid, v).catch(() => {
+          /* ignore */
+        })
+      );
+    }
+    await Promise.all(tasks);
   }
 
   function goNext() {
@@ -105,17 +166,16 @@ export const useQuizStore = defineStore('quiz', () => {
     }
   }
 
-  function submitQuiz(): QuizAttempt | null {
+  function buildLocalGradedAttempt(): QuizAttempt | null {
     if (!currentQuiz.value || !startedAt.value) return null;
 
     const quizAnswers: QuizAnswer[] = currentQuiz.value.questions.map((q) => {
       const selected = answers.value[q.id] ?? null;
       const isCorrect = gradeAnswer(q, selected);
-
       return {
         questionId: q.id,
         selectedOptionId: selected,
-        isCorrect: isCorrect
+        isCorrect
       };
     });
 
@@ -124,7 +184,7 @@ export const useQuizStore = defineStore('quiz', () => {
     const percentage = Math.round((score / total) * 100);
     const passed = percentage >= currentQuiz.value.passingScore;
 
-    const attempt: QuizAttempt = {
+    return {
       quizId: currentQuiz.value.id,
       answers: quizAnswers,
       score,
@@ -134,19 +194,60 @@ export const useQuizStore = defineStore('quiz', () => {
       startedAt: startedAt.value,
       finishedAt: new Date().toISOString()
     };
+  }
 
-    attempts.value.push(attempt);
-    persistAttempts(attempts.value);
-    submitted.value = true;
+  async function submitQuiz(): Promise<QuizAttempt | null> {
+    if (!currentQuiz.value || !startedAt.value) return null;
+
+    await flushPendingAnswerSaves();
+
+    const aid = currentAttemptId.value;
+    if (aid && canSyncQuizAttempts()) {
+      try {
+        const result = await submitQuizAttempt(aid);
+        const quizAnswers: QuizAnswer[] = currentQuiz.value.questions.map((q) => {
+          const selected = answers.value[q.id] ?? null;
+          return {
+            questionId: q.id,
+            selectedOptionId: selected,
+            isCorrect: gradeAnswer(q, selected)
+          };
+        });
+        const attempt: QuizAttempt = {
+          quizId: currentQuiz.value.id,
+          answers: quizAnswers,
+          score: result.score,
+          total: result.total,
+          percentage: result.percentage,
+          passed: result.passed,
+          startedAt: startedAt.value,
+          finishedAt: result.finishedAt
+        };
+        submitted.value = true;
+        currentAttemptId.value = null;
+        return attempt;
+      } catch {
+        const fallback = buildLocalGradedAttempt();
+        if (fallback) submitted.value = true;
+        currentAttemptId.value = null;
+        return fallback;
+      }
+    }
+
+    const attempt = buildLocalGradedAttempt();
+    if (attempt) submitted.value = true;
     return attempt;
   }
 
   function reset() {
+    for (const t of saveTimers.values()) clearTimeout(t);
+    saveTimers.clear();
     currentQuiz.value = null;
     currentIndex.value = 0;
     answers.value = {};
     startedAt.value = null;
     submitted.value = false;
+    currentAttemptId.value = null;
   }
 
   return {
@@ -160,7 +261,7 @@ export const useQuizStore = defineStore('quiz', () => {
     answers,
     startedAt,
     submitted,
-    attempts,
+    currentAttemptId,
     currentQuestion,
     progress,
     answeredCount,

@@ -14,7 +14,7 @@ U3-012,U3,QuizAttempt API: start,POST /api/v1/quiz-attempts creating attempt wit
 U3-013,U3,QuizAttempt API: save answer,PATCH /api/v1/quiz-attempts/:id/answer storing intermediate answers,feature,critical,done,2,U3-012,server/src/routes/quiz-attempts.ts
 U3-014,U3,QuizAttempt API: submit,POST /:id/submit triggering scoring + finalizing record,feature,critical,done,3,U3-012,server/src/routes/quiz-attempts.ts
 U3-015,U3,Server-side scoring lib,quiz-scoring.ts implementing scoring for all 13 question types + partial credit,feature,critical,done,5,U3-014,server/src/lib/quiz-scoring.ts
-U3-016,U3,Replace local submit in store,quiz.ts uses API instead of local computation; remove localStorage attempts,refactor,critical,todo,3,U3-014,app/src/stores/quiz.ts
+U3-016,U3,Replace local submit in store,quiz.ts uses API instead of local computation; remove localStorage attempts,refactor,critical,done,3,U3-014,app/src/stores/quiz.ts
 U3-017,U3,My attempts page,View listing student attempts with filters + replay link,page,high,todo,3,U3-014,app/src/views/MyAttemptsPage.vue
 U3-018,U3,Admin quiz attempts view,Per-quiz table of attempts with score distribution chart,page,high,todo,3,U3-014,app/src/views/admin/AdminQuizAttempts.vue
 U3-019,U3,AdminQuizBuilder type-aware UI,Builder allows creating each of the 13 types via specific forms,feature,critical,todo,8,U3-001,app/src/views/admin/AdminQuizBuilder.vue

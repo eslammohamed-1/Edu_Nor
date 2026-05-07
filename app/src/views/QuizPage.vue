@@ -32,8 +32,8 @@ const isLast = computed(() => {
 
 const quizList = computed(() => store.quizzesInCatalog);
 
-function start(id: string) {
-  const ok = store.startQuiz(id);
+async function start(id: string) {
+  const ok = await store.startQuiz(id);
   if (!ok) return;
   if (currentQuiz.value) {
     timeLeft.value = currentQuiz.value.duration * 60;
@@ -65,9 +65,9 @@ function handleSelect(optionId: string) {
   store.selectAnswer(currentQuestion.value.id, optionId);
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   stopTimer();
-  const attempt = store.submitQuiz();
+  const attempt = await store.submitQuiz();
   if (attempt) lastAttempt.value = attempt;
 }
 
@@ -87,7 +87,7 @@ function handleExit() {
 }
 
 watch(quizId, (id) => {
-  if (id) start(id);
+  if (id) void start(id);
 }, { immediate: true });
 
 onUnmounted(() => {
