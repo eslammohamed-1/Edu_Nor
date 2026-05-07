@@ -15,6 +15,8 @@
     "preview": "npm run preview --prefix app",
     "db:up": "docker compose -f server/docker-compose.yml up -d",
     "db:down": "docker compose -f server/docker-compose.yml down",
+    "compose:staging": "docker compose -f docker-compose.staging.yml up --build -d",
+    "compose:staging:down": "docker compose -f docker-compose.staging.yml down",
     "db:migrate": "npm run db:migrate --prefix server",
     "migrate:quizzes": "npm run migrate:quizzes --prefix server",
     "migrate:sqlite": "npm run migrate:sqlite --prefix server",

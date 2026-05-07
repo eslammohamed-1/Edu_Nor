@@ -63,6 +63,34 @@ docker compose up -d
 
 يرفع **PostgreSQL 16** على `5432` و **MinIO** على `9000` (واجهة `9001`).
 
+### د) Docker Compose كامل للـ staging/dev
+
+من جذر المستودع:
+
+```bash
+docker compose -f docker-compose.staging.yml up --build -d
+```
+
+يشغّل:
+
+- الواجهة على `http://localhost:8080`
+- الـ API على `http://localhost:3001`
+- PostgreSQL على `localhost:5432`
+- MinIO على `http://localhost:9000` والكونسول `http://localhost:9001`
+
+صورة السيرفر تنفّذ `prisma migrate deploy` تلقائياً، وبشكل افتراضي تشغّل seed عبر `SEED_ON_START=true`.
+لو احتجت تعطيل الـ seed:
+
+```bash
+SEED_ON_START=false docker compose -f docker-compose.staging.yml up --build -d
+```
+
+إيقاف الستاك:
+
+```bash
+docker compose -f docker-compose.staging.yml down
+```
+
 ### البيئة والترحيل
 
 ```bash

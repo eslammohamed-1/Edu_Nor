@@ -18,9 +18,9 @@ U8-016,U8,Deploy staging workflow,On main merge: deploy to staging environment v
 U8-017,U8,Deploy production workflow,Manual trigger workflow with environment protection rules,ci,high,todo,2,U8-016,.github/workflows/deploy-production.yml
 U8-018,U8,Backup workflow scheduled,Daily cron action calling backup script,ci,critical,todo,1,U8-009,.github/workflows/backup-db.yml
 U8-019,U8,Gitleaks workflow,Pre-merge secret scan blocking on findings,ci,high,todo,1,,.github/workflows/gitleaks.yml
-U8-020,U8,Dockerfile for app,Multi-stage build serving via nginx with SPA fallback,setup,critical,todo,3,,Dockerfile.app
-U8-021,U8,Dockerfile for server,Multi-stage build with prisma generate + production node,setup,critical,todo,3,,Dockerfile.server
-U8-022,U8,Compose for staging,docker-compose.staging.yml linking app+server+postgres+minio,setup,high,todo,2,"U8-020,U8-021",docker-compose.staging.yml
+U8-020,U8,Dockerfile for app,Multi-stage build serving via nginx with SPA fallback,setup,critical,done,3,,Dockerfile.app
+U8-021,U8,Dockerfile for server,Multi-stage build with prisma generate + production node,setup,critical,done,3,,Dockerfile.server
+U8-022,U8,Compose for staging,docker-compose.staging.yml linking app+server+postgres+minio,setup,high,done,2,"U8-020,U8-021",docker-compose.staging.yml
 U8-023,U8,Health and readiness probes,Add /ready endpoint that pings DB and storage,feature,high,todo,2,,server/src/index.ts
 U8-024,U8,Runbook deploy,docs/runbooks/deploy.md manual deploy steps if CI fails,docs,high,todo,1,,docs/runbooks/deploy.md
 U8-025,U8,Runbook rollback,docs/runbooks/rollback.md rolling back release with image tags,docs,high,todo,1,,docs/runbooks/rollback.md
