@@ -5,21 +5,52 @@ import AppButton from '@/components/common/AppButton.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
 import AppInput from '@/components/common/AppInput.vue';
 import { useToast } from '@/composables/useToast';
+import { getApiBase } from '@/services/http/client';
 
 const toast = useToast();
 const submitted = ref(false);
+const busy = ref(false);
 const form = reactive({ email: '' });
 const errors = reactive({ email: '' });
 
-function submit() {
+function validate(): boolean {
   errors.email = '';
   const email = form.email.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.email = 'اكتب بريد إلكتروني صالح';
+    return false;
+  }
+  return true;
+}
+
+async function submit() {
+  if (!validate()) return;
+  const base = getApiBase();
+  if (!base) {
+    toast.info('فعّل VITE_API_BASE_URL لإرسال الطلب إلى الخادم.');
+    submitted.value = true;
     return;
   }
-  submitted.value = true;
-  toast.info('إذا كان البريد مسجلاً ستصلك تعليمات الاستعادة عند تفعيل الخدمة.');
+  busy.value = true;
+  try {
+    const res = await fetch(`${base}/api/v1/auth/forgot`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email: form.email.trim().toLowerCase() })
+    });
+    if (!res.ok) {
+      const j = (await res.json()) as { error?: string };
+      toast.error(j.error ?? 'فشل الطلب');
+      return;
+    }
+    submitted.value = true;
+    toast.success('إذا كان البريد مسجلاً ستصلك التعليمات.');
+  } catch {
+    toast.error('خطأ في الاتصال');
+  } finally {
+    busy.value = false;
+  }
 }
 </script>
 
@@ -34,7 +65,7 @@ function submit() {
       <div class="forgot-body">
         <h1 class="font-ar text-navy">استعادة كلمة المرور</h1>
         <p class="font-ar text-secondary">
-          اكتب بريد حسابك وسنعرض نفس الرسالة سواء كان مسجلاً أم لا لحماية خصوصية الحسابات.
+          اكتب بريد حسابك؛ نعرض دائماً نفس الرسالة لحماية الخصوصية.
         </p>
 
         <form class="forgot-form" @submit.prevent="submit" novalidate>
@@ -46,13 +77,13 @@ function submit() {
             :error="errors.email"
             required
           />
-          <AppButton type="submit" block>
+          <AppButton type="submit" :loading="busy" block>
             إرسال تعليمات الاستعادة
           </AppButton>
         </form>
 
         <p v-if="submitted" class="notice font-ar">
-          تم تسجيل الطلب. عند تفعيل خدمة البريد سيصل رابط الاستعادة إلى الحساب المسجل.
+          تم تسجيل الطلب. راجع بريدك أو سجل السيرفر في وضع التطوير.
         </p>
 
         <RouterLink to="/login" class="login-link font-ar">

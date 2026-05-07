@@ -1,5 +1,4 @@
 import type { Stage, SubjectInfo } from '@/types/course';
-import type { User } from '@/types/auth';
 
 /**
  * فلترة المواد حسب المرحلة والبحث.
@@ -10,7 +9,7 @@ export function getDisplayedSubjects(options: {
   stageFilter: Stage | 'all';
   searchQuery: string;
 }): SubjectInfo[] {
-  const { subjects, stageFilter, searchQuery } = options;
+  const { subjects, searchQuery } = options;
 
   let list = subjects;
 

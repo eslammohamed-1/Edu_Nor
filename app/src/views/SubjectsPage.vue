@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { useCurriculumStore } from '@/stores/curriculum';
 import { useAuth } from '@/composables/useAuth';
 import SubjectCard from '@/components/courses/SubjectCard.vue';
@@ -9,8 +8,6 @@ import type { Stage, SubjectInfo } from '@/types/course';
 import { stageLabel } from '@/config/educationTracks';
 
 const store = useCurriculumStore();
-const route = useRoute();
-const router = useRouter();
 const { user } = useAuth();
 
 const stages: Array<{ id: Stage | 'all'; label: string }> = [

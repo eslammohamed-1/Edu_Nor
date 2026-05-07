@@ -112,14 +112,28 @@ export const useQuizStore = defineStore('quiz', () => {
       let isCorrect = false;
 
       switch (q.type) {
-        // أسئلة الاختيار (MCQ, MRQ, opinion, gap): مطابقة الـ choice المختار
         case 'mcq':
-        case 'mrq':
         case 'opinion':
         case 'gap': {
           if ('choices' in q && Array.isArray(q.choices)) {
             const choice = q.choices.find((c) => c.id === selected);
             isCorrect = choice?.isCorrect === true;
+          }
+          break;
+        }
+
+        case 'mrq': {
+          if ('choices' in q && Array.isArray(q.choices) && selected) {
+            const correct = new Set(q.choices.filter((c) => c.isCorrect).map((c) => c.id));
+            let picked = new Set<string>();
+            try {
+              const a = JSON.parse(selected) as unknown;
+              if (Array.isArray(a)) picked = new Set(a.map((x) => String(x)));
+            } catch {
+              picked = new Set();
+            }
+            isCorrect =
+              correct.size === picked.size && [...correct].every((id) => picked.has(id));
           }
           break;
         }

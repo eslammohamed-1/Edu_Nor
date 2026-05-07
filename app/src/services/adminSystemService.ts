@@ -31,7 +31,7 @@ export async function fetchAuditLogs(): Promise<AuditEntry[] | null> {
 
 export async function postAuditLog(
   action: string,
-  target?: { type: string; id: string; label?: string },
+  target?: AuditEntry['target'],
   meta?: Record<string, unknown>
 ): Promise<boolean> {
   if (!getApiBase()) return false;

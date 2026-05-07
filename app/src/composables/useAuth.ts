@@ -13,6 +13,7 @@ export function useAuth() {
     isAuthenticated,
     isSuperAdmin,
     login: store.login,
+    completeTwoFactor: store.completeTwoFactor,
     register: store.register,
     logout: store.logout,
     clearError: store.clearError,

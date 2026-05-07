@@ -4,7 +4,7 @@ export interface PublicUser {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'admin' | 'super_admin';
+  role: 'student' | 'admin' | 'teacher' | 'super_admin';
   banned?: boolean;
   grade?: string;
   phone?: string;

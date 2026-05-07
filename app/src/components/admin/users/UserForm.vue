@@ -56,7 +56,8 @@ function validate(): boolean {
   if (needPassword || updatingPassword) {
     const policyErr = validatePasswordAgainstPolicy(
       form.value.password,
-      settingsStore.settings.security.passwordPolicy
+      settingsStore.settings.security.passwordPolicy,
+      { email: form.value.email, name: form.value.name }
     );
     if (policyErr) errors.value.password = policyErr;
   }
@@ -119,12 +120,13 @@ function submit() {
             <select v-model="form.role" class="field-input font-ar">
               <option value="student">طالب</option>
               <option value="admin">مدير</option>
+              <option value="teacher">معلم</option>
               <option value="super_admin">سوبر أدمن</option>
             </select>
           </div>
 
-          <!-- Permissions for admin -->
-          <div v-if="form.role === 'admin'" class="permissions-section">
+          <!-- Permissions for admin / teacher -->
+          <div v-if="form.role === 'admin' || form.role === 'teacher'" class="permissions-section">
             <div class="perm-header">
               <label class="field-label font-ar">الصلاحيات</label>
               <div class="perm-actions">

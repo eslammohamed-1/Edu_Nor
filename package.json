@@ -2,6 +2,9 @@
   "name": "edu-nor",
   "private": true,
   "description": "Monorepo root — استخدم npm من هنا لتشغيل الواجهة دون cd app",
+  "engines": {
+    "node": ">=20.10.0"
+  },
   "scripts": {
     "dev": "npm run dev --prefix app",
     "dev:app": "npm run dev --prefix app",
@@ -9,6 +12,18 @@
     "build": "npm run build --prefix app",
     "build:server": "npm run build --prefix server",
     "build:catalog": "python3 scripts/build_catalog_from_csv.py",
-    "preview": "npm run preview --prefix app"
+    "preview": "npm run preview --prefix app",
+    "db:up": "docker compose -f server/docker-compose.yml up -d",
+    "db:down": "docker compose -f server/docker-compose.yml down",
+    "db:migrate": "npm run db:migrate --prefix server",
+    "migrate:quizzes": "npm run migrate:quizzes --prefix server",
+    "migrate:sqlite": "npm run migrate:sqlite --prefix server",
+    "gen:api": "npm run gen:api --prefix server",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
   }
 }

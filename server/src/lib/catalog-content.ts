@@ -14,12 +14,12 @@ export function repoRootFromLib(): string {
 /** يملأ الحقل لمخازن SQLite القديمة: dedupe كان يستخدم id بصيغة canonical__dupأو تبقى كما هي. */
 export async function ensureLessonSourceLessonKeysBackfilled(): Promise<void> {
   await prisma.$executeRawUnsafe(`
-    UPDATE Lesson
-    SET sourceLessonKey = CASE
-      WHEN instr(id, '__dup') > 0 THEN substr(id, 1, instr(id, '__dup') - 1)
-      ELSE id
+    UPDATE "Lesson"
+    SET "sourceLessonKey" = CASE
+      WHEN strpos("id", '__dup') > 0 THEN substring("id" from 1 for strpos("id", '__dup') - 1)
+      ELSE "id"
     END
-    WHERE sourceLessonKey IS NULL
+    WHERE "sourceLessonKey" IS NULL
   `);
 }
 

@@ -92,7 +92,8 @@ function validate(): boolean {
   } else {
     const policyErr = validatePasswordAgainstPolicy(
       form.password,
-      settingsStore.settings.security.passwordPolicy
+      settingsStore.settings.security.passwordPolicy,
+      { email: form.email, name: form.name }
     );
     if (policyErr) {
       errors.password = policyErr;

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { useAdminContentStore } from '@/stores/admin/adminContent';
 import ConfirmDialog from '@/components/admin/shared/ConfirmDialog.vue';
 import AppIcon from '@/components/common/AppIcon.vue';
-import type { LessonInfo, LessonType } from '@/types/course';
+import type { LessonInfo, LessonType, SectionInfo, SessionType } from '@/types/course';
 
 const store = useAdminContentStore();
 
@@ -13,58 +13,102 @@ const editLesson = ref<(LessonInfo & { subjectId: string; published?: boolean })
 const confirmDelete = ref({ open: false, id: '', name: '' });
 
 const lessons = computed(() =>
-  selectedSubjectId.value
-    ? store.lessonsBySubject(selectedSubjectId.value)
-    : []
+  selectedSubjectId.value ? store.lessonsBySubject(selectedSubjectId.value) : []
 );
 
+const emptySections = (): SectionInfo[] => [];
+
 const form = ref({
-  title: '', description: '', duration: 0, type: 'video' as LessonType,
-  videoUrl: '', content: '', keyPoints: [] as string[], order: 0, subjectId: '',
-  unitTitle: ''
+  title: '',
+  description: '',
+  duration: 0,
+  type: 'video' as LessonType,
+  videoUrl: '',
+  content: '',
+  order: 0,
+  subjectId: '',
+  unitTitle: '',
+  sessionType: 'Regular' as SessionType,
+  sections: emptySections()
 });
 
 const newKeyPoint = ref('');
 
+/** لعرض/تعديل نقاط سريعة محلياً — تُخزَّن داخل أول قسم عند الحفظ إن وُجدت */
+const keyPoints = ref<string[]>([]);
+
 function addKeyPoint() {
   if (newKeyPoint.value.trim()) {
-    form.value.keyPoints.push(newKeyPoint.value.trim());
+    keyPoints.value.push(newKeyPoint.value.trim());
     newKeyPoint.value = '';
   }
 }
 
 function removeKeyPoint(idx: number) {
-  form.value.keyPoints.splice(idx, 1);
+  keyPoints.value.splice(idx, 1);
 }
 
 function openCreate() {
   editLesson.value = null;
-  form.value = { 
-    title: '', description: '', duration: 0, type: 'video', 
-    videoUrl: '', content: '', keyPoints: [], 
-    order: lessons.value.length + 1, 
+  keyPoints.value = [];
+  form.value = {
+    title: '',
+    description: '',
+    duration: 0,
+    type: 'video',
+    videoUrl: '',
+    content: '',
+    order: lessons.value.length + 1,
     subjectId: selectedSubjectId.value,
-    unitTitle: ''
+    unitTitle: '',
+    sessionType: 'Regular',
+    sections: emptySections()
   };
   showForm.value = true;
 }
 
 function openEdit(l: LessonInfo & { subjectId: string; published?: boolean }) {
   editLesson.value = l;
-  form.value = { 
-    title: l.title, description: l.description || '', duration: l.duration, 
-    type: l.type, videoUrl: l.videoUrl || '', content: l.content || '', 
-    keyPoints: [...(l.keyPoints || [])], order: l.order, 
-    subjectId: l.subjectId, unitTitle: l.unitTitle || '' 
+  keyPoints.value = [];
+  form.value = {
+    title: l.title,
+    description: l.description || '',
+    duration: l.duration,
+    type: (['video', 'reading', 'quiz', 'revision'].includes(l.type) ? l.type : 'video') as LessonType,
+    videoUrl: l.videoUrl || '',
+    content: l.content || '',
+    order: l.order,
+    subjectId: l.subjectId,
+    unitTitle: l.unitTitle || '',
+    sessionType: l.sessionType || 'Regular',
+    sections: Array.isArray(l.sections) ? [...l.sections] : emptySections()
   };
   showForm.value = true;
 }
 
 function handleSave() {
+  let content = form.value.content;
+  if (keyPoints.value.length) {
+    const block = keyPoints.value.map((k) => `• ${k}`).join('\n');
+    content = content.trim() ? `${content.trim()}\n\n${block}` : block;
+  }
+  const payload = {
+    title: form.value.title,
+    description: form.value.description,
+    duration: form.value.duration,
+    type: form.value.type,
+    videoUrl: form.value.videoUrl,
+    content,
+    order: form.value.order,
+    subjectId: form.value.subjectId,
+    unitTitle: form.value.unitTitle,
+    sessionType: form.value.sessionType,
+    sections: form.value.sections.length ? form.value.sections : emptySections()
+  };
   if (editLesson.value) {
-    store.updateLesson(editLesson.value.id, form.value);
+    store.updateLesson(editLesson.value.id, payload);
   } else {
-    store.createLesson(form.value);
+    store.createLesson(payload);
   }
   showForm.value = false;
 }
@@ -182,8 +226,8 @@ function doDelete() {
                 <input v-model="newKeyPoint" class="field-input font-ar" placeholder="أضف معلومة هامة..." @keyup.enter="addKeyPoint" />
                 <button class="add-kp-btn" @click="addKeyPoint"><AppIcon name="Plus" :size="16" /></button>
               </div>
-              <ul v-if="form.keyPoints.length" class="kp-list">
-                <li v-for="(kp, i) in form.keyPoints" :key="i" class="kp-item font-ar">
+              <ul v-if="keyPoints.length" class="kp-list">
+                <li v-for="(kp, i) in keyPoints" :key="i" class="kp-item font-ar">
                   {{ kp }}
                   <button class="kp-remove" @click="removeKeyPoint(i)"><AppIcon name="X" :size="12" /></button>
                 </li>

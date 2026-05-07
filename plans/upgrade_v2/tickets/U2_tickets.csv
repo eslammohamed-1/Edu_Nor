@@ -1,25 +1,25 @@
 ticket_id,phase,title,description,type,priority,status,estimated_hours,depends_on,file_path
-U2-001,U2,PasswordResetToken model,Prisma model with userId/tokenHash/expiresAt/usedAt and indexes,schema,critical,todo,1,U1-002,server/prisma/schema.prisma
-U2-002,U2,Forgot password endpoint,POST /api/v1/auth/forgot accepting email + always returns 200 to avoid enumeration,feature,critical,todo,2,U2-001,server/src/routes/auth.ts
-U2-003,U2,Reset password endpoint,POST /api/v1/auth/reset validating token + applying password policy,feature,critical,todo,2,"U2-001,U2-013",server/src/routes/auth.ts
-U2-004,U2,Email service abstraction,lib/email.ts with logger transport in dev and SMTP/Resend interface for prod,feature,high,todo,2,,server/src/lib/email.ts
-U2-005,U2,ForgotPassword page wiring,Connect existing UI to backend + success state + expired link handling,feature,critical,todo,2,U2-002,app/src/views/ForgotPasswordPage.vue
-U2-006,U2,ResetPassword page,New page reading token from URL and submitting new password,page,critical,todo,2,U2-003,app/src/views/ResetPasswordPage.vue
-U2-007,U2,UserTwoFactor model,Prisma model with secret/enabled/recoveryCodesJson,schema,critical,todo,1,U1-002,server/prisma/schema.prisma
-U2-008,U2,2FA setup endpoint,POST /api/v1/auth/2fa/setup returning otpauth URI + QR base64 + temp secret,feature,critical,todo,2,U2-007,server/src/routes/auth.ts
-U2-009,U2,2FA enable endpoint,Verify code from authenticator and persist secret + generate 10 recovery codes,feature,critical,todo,2,U2-008,server/src/routes/auth.ts
-U2-010,U2,2FA verify on login,Modify login flow to return requires2fa+ticket if enabled and add /2fa/verify endpoint,feature,critical,todo,3,U2-009,server/src/routes/auth.ts
-U2-011,U2,TwoFactor page UI,New page handling QR display + code entry + recovery codes display,page,critical,todo,3,"U2-009,U2-010",app/src/views/TwoFactorPage.vue
-U2-012,U2,LoginAttempt model + lockout,Track attempts and lock email after 5 failures in 15 minutes for 30 minutes,feature,critical,todo,3,U1-002,server/prisma/schema.prisma
-U2-013,U2,Password policy module,Server lib enforcing length/complexity/no-substring + breach check via HIBP k-anonymity,feature,critical,todo,3,,server/src/lib/passwordPolicy.ts
-U2-014,U2,Password policy mirror frontend,Identical rules in app/src/lib/passwordPolicy.ts for live feedback,feature,high,todo,1,U2-013,app/src/lib/passwordPolicy.ts
-U2-015,U2,Helmet plugin with CSP,Register @fastify/helmet with strict CSP allowing only self+API connect-src,feature,critical,todo,2,,server/src/plugins/helmet.ts
-U2-016,U2,CSRF token middleware,Double-submit pattern with X-CSRF-Token header on mutating /admin/* endpoints,feature,critical,todo,3,,server/src/lib/csrf.ts
-U2-017,U2,CSRF helper frontend,App-level interceptor injecting CSRF header automatically on mutations,feature,high,todo,1,U2-016,app/src/lib/csrf.ts
-U2-018,U2,Add teacher role,Extend Prisma Role enum + types/auth.ts + UserForm select options,feature,high,todo,2,U1-002,server/prisma/schema.prisma
-U2-019,U2,Permission table seed,Seed permissions list + role-default permissions matrix,feature,high,todo,2,"U1-006,U2-018",server/prisma/seed.ts
-U2-020,U2,can() helper enhancement,Update permissions check to merge role defaults + per-user overrides,feature,high,todo,1,U2-019,app/src/lib/permissions.ts
-U2-021,U2,Audit middleware capture,Hook capturing all mutations with actor+method+url+body summary excluding passwords,feature,high,todo,3,,server/src/lib/audit.ts
-U2-022,U2,Superadmin reset CLI,scripts/superadmin-reset.ts to recover access + log to audit,feature,medium,todo,1,,scripts/superadmin-reset.ts
-U2-023,U2,Security E2E tests,Playwright cases for forgot/reset/2fa/lockout flows,test,high,todo,4,"U2-005,U2-011,U2-012",e2e/security.spec.ts
-U2-024,U2,Remove maintained-only ENABLE_MOCK_AUTH,Mock auth flag must default false in production builds,refactor,high,todo,1,,app/src/config/superAdmin.ts
+U2-001,U2,PasswordResetToken model,Prisma model with userId/tokenHash/expiresAt/usedAt and indexes,schema,critical,done,1,U1-002,server/prisma/schema.prisma
+U2-002,U2,Forgot password endpoint,POST /api/v1/auth/forgot accepting email + always returns 200 to avoid enumeration,feature,critical,done,2,U2-001,server/src/routes/auth.ts
+U2-003,U2,Reset password endpoint,POST /api/v1/auth/reset validating token + applying password policy,feature,critical,done,2,"U2-001,U2-013",server/src/routes/auth.ts
+U2-004,U2,Email service abstraction,lib/email.ts with logger transport in dev and SMTP/Resend interface for prod,feature,high,done,2,,server/src/lib/email.ts
+U2-005,U2,ForgotPassword page wiring,Connect existing UI to backend + success state + expired link handling,feature,critical,done,2,U2-002,app/src/views/ForgotPasswordPage.vue
+U2-006,U2,ResetPassword page,New page reading token from URL and submitting new password,page,critical,done,2,U2-003,app/src/views/ResetPasswordPage.vue
+U2-007,U2,UserTwoFactor model,Prisma model with secret/enabled/recoveryCodesJson,schema,critical,done,1,U1-002,server/prisma/schema.prisma
+U2-008,U2,2FA setup endpoint,POST /api/v1/auth/2fa/setup returning otpauth URI + QR base64 + temp secret,feature,critical,done,2,U2-007,server/src/routes/auth.ts
+U2-009,U2,2FA enable endpoint,Verify code from authenticator and persist secret + generate 10 recovery codes,feature,critical,done,2,U2-008,server/src/routes/auth.ts
+U2-010,U2,2FA verify on login,Modify login flow to return requires2fa+ticket if enabled and add /2fa/verify endpoint,feature,critical,done,3,U2-009,server/src/routes/auth.ts
+U2-011,U2,TwoFactor page UI,New page handling QR display + code entry + recovery codes display,page,critical,done,3,"U2-009,U2-010",app/src/views/TwoFactorPage.vue
+U2-012,U2,LoginAttempt model + lockout,Track attempts and lock email after 5 failures in 15 minutes for 30 minutes,feature,critical,done,3,U1-002,server/prisma/schema.prisma
+U2-013,U2,Password policy module,Server lib enforcing length/complexity/no-substring + breach check via HIBP k-anonymity,feature,critical,done,3,,server/src/lib/passwordPolicy.ts
+U2-014,U2,Password policy mirror frontend,Identical rules in app/src/lib/passwordPolicy.ts for live feedback,feature,high,done,1,U2-013,app/src/lib/passwordPolicy.ts
+U2-015,U2,Helmet plugin with CSP,Register @fastify/helmet with strict CSP allowing only self+API connect-src,feature,critical,done,2,,server/src/plugins/helmet.ts
+U2-016,U2,CSRF token middleware,Double-submit pattern with X-CSRF-Token header on mutating /admin/* endpoints,feature,critical,done,3,,server/src/index.ts
+U2-017,U2,CSRF helper frontend,App-level interceptor injecting CSRF header automatically on mutations,feature,high,done,1,U2-016,app/src/services/http/client.ts
+U2-018,U2,Add teacher role,Extend Prisma Role enum + types/auth.ts + UserForm select options,feature,high,done,2,U1-002,server/prisma/schema.prisma
+U2-019,U2,Permission table seed,Seed permissions list + role-default permissions matrix,feature,high,done,2,"U1-006,U2-018",server/prisma/seed.ts
+U2-020,U2,can() helper enhancement,Update permissions check to merge role defaults + per-user overrides,feature,high,done,1,U2-019,app/src/lib/permissions.ts
+U2-021,U2,Audit middleware capture,Hook capturing all mutations with actor+method+url+body summary excluding passwords,feature,high,done,3,,server/src/lib/audit.ts
+U2-022,U2,Superadmin reset CLI,scripts/superadmin-reset.ts to recover access + log to audit,feature,medium,done,1,,scripts/superadmin-reset.ts
+U2-023,U2,Security E2E tests,Playwright cases for forgot/reset/2fa/lockout flows,test,high,done,4,"U2-005,U2-011,U2-012",e2e/security.spec.ts
+U2-024,U2,Remove maintained-only ENABLE_MOCK_AUTH,Mock auth flag must default false in production builds,refactor,high,done,1,,app/src/config/superAdmin.ts

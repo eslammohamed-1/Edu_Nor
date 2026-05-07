@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCurriculumStore } from '@/stores/curriculum';
 import { useQuizStore } from '@/stores/quiz';
@@ -59,7 +59,7 @@ function markComplete() {
           <span class="current">{{ lesson.title }}</span>
         </nav>
 
-        <LessonPlayer :video-url="lesson.videoUrl" :title="lesson.title" />
+        <LessonPlayer :video-url="lesson.videoUrl ?? undefined" :title="lesson.title" />
 
         <article class="lesson-article">
           <div class="lesson-head">

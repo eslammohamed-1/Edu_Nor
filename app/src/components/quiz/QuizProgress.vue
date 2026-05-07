@@ -25,7 +25,10 @@ const minutes = computed(() => {
 
 function isAnswered(qid: string) {
   const val = props.answers[qid];
-  return val !== null && val !== undefined;
+  if (val === null || val === undefined) return false;
+  const t = String(val).trim();
+  if (t === '[]') return false;
+  return true;
 }
 </script>
 

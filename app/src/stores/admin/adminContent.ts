@@ -62,6 +62,9 @@ export const useAdminContentStore = defineStore('adminContent', () => {
 
   const subjects = computed(() => data.value.subjects);
   const lessons = computed(() => data.value.lessons);
+  /** في هذا المخزن، «الكورس» يُمثَّل بالمادة (Subject)؛ يُستعمل للوحة التحكم فقط */
+  const courses = computed(() => data.value.subjects);
+  const publishedCourses = computed(() => data.value.lessons.filter((l) => l.published));
 
   async function fetchContent() {
     if (!getApiBase()) {
@@ -164,7 +167,12 @@ export const useAdminContentStore = defineStore('adminContent', () => {
   }
 
   return {
-    subjects, lessons, loading, fetchContent,
+    subjects,
+    lessons,
+    courses,
+    publishedCourses,
+    loading,
+    fetchContent,
     createSubject, updateSubject, deleteSubject, reorderSubjects,
     createLesson, updateLesson, deleteLesson, publishLesson,
     lessonsBySubject

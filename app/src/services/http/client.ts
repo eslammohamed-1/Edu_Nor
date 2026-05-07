@@ -15,6 +15,22 @@ export function useRemoteApi(): boolean {
   return !!getApiBase();
 }
 
+let csrfCache: string | null = null;
+
+/** يستدعى مرة عند التشغيل مع واجهة بعيدة؛ يحدّث كوكي csrf_token */
+export async function ensureCsrfToken(): Promise<void> {
+  const base = getApiBase();
+  if (!base) return;
+  try {
+    const res = await fetch(`${base}/api/v1/auth/csrf`, { credentials: 'include' });
+    if (!res.ok) return;
+    const j = (await res.json()) as { csrfToken?: string };
+    if (j.csrfToken) csrfCache = j.csrfToken;
+  } catch {
+    /* تجاهل */
+  }
+}
+
 async function tryRefresh(base: string): Promise<StoredAuthPayload | null> {
   const stored = readStoredAuth();
   if (!stored?.token) return null;
@@ -38,12 +54,23 @@ async function tryRefresh(base: string): Promise<StoredAuthPayload | null> {
   return next;
 }
 
+function needsCsrf(path: string, method: string): boolean {
+  if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) return false;
+  return path.startsWith('/api/v1/admin');
+}
+
 /**
  * طلبات API مع Bearer؛ عند 401 يُجرَّب refresh مرة واحدة ثم إعادة المحاولة.
+ * يحقن X-CSRF-Token لمسارات الإدارة بعد ensureCsrfToken.
  */
 export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const base = getApiBase();
   if (!base) throw new Error('VITE_API_BASE_URL غير معرّف');
+
+  const method = (init.method ?? 'GET').toUpperCase();
+  if (needsCsrf(path, method) && !csrfCache) {
+    await ensureCsrfToken();
+  }
 
   const run = async (token: string | undefined) => {
     const headers = new Headers(init.headers);
@@ -51,6 +78,9 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
     if (token) headers.set('Authorization', `Bearer ${token}`);
     if (init.body && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
+    }
+    if (needsCsrf(path, method) && csrfCache) {
+      headers.set('X-CSRF-Token', csrfCache);
     }
     return fetch(`${base}${path}`, { ...init, headers, credentials: 'include' });
   };

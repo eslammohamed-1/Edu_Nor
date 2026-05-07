@@ -3,32 +3,74 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 enum Role {
   student
   admin
+  teacher
   super_admin
 }
 
 model User {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  passwordHash     String
-  name             String
-  role             Role     @default(student)
-  banned           Boolean  @default(false)
-  grade            String?
-  phone            String?
-  stage            String?
-  secondaryTrack   String?
-  permissionsJson  String? // JSON array of strings for admin role
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String  @id @default(cuid())
+  email           String  @unique
+  passwordHash    String
+  name            String
+  role            Role    @default(student)
+  banned          Boolean @default(false)
+  grade           String?
+  phone           String?
+  stage           String?
+  secondaryTrack  String?
+  permissionsJson String?
 
-  refreshTokens RefreshToken[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens         RefreshToken[]
+  quizAttempts          QuizAttempt[]
+  passwordResetTokens   PasswordResetToken[]
+  twoFactor             UserTwoFactor?
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model UserTwoFactor {
+  userId             String   @id
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret             String
+  enabled            Boolean  @default(false)
+  recoveryHashesJson String   @default("[]")
+  updatedAt          DateTime @updatedAt
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  emailNorm String
+  ip        String?
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([emailNorm, createdAt])
+}
+
+model AccountLockout {
+  emailNorm   String   @id
+  lockedUntil DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model RefreshToken {
@@ -59,6 +101,8 @@ model AuditLog {
   action     String
   targetJson String?
   metaJson   String?
+  severity   String   @default("info")
+  category   String   @default("admin")
   ip         String?
   userAgent  String?
   createdAt  DateTime @default(now())
@@ -68,98 +112,191 @@ model AuditLog {
   @@index([action])
 }
 
+model Setting {
+  key       String   @id
+  valueJson String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  code        String           @unique
+  description String?
+  roleGrants  RolePermission[]
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  role         Role
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([role, permissionId])
+}
+
 // ──────────────────────────────────────────────
-// المنهج الدراسي: Stage → Grade → Term → Subject → Lesson → Section
-// كل ID عبارة عن 12 رقم عشوائي غير مكرر
+// كتالوج المتعلّم (Subjects → Courses → Chapters → Lessons)
+// يتوافق مع `catalog-content.ts` وملفات generated/*.json
 // ──────────────────────────────────────────────
-
-model Stage {
-  id     String  @id          // 12 رقم عشوائي
-  name   String               // ابتدائي / إعدادي / ثانوي
-  slug   String  @unique      // primary / prep / secondary
-  order  Int
-  grades Grade[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Grade {
-  id       String  @id
-  stageId  String
-  stage    Stage   @relation(fields: [stageId], references: [id], onDelete: Cascade)
-  name     String              // الصف الأول الابتدائي
-  order    Int                 // 1-6 (ابتدائي) / 1-3 (إعدادي/ثانوي)
-  terms    Term[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([stageId])
-}
-
-model Term {
-  id       String  @id
-  gradeId  String
-  grade    Grade   @relation(fields: [gradeId], references: [id], onDelete: Cascade)
-  name     String              // الترم الأول / الترم الثاني
-  order    Int                 // 1 أو 2
-  track    String?             // scientific_ar / scientific_languages / literary (ثانوي فقط)
-  subjects Subject[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([gradeId])
-}
 
 model Subject {
-  id       String  @id
-  termId   String
-  term     Term    @relation(fields: [termId], references: [id], onDelete: Cascade)
-  name     String              // اللغة العربية
-  slug     String              // arabic
-  icon     String  @default("BookOpen")
-  color    String  @default("#1E3A5F")
-  order    Int
-  lessons  Lesson[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([termId])
-}
-
-model Lesson {
   id          String   @id
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  title       String
+  name        String
+  slug        String
+  icon        String   @default("BookOpen")
+  color       String   @default("#1E3A5F")
+  stagesJson  String   @default("[]")
   description String   @default("")
-  duration    Int      @default(0)
-  type        String   @default("video")
-  videoUrl    String?
-  content     String   @default("")
-  order       Int
-  unitTitle   String?                        // اسم الوحدة (Section Group)
-  sessionType String   @default("Regular")   // Regular / Revision
-  sections    Section[]
+  visible     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  courses     Course[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+model Course {
+  id             String    @id
+  subjectId      String
+  subject        Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  offeringId     String?
+  title          String
+  description    String    @default("")
+  stage          String
+  grade          String
+  secondaryTrack String?
+  academicYear   String?
+  term           Int?
+  season         Int?
+  instructor     String    @default("")
+  thumbnail      String?
+  duration       Int       @default(0)
+  lessonsCount   Int       @default(0)
+  studentsCount  Int       @default(0)
+  rating         Float     @default(0)
+  published      Boolean   @default(true)
+  chapters       Chapter[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([subjectId])
 }
 
-model Section {
-  id           String  @id
-  lessonId     String
-  lesson       Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  title        String
-  type         String  @default("Regular")   // Regular / Revision / Exercise / Quiz
-  content      String  @default("")
-  duration     Int     @default(0)
-  order        Int
-  hasQuiz      Boolean @default(false)
-  hasWorksheet Boolean @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model Chapter {
+  id          String   @id
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String   @default("")
+  order       Int
+  lessons     Lesson[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
+  @@index([courseId])
+}
+
+model Lesson {
+  id              String   @id
+  chapterId       String
+  chapter         Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  sourceLessonKey String?
+  title           String
+  description     String   @default("")
+  duration        Int      @default(0)
+  type            String   @default("video")
+  videoUrl        String?
+  content         String   @default("")
+  keyPointsJson   String?
+  order           Int
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([chapterId])
+}
+
+// ──────────────────────────────────────────────
+// اختبارات ومحاولات (U1)
+// ──────────────────────────────────────────────
+
+model Quiz {
+  id           String         @id
+  title        String
+  description  String         @default("")
+  subjectId    String
+  grade        String
+  lessonId     String?
+  duration     Int            @default(30)
+  passingScore Int            @default(60)
+  status       String         @default("published")
+  questions    QuizQuestion[]
+  attempts     QuizAttempt[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([subjectId])
   @@index([lessonId])
 }
 
+model QuizQuestion {
+  id       String               @id
+  quizId   String
+  quiz     Quiz                 @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  position Int
+  type     String
+  stem     String
+  payload  Json?
+  points   Int?                 @default(1)
+  options  QuizQuestionOption[]
+
+  @@index([quizId])
+}
+
+model QuizQuestionOption {
+  id         String       @id
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label      String
+  isCorrect  Boolean      @default(false)
+  position   Int
+
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId     String
+  quiz       Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  score      Int?
+  total      Int?
+  percentage Int?
+  passed     Boolean?
+  metaJson   Json?
+  createdAt  DateTime  @default(now())
+
+  answers QuizAttemptAnswer[]
+
+  @@index([userId])
+  @@index([quizId])
+  @@index([userId, quizId])
+}
+
+model QuizAttemptAnswer {
+  id            String      @id @default(cuid())
+  attemptId     String
+  attempt       QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId    String
+  answerPayload Json
+  isCorrect     Boolean?
+  pointsAwarded Int?
+
+  @@index([attemptId])
+  @@index([questionId])
+}

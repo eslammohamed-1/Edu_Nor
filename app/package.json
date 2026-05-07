@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.10.0"
+  },
   "scripts": {
     "dev": "vite",
     "generate:questions-index": "node --experimental-strip-types ../scripts/generate-questions-index.ts",
@@ -12,7 +15,8 @@
     "preview": "vite preview",
     "import:toc": "cd .. && .venv/bin/python scripts/import_toc_from_xlsx.py",
     "build:catalog": "cd .. && python3 scripts/build_catalog_from_csv.py",
-    "export:quizzes-snapshot": "cd .. && ./server/node_modules/.bin/tsx scripts/export-quizzes-snapshot.ts"
+    "export:quizzes-snapshot": "cd .. && ./server/node_modules/.bin/tsx scripts/export-quizzes-snapshot.ts",
+    "gen:api": "npm run gen:api --prefix ../server"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0",
@@ -21,12 +25,12 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@types/node": "^24.12.2",
+    "@types/node": "^22.14.0",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
-    "typescript": "~6.0.2",
-    "vite": "^8.0.10",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.11",
     "vitest": "^3.2.4",
-    "vue-tsc": "^3.2.7"
+    "vue-tsc": "^3.2.8"
   }
 }

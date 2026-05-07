@@ -27,6 +27,18 @@ export const publicRoutes: RouteRecordRaw[] = [
     meta: { title: 'استعادة كلمة المرور — إديو نور', requiresGuest: true }
   },
   {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/views/ResetPasswordPage.vue'),
+    meta: { title: 'تعيين كلمة مرور جديدة — إديو نور', requiresGuest: true }
+  },
+  {
+    path: '/two-factor',
+    name: 'two-factor',
+    component: () => import('@/views/TwoFactorPage.vue'),
+    meta: { title: 'التحقق الثنائي — إديو نور', requiresGuest: true }
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('@/views/RegisterPage.vue'),

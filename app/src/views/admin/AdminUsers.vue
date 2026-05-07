@@ -51,7 +51,7 @@ const columns: Column<User>[] = [
 const filterChips = [
   { key: 'role', label: 'الدور', options: [
     { value: 'student', label: 'طالب' },
-    { value: 'admin', label: 'مدير' },
+    { value: 'teacher', label: 'معلم' },
     { value: 'super_admin', label: 'سوبر أدمن' }
   ]},
   { key: 'status', label: 'الحالة', options: [

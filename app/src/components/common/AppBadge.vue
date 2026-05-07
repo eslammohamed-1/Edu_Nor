@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'teal';
+  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'teal' | 'gold';
   size?: 'sm' | 'md';
 }
 
@@ -65,5 +65,10 @@ withDefaults(defineProps<Props>(), {
 .badge--teal {
   background-color: rgba(46, 196, 182, 0.1);
   color: var(--color-teal);
+}
+
+.badge--gold {
+  background-color: rgba(244, 168, 37, 0.12);
+  color: var(--color-gold, #c9a227);
 }
 </style>

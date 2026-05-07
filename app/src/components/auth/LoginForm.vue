@@ -75,6 +75,10 @@ async function handleSubmit() {
     password: form.password,
     remember: form.remember
   });
+  if (success === 'twofa') {
+    router.push('/two-factor');
+    return;
+  }
   if (success) {
     clearLoginThrottle();
     toast.success(

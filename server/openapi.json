@@ -1,0 +1,8 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "EduNor API",
+    "version": "0.2.0"
+  },
+  "paths": {}
+}

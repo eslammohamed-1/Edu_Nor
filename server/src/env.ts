@@ -13,7 +13,22 @@ const envSchema = z.object({
   /** مجلد ملفات CSV في المستودع؛ افتراضيًا ../data/csv من مجلد تشغيل السيرفر */
   CSV_DATA_DIR: z.string().optional(),
   /** جذر بنك الأسئلة: `<repo>/data/question-bank` إن وُجد؛ أو مسار نسبي لمستودع المشروع */
-  QUESTION_BANK_ROOT: z.string().optional()
+  QUESTION_BANK_ROOT: z.string().optional(),
+  /** في الإنتاج اضبطها false — غالبًا true للتطوير المحلي عبر .env */
+  ENABLE_API_DOCS: z.coerce.boolean().default(false),
+  /** رابط الواجهة العام لروابط استعادة كلمة المرور */
+  APP_PUBLIC_URL: z.string().url().default('http://localhost:5173'),
+  /** تعطيل فحص haveibeenpwned (مفيد محلياً بدون شبكة) */
+  SKIP_BREACH_CHECK: z.coerce.boolean().default(false),
+  /** CSP: يسمح بالاتصال بهذه الأصول بالإضافة لـ self (مفصول بفواصل) */
+  CSP_EXTRA_CONNECT_SRC: z.string().optional(),
+  /** S3-compatible (MinIO محليًا) — كلها اختيارية حتى تفعيل الرفع */
+  S3_ENDPOINT: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_ACCESS_KEY: z.string().optional(),
+  S3_SECRET_KEY: z.string().optional(),
+  S3_REGION: z.string().default('us-east-1'),
+  S3_USE_PATH_STYLE: z.coerce.boolean().default(true)
 });
 
 export type Env = z.infer<typeof envSchema>;

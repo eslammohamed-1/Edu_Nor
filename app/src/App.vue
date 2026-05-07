@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import TheLayout from '@/layouts/TheLayout.vue';
 import AppToast from '@/components/common/AppToast.vue';
@@ -7,11 +7,16 @@ import { useAdminSettingsStore } from '@/stores/admin/adminSettings';
 import { useAuthStore } from '@/stores/auth';
 import { useQuizStore } from '@/stores/quiz';
 import AppIcon from '@/components/common/AppIcon.vue';
+import { ensureCsrfToken, useRemoteApi } from '@/services/http/client';
 
 const route = useRoute();
 const authStore = useAuthStore();
 const settingsStore = useAdminSettingsStore();
 const quizStore = useQuizStore();
+
+onMounted(() => {
+  if (useRemoteApi()) void ensureCsrfToken();
+});
 
 // init() يُستدعى في main.ts — لا نكرره هنا
 void quizStore.hydrateQuizzesFromApi();

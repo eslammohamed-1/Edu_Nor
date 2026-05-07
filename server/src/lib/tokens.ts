@@ -20,8 +20,24 @@ export function signAccessToken(
 
 export function verifyAccessToken(token: string, secret: string): AccessPayload {
   const decoded = jwt.verify(token, secret, { issuer: 'edunor-api' }) as jwt.JwtPayload;
+  if ((decoded as { purpose?: string }).purpose) throw new Error('Invalid token type');
   if (!decoded.sub || !decoded.role) throw new Error('Invalid token payload');
   return { sub: decoded.sub, role: decoded.role as Role };
+}
+
+export function signTwoFactorPendingToken(userId: string, secret: string): string {
+  return jwt.sign({ sub: userId, purpose: '2fa_pending' }, secret, {
+    expiresIn: 300,
+    issuer: 'edunor-api'
+  });
+}
+
+export function verifyTwoFactorPendingToken(token: string, secret: string): string {
+  const decoded = jwt.verify(token, secret, { issuer: 'edunor-api' }) as jwt.JwtPayload;
+  if (decoded.purpose !== '2fa_pending' || typeof decoded.sub !== 'string') {
+    throw new Error('Invalid 2FA ticket');
+  }
+  return decoded.sub;
 }
 
 export function randomRefreshToken(): string {

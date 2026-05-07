@@ -10,7 +10,7 @@ import {
   type StoredAuthPayload
 } from '@/lib/authStorage';
 import { apiLogoutRefresh, getApiBase } from '@/services/http/client';
-import { loginRemote, registerRemote } from '@/services/authService';
+import { loginRemote, registerRemote, verifyTwoFactorRemote } from '@/services/authService';
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,15 +57,23 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(payload: LoginPayload): Promise<boolean> {
+  async function login(payload: LoginPayload): Promise<true | false | 'twofa'> {
     isLoading.value = true;
     error.value = null;
 
     try {
       const apiBase = getApiBase();
       if (apiBase) {
-        const session = await loginRemote(payload);
-        applySession(session, payload.remember ?? true);
+        const out = await loginRemote(payload);
+        if (out.kind === 'locked') {
+          error.value = out.message;
+          return false;
+        }
+        if (out.kind === 'twofa') {
+          sessionStorage.setItem('edunor_2fa_ticket', out.twoFactorTicket);
+          return 'twofa';
+        }
+        applySession(out.session, payload.remember ?? true);
         return true;
       }
       if (!ENABLE_MOCK_AUTH) {
@@ -107,6 +115,27 @@ export const useAuthStore = defineStore('auth', () => {
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'حدث خطأ ما';
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function completeTwoFactor(code: string, remember = true): Promise<boolean> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const ticket = sessionStorage.getItem('edunor_2fa_ticket');
+      if (!ticket) {
+        error.value = 'انتهت جلسة التحقق — سجّل الدخول من جديد';
+        return false;
+      }
+      const session = await verifyTwoFactorRemote(ticket, code);
+      sessionStorage.removeItem('edunor_2fa_ticket');
+      applySession(session, remember);
+      return true;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'رمز غير صحيح';
       return false;
     } finally {
       isLoading.value = false;
@@ -181,6 +210,7 @@ export const useAuthStore = defineStore('auth', () => {
     isSuperAdmin,
     hydrate,
     login,
+    completeTwoFactor,
     register,
     logout,
     clearError

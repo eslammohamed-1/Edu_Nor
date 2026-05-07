@@ -10,10 +10,12 @@ import { getApiBase } from '@/services/http/client';
 
 export interface AuditEntry {
   id: string;
-  actor: { id: string; name: string; role: UserRole };
+  actor: { id: string; name: string; role: UserRole | 'guest' | 'system' };
   action: string;
-  target?: { type: string; id: string; label?: string };
+  target?: { type: string; id?: string; label?: string; path?: string; method?: string };
   meta?: Record<string, unknown>;
+  severity?: string;
+  category?: string;
   ip?: string;
   userAgent?: string;
   createdAt: string;

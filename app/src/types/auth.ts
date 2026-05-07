@@ -3,9 +3,10 @@ import type { Stage } from '@/types/course';
 /**
  * - student: مستخدم عادي
  * - admin: إدارة محدودة (صلاحيات من permissions)
+ * - teacher: معلم
  * - super_admin: كل صلاحيات المنصة
  */
-export type UserRole = 'student' | 'admin' | 'super_admin';
+export type UserRole = 'student' | 'admin' | 'teacher' | 'super_admin';
 
 /** مسار الثانوية: علمي عربي / علمي لغات / أدبي */
 export type SecondaryTrack = 'scientific_ar' | 'scientific_languages' | 'literary';
@@ -24,7 +25,7 @@ export interface User {
   avatar?: string;
   createdAt: string;
   role: UserRole;
-  /** للـ admin فقط؛ السوبر أدمن يتجاهلها وله كل شيء */
+  /** للـ admin والمعلم؛ إن غابت نستخدم افتراضيات الدور (انظر seed RolePermission) */
   permissions?: string[];
 }
 

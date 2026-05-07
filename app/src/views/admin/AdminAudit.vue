@@ -34,6 +34,8 @@ const columns: Column<AuditEntry>[] = [
   { key: 'createdAt', label: 'الوقت', sortable: true },
   { key: 'actor', label: 'المنفّذ' },
   { key: 'action', label: 'الفعل', sortable: true },
+  { key: 'category', label: 'التصنيف', sortable: true },
+  { key: 'severity', label: 'الخطورة', sortable: true },
   { key: 'target', label: 'الهدف' },
   { key: 'ip', label: 'IP' },
   { key: 'userAgent', label: 'الجهاز' }
@@ -46,6 +48,15 @@ function formatDate(iso: string): string {
 function summarizeUa(ua?: string): string {
   if (!ua) return '—';
   return ua.length > 48 ? ua.slice(0, 48) + '…' : ua;
+}
+
+function targetSummary(entry: AuditEntry): string {
+  const t = entry.target;
+  if (!t) return '—';
+  if (t.type === 'http' && t.path) {
+    return `${t.method ?? ''} ${t.path}`.trim();
+  }
+  return t.label || t.id || '—';
 }
 
 function actionLabel(action: string): string {
@@ -140,8 +151,14 @@ function doClear() {
         <template #cell-action="{ row }">
           <span class="action-tag font-ar">{{ actionLabel((row as unknown as AuditEntry).action) }}</span>
         </template>
+        <template #cell-category="{ row }">
+          <span class="font-ar muted">{{ (row as unknown as AuditEntry).category || '—' }}</span>
+        </template>
+        <template #cell-severity="{ row }">
+          <span class="font-ar muted">{{ (row as unknown as AuditEntry).severity || '—' }}</span>
+        </template>
         <template #cell-target="{ row }">
-          <span class="font-ar target-cell">{{ (row as unknown as AuditEntry).target?.label || '—' }}</span>
+          <span class="font-ar target-cell">{{ targetSummary(row as unknown as AuditEntry) }}</span>
         </template>
         <template #cell-ip="{ row }">
           <span class="font-en ip-cell">{{ (row as unknown as AuditEntry).ip || '—' }}</span>
@@ -191,7 +208,8 @@ function doClear() {
 .actor-cell { display: flex; align-items: center; gap: 0.5rem; }
 .actor-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gradient-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
 .action-tag { font-size: 0.8125rem; background: var(--bg-section); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); color: var(--text-secondary); }
-.target-cell { font-size: 0.8125rem; color: var(--text-primary); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
+.target-cell { font-size: 0.8125rem; color: var(--text-primary); max-width: min(420px, 40vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
 .ip-cell { font-size: 0.75rem; color: var(--text-muted); }
 .ua-cell { font-size: 0.65rem; color: var(--text-muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: middle; }
+.muted { color: var(--text-muted); font-size: 0.8125rem; }
 </style>
