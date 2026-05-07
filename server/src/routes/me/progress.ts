@@ -1,6 +1,10 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
+import { loadEnv } from '../../env.js';
+import { tryIssueSubjectCompletionCertificate } from '../../lib/certificates.js';
+
+const env = loadEnv();
 
 const postBodySchema = z.object({
   lessonId: z.string().min(1),
@@ -161,6 +165,12 @@ export const meProgressRoutes: FastifyPluginAsync = async (app) => {
           completedAt
         }
       });
+
+      if (row.status === 'completed') {
+        void tryIssueSubjectCompletionCertificate(env, user.id, lessonId).catch((err) => {
+          req.log.warn({ err }, 'issue subject certificate failed');
+        });
+      }
 
       return reply.send({
         ok: true,

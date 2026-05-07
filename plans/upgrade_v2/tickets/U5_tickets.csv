@@ -7,10 +7,10 @@ U5-005,U5,Study plan recommendation logic,Server lib computing next recommended 
 U5-006,U5,Study plan endpoint,GET /api/v1/me/study-plan returning ordered list,feature,high,done,1,U5-005,server/src/routes/me/study-plan.ts
 U5-007,U5,MyStudyPlan page,Full page UI with "start here" highlighted card,page,high,done,3,U5-006,app/src/views/MyStudyPlanPage.vue
 U5-008,U5,Dashboard widget for next lesson,Add widget to DashboardPage showing recommendation,feature,high,done,1,U5-006,app/src/views/DashboardPage.vue
-U5-009,U5,Certificate model + signing,Prisma Certificate model + hashSignature using HMAC + secret,schema,high,todo,2,U1-002,server/prisma/schema.prisma
-U5-010,U5,Auto-issue certificate logic,Trigger on lesson complete chain + final quiz pass,feature,high,todo,3,"U5-001,U5-009,U3-014",server/src/lib/certificates.ts
-U5-011,U5,Certificate page UI,Premium-looking page with print button + share link,page,high,todo,3,U5-010,app/src/views/CertificatePage.vue
-U5-012,U5,Public verify endpoint + page,GET /cert/verify/:hash returning certificate validity + page,feature,medium,todo,2,U5-009,app/src/views/CertificateVerifyPage.vue
+U5-009,U5,Certificate model + signing,Prisma Certificate model + hashSignature using HMAC + secret,schema,high,done,2,U1-002,server/prisma/schema.prisma
+U5-010,U5,Auto-issue certificate logic,Trigger on lesson complete chain + final quiz pass,feature,high,done,3,"U5-001,U5-009,U3-014",server/src/lib/certificates.ts
+U5-011,U5,Certificate page UI,Premium-looking page with print button + share link,page,high,done,3,U5-010,app/src/views/CertificatePage.vue
+U5-012,U5,Public verify endpoint + page,GET /cert/verify/:hash returning certificate validity + page,feature,medium,done,2,U5-009,app/src/views/CertificateVerifyPage.vue
 U5-013,U5,UserStats model + scoring rules,Prisma UserStats + lib computing points/streak/badges,schema,high,todo,3,U1-002,server/prisma/schema.prisma
 U5-014,U5,Gamification awards on actions,Hooks awarding points after lesson complete/quiz pass/course finish,feature,high,todo,3,"U5-002,U3-014,U5-013",server/src/lib/gamification.ts
 U5-015,U5,Streak counter calc,Cron-like check daily that decrements broken streaks correctly across timezones,feature,medium,todo,3,U5-013,server/src/lib/gamification.ts

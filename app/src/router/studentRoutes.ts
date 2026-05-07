@@ -19,5 +19,11 @@ export const studentRoutes: RouteRecordRaw[] = [
     name: 'profile',
     component: () => import('@/views/ProfilePage.vue'),
     meta: { title: 'ملفي الشخصي — إديو نور', requiresAuth: true }
+  },
+  {
+    path: '/certificates/:certificateId',
+    name: 'certificate',
+    component: () => import('@/views/CertificatePage.vue'),
+    meta: { title: 'شهادتي — إديو نور', requiresAuth: true }
   }
 ];

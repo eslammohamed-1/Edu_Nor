@@ -33,6 +33,7 @@ model User {
   refreshTokens         RefreshToken[]
   quizAttempts          QuizAttempt[]
   lessonProgress        LessonProgress[]
+  certificates          Certificate[]
   passwordResetTokens   PasswordResetToken[]
   twoFactor             UserTwoFactor?
 }
@@ -152,6 +153,7 @@ model Subject {
   visible     Boolean  @default(true)
   sortOrder   Int      @default(0)
   courses     Course[]
+  certificates Certificate[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -241,6 +243,32 @@ model LessonProgress {
 }
 
 // ──────────────────────────────────────────────
+// شهادات (U5)
+// ──────────────────────────────────────────────
+
+/// شهادة إنجاز — التحقق عبر توقيع HMAC على `metaJson.nonce`
+model Certificate {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId     String
+  subject       Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  quizId        String?
+  quiz          Quiz?    @relation(fields: [quizId], references: [id], onDelete: SetNull)
+  /// `subject_completion` | `quiz_pass`
+  kind          String
+  title         String
+  hashSignature String
+  issuedAt      DateTime @default(now())
+  metaJson      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([subjectId])
+  @@index([quizId])
+}
+
+// ──────────────────────────────────────────────
 // اختبارات ومحاولات (U1)
 // ──────────────────────────────────────────────
 
@@ -256,6 +284,7 @@ model Quiz {
   status       String         @default("published")
   questions    QuizQuestion[]
   attempts     QuizAttempt[]
+  certificates Certificate[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 

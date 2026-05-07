@@ -2,6 +2,8 @@ import type { FastifyPluginAsync } from 'fastify';
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db.js';
+import { loadEnv } from '../env.js';
+import { tryIssueQuizPassCertificate } from '../lib/certificates.js';
 import { findLearnerQuizById } from '../lib/quiz-content.js';
 import {
   parseQuizAnswerEnvelope,
@@ -9,6 +11,8 @@ import {
   type QuizAnswerEnvelopeV1
 } from '../lib/quiz-answer-envelope.js';
 import { gradeAnswerJson } from '../lib/quiz-scoring.js';
+
+const certEnv = loadEnv();
 
 const startBodySchema = z.object({
   quizId: z.string().min(1)
@@ -303,6 +307,12 @@ export const quizAttemptsRoutes: FastifyPluginAsync = async (app) => {
           passed
         }
       });
+
+      if (passed) {
+        void tryIssueQuizPassCertificate(certEnv, user.id, attempt.quizId).catch((err) => {
+          req.log.warn({ err }, 'issue quiz certificate failed');
+        });
+      }
 
       return reply.send({
         score,

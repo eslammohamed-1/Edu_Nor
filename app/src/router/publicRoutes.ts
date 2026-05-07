@@ -39,6 +39,12 @@ export const publicRoutes: RouteRecordRaw[] = [
     meta: { title: 'التحقق الثنائي — إديو نور', requiresGuest: true }
   },
   {
+    path: '/cert/verify/:certificateId',
+    name: 'cert-verify',
+    component: () => import('@/views/CertificateVerifyPage.vue'),
+    meta: { title: 'التحقق من الشهادة — إديو نور' }
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('@/views/RegisterPage.vue'),

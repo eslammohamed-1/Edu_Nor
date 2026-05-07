@@ -3,6 +3,8 @@ import { z } from 'zod';
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 chars'),
+  /** اختياري: مفتاح منفصل لتوقيع الشهادات؛ إن غاب يُستخدم JWT_SECRET (تطوير فقط) */
+  CERTIFICATE_HMAC_SECRET: z.string().min(16).optional(),
   JWT_ACCESS_EXPIRES_SEC: z.coerce.number().default(900),
   JWT_REFRESH_EXPIRES_DAYS: z.coerce.number().default(7),
   PORT: z.coerce.number().default(3001),
